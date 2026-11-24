@@ -5,9 +5,9 @@ lucide.createIcons({icons});\``);if(r===void 0)throw Error("`createIcons()` only
   <div class="swiper-slide hero-slide relative overflow-hidden">
     <img src="${e.img}" alt="" class="hero-bg absolute inset-0 h-full w-full object-cover" />
     <div class="absolute inset-0 bg-gradient-to-b from-ink/45 via-ink/15 to-ink/40"></div>
-    <div class="relative flex h-full flex-col items-center px-6 pt-[110px] text-center text-white md:pt-[140px]">
+    <div class="relative flex h-full flex-col items-center px-6 pt-[90px] text-center text-white md:pt-[140px]">
       <p class="hero-anim text-[15px]">Autos 0km y usados de agencias y concesionarios oficiales</p>
-      <h1 class="hero-anim d1 mt-4 max-w-[760px] text-[40px] font-bold leading-[1.15] md:text-[70px]">${e.title}</h1>
+      <h1 class="hero-anim d1 mt-4 max-w-[760px] text-[36px] font-bold leading-[1.15] sm:text-[48px] md:text-[70px]">${e.title}</h1>
     </div>
   </div>`).join(``),new K(`#hero`,{modules:[ft,pt,_t],effect:`fade`,fadeEffect:{crossFade:!0},speed:1e3,loop:!0,autoplay:{delay:6e3,disableOnInteraction:!1},navigation:{prevEl:`.hero-prev`,nextEl:`.hero-next`}}),(()=>{let e=Z(`#sel-make`),t=Z(`#sel-model`);e.insertAdjacentHTML(`beforeend`,Object.keys($t).map(e=>`<option>${e}</option>`).join(``)),e.addEventListener(`change`,()=>{t.innerHTML=`<option value="">Todos los modelos</option>`+($t[e.value]||[]).map(e=>`<option>${e}</option>`).join(``)}),Q(`#search-tabs .tab-btn`).forEach(e=>e.addEventListener(`click`,()=>{Q(`#search-tabs .tab-btn`).forEach(e=>{e.classList.remove(`is-active`),e.classList.add(`opacity-80`)}),e.classList.add(`is-active`),e.classList.remove(`opacity-80`)})),Z(`#search-form`).addEventListener(`submit`,e=>{e.preventDefault(),Z(`#destacados`).scrollIntoView({behavior:`smooth`})})})(),Z(`#types .swiper-wrapper`).innerHTML=en.map(e=>`
   <div class="swiper-slide">

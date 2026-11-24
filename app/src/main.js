@@ -56,9 +56,9 @@ $('#hero-wrapper').innerHTML = heroSlides.map((s) => `
   <div class="swiper-slide hero-slide relative overflow-hidden">
     <img src="${s.img}" alt="" class="hero-bg absolute inset-0 h-full w-full object-cover" />
     <div class="absolute inset-0 bg-gradient-to-b from-ink/45 via-ink/15 to-ink/40"></div>
-    <div class="relative flex h-full flex-col items-center px-6 pt-[110px] text-center text-white md:pt-[140px]">
+    <div class="relative flex h-full flex-col items-center px-6 pt-[90px] text-center text-white md:pt-[140px]">
       <p class="hero-anim text-[15px]">Autos 0km y usados de agencias y concesionarios oficiales</p>
-      <h1 class="hero-anim d1 mt-4 max-w-[760px] text-[40px] font-bold leading-[1.15] md:text-[70px]">${s.title}</h1>
+      <h1 class="hero-anim d1 mt-4 max-w-[760px] text-[36px] font-bold leading-[1.15] sm:text-[48px] md:text-[70px]">${s.title}</h1>
     </div>
   </div>`).join('');
 
