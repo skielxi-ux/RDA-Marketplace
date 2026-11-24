@@ -4,6 +4,7 @@ import './styles/main.css';
 
 import { initHeader } from './ui/header.js';
 import { initDrawer } from './ui/drawer.js';
+import { initAuth } from './ui/auth.js';
 import { initHero } from './ui/hero.js';
 import { initSearch } from './ui/search.js';
 import { initBodyTypes, initFeatured } from './ui/sliders.js';
@@ -20,3 +21,4 @@ initBodyTypes();
 initFeatured();
 initReveal();
 initCounters();
+initAuth();

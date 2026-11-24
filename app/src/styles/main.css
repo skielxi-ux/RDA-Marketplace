@@ -189,6 +189,33 @@
   }
   .toast.is-on { @apply translate-y-0 opacity-100; }
 
+  /* Cuentas: ventana Ingresar / Crear cuenta */
+  .auth-modal { @apply fixed inset-0 z-[90] flex items-stretch justify-center sm:items-center sm:p-6; }
+  .auth-backdrop { @apply absolute inset-0 bg-ink/60 opacity-0 backdrop-blur-[2px] transition-opacity duration-300; }
+  .auth-panel {
+    @apply relative flex max-h-full w-full flex-col overflow-hidden bg-white opacity-0 shadow-2xl transition-all duration-300 ease-out
+           translate-y-6 sm:max-h-[min(92vh,860px)] sm:max-w-[520px] sm:rounded-[24px];
+  }
+  .auth-modal.is-open .auth-backdrop { @apply opacity-100; }
+  .auth-modal.is-open .auth-panel { @apply translate-y-0 opacity-100; }
+  .auth-label { @apply mb-1.5 block text-[14px] font-medium; }
+  .auth-input {
+    @apply h-[52px] w-full rounded-xl border border-line bg-white px-4 text-[16px] text-ink outline-none transition-all duration-300
+           placeholder:text-ink/35 hover:border-ink/30 focus:border-brand focus:shadow-[0_0_0_4px_rgba(64,95,242,0.12)]
+           aria-[invalid=true]:border-[#E5484D];
+  }
+  .auth-eye { @apply absolute right-2 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-lg text-ink/50 transition-colors hover:text-brand; }
+  .auth-error { @apply flex items-start gap-2 rounded-xl bg-[#FDECEC] px-4 py-3 text-[14px] text-[#B42318]; }
+  .auth-type {
+    @apply flex w-full items-center gap-4 rounded-2xl border border-line bg-white p-5 transition-all duration-300 ease-out
+           hover:-translate-y-0.5 hover:border-brand hover:shadow-[0_14px_30px_-12px_rgba(64,95,242,0.45)] active:translate-y-0 active:scale-[0.99];
+  }
+  .auth-type-icon { @apply grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-[#EEF1FB] text-brand transition-all duration-300 group-hover:bg-brand group-hover:text-white; }
+  .auth-type:hover .i-chevron-right { translate: 4px 0; @apply text-brand; }
+  .auth-type .i-chevron-right { transition: translate .35s ease; }
+  .btn-primary:disabled { @apply pointer-events-none; }
+  .user-menu { @apply absolute z-[60] w-[260px] rounded-2xl border border-line bg-white p-2 pt-3 shadow-[0_20px_50px_-15px_rgba(5,11,32,0.3)]; }
+
   /* Listado: filtros */
   .filters-panel {
     @apply fixed inset-y-0 right-0 z-50 flex w-[360px] max-w-[92vw] translate-x-full flex-col overflow-y-auto bg-white px-5 pt-5

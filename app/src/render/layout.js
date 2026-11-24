@@ -1,5 +1,6 @@
 // Partes comunes a todas las páginas: header, menú lateral y botón "volver arriba".
 import { logoSvg } from './logo.js';
+import { renderAuthModal } from './auth.js';
 
 export const renderSiteHeader = () => `
   <!-- ================= HEADER ================= -->
@@ -23,9 +24,9 @@ export const renderSiteHeader = () => `
       <a href="./" class="flex shrink-0 items-center" aria-label="Red de Autos, ir al inicio">${logoSvg('h-8 w-auto sm:h-10 lg:h-11')}</a>
 
       <div class="flex flex-1 items-center justify-end gap-3 sm:gap-6">
-        <a href="#ingresar" class="hidden items-center gap-2 font-medium transition-colors duration-300 hover:text-brand sm:flex">
-          <i data-icon="user" class="h-4 w-4"></i> Ingresar
-        </a>
+        <button type="button" data-auth-open aria-haspopup="dialog" aria-expanded="false" class="flex items-center gap-2 font-medium transition-colors duration-300 hover:text-brand max-sm:h-10 max-sm:w-10 max-sm:justify-center max-sm:rounded-full max-sm:border max-sm:border-line" >
+          <i data-icon="user" class="h-4 w-4"></i> <span data-auth-label class="max-w-[140px] truncate max-sm:sr-only">Ingresar</span>
+        </button>
         <a href="./#vender" class="btn-outline max-sm:px-3.5 max-sm:py-[7px] max-sm:text-[14px]">
           <i data-icon="plus" class="hidden h-4 w-4 sm:block"></i>Publicar<span class="hidden sm:inline">&nbsp;auto</span>
         </a>
@@ -52,11 +53,25 @@ export const renderSiteHeader = () => `
     </nav>
     <div class="mt-auto space-y-3 pt-8">
       <a href="./#agencias" class="btn-primary h-[55px] w-full">Sumá tu agencia <i data-icon="arrow-right" class="h-4 w-4"></i></a>
-      <a href="#ingresar" class="btn-outline h-[55px] w-full justify-center"><i data-icon="user" class="h-4 w-4"></i> Ingresar</a>
+      <button type="button" data-auth-open class="btn-outline h-[55px] w-full justify-center"><i data-icon="user" class="h-4 w-4"></i> <span data-auth-label>Ingresar</span></button>
     </div>
   </aside>`;
 
-export const renderToTop = () => `
+/** Menú de la cuenta (cuando hay sesión iniciada) + ventana de ingreso. */
+export const renderAccountUi = () => `
+  <div id="user-menu" class="user-menu" role="menu" aria-label="Mi cuenta" hidden>
+    <div class="border-b border-line px-4 pb-3 pt-1">
+      <p class="truncate text-[16px] font-bold" data-user-name></p>
+      <p class="text-[13px] text-ink/60" data-user-type></p>
+      <p class="mt-2 rounded-lg bg-[#FFF6E5] px-2.5 py-1.5 text-[12px] text-[#8A5A00]" data-user-pending hidden>Tu agencia está en revisión.</p>
+    </div>
+    <button type="button" role="menuitem" data-logout class="mt-1 flex w-full items-center gap-2.5 rounded-lg px-4 py-2.5 text-left text-[15px] transition-colors hover:bg-soft hover:text-brand">
+      <i data-icon="log-out" class="h-4 w-4"></i> Cerrar sesión
+    </button>
+  </div>
+  ${renderAuthModal()}`;
+
+export const renderToTop = () => `${renderAccountUi()}
   <button id="to-top" type="button" class="to-top fixed bottom-5 right-5 z-30 grid h-[46px] w-[46px] place-items-center rounded-full bg-brand text-white sm:bottom-[30px] sm:right-[30px]" aria-label="Volver arriba">
     <i data-icon="arrow-up" class="h-4 w-4"></i>
   </button>`;

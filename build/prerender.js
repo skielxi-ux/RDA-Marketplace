@@ -19,7 +19,7 @@ const CSP = [
   "style-src 'self'",
   "img-src 'self' data: https://images.unsplash.com",
   "font-src 'self' data:",
-  "connect-src 'self'",
+  "connect-src 'self' https://ytuecptdgtmrbiddyzht.supabase.co wss://ytuecptdgtmrbiddyzht.supabase.co",
   'frame-src https://www.openstreetmap.org',
   "object-src 'none'",
   "base-uri 'self'",

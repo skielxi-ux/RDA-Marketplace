@@ -8,6 +8,12 @@ export const SITE = {
   phone: { display: '381 000-0000', tel: '+543810000000' },
   ogImage:
     'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1200&h=630&fit=crop&auto=format&q=75',
+  // Supabase (proyecto RED DE AUTOS IA). La clave "publishable" es pública por diseño:
+  // los datos están protegidos por RLS y por la función del servidor.
+  supabase: {
+    url: 'https://ytuecptdgtmrbiddyzht.supabase.co',
+    publishableKey: 'sb_publishable_hhgYneVg1XyLJL64fv1nXQ_io3nnHfO',
+  },
   // Mientras el catálogo sea de ejemplo, el sitio no se indexa en Google.
   indexable: false,
 };
