@@ -214,6 +214,8 @@
   .auth-type:hover .i-chevron-right { translate: 4px 0; @apply text-brand; }
   .auth-type .i-chevron-right { transition: translate .35s ease; }
   .btn-primary:disabled { @apply pointer-events-none; }
+  .adm-badge { @apply ml-1.5 inline-grid h-5 min-w-5 place-items-center rounded-full bg-brand px-1.5 text-[12px] font-bold text-white; }
+  .adm-bar { @apply block h-full transition-[width] duration-500; }
   .user-menu { @apply absolute z-[60] w-[260px] rounded-2xl border border-line bg-white p-2 pt-3 shadow-[0_20px_50px_-15px_rgba(5,11,32,0.3)]; }
 
   /* Listado: filtros */

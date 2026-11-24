@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--slot:csp-->
+  <meta name="referrer" content="no-referrer" />
+  <meta name="robots" content="noindex, nofollow, noarchive" />
+  <title>Administrador · Red de Autos</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <script type="module" src="/src/admin.js"></script>
+</head>
+<body class="bg-soft">
+  <header class="sticky top-0 z-40 border-b border-line bg-white">
+    <div class="container-x flex h-[68px] items-center justify-between gap-4">
+      <a href="./" class="flex items-center gap-3" aria-label="Ir al sitio"><!--slot:logo--><span class="hidden rounded-full bg-ink px-3 py-1 text-[12px] font-medium text-white sm:inline">Administrador</span></a>
+      <button type="button" id="adm-logout" class="btn-outline h-[42px] !px-4" hidden><i data-icon="log-out" class="h-4 w-4"></i> Salir</button>
+    </div>
+  </header>
+
+  <main class="container-x py-8 md:py-10">
+    <!-- INGRESO -->
+    <section id="adm-login" class="mx-auto max-w-[440px]" hidden>
+      <div class="rounded-[24px] border border-line bg-white p-6 shadow-[0_20px_50px_-25px_rgba(5,11,32,0.3)] sm:p-8">
+        <span class="grid h-12 w-12 place-items-center rounded-xl bg-[#EEF1FB] text-brand"><i data-icon="lock" class="h-6 w-6"></i></span>
+        <h1 class="mt-5 text-[26px] font-bold leading-tight">Administrador</h1>
+        <p class="mt-1.5 text-[15px] text-ink/70">Entrá con el celular y la contraseña de admin de Red de Autos.</p>
+        <form id="adm-login-form" class="mt-6 space-y-5" novalidate>
+          <div>
+            <label for="adm-tel" class="auth-label">Celular de admin</label>
+            <input id="adm-tel" name="telefono" type="tel" inputmode="tel" autocomplete="username" required class="auth-input" placeholder="381 555-1234" maxlength="20" />
+          </div>
+          <div>
+            <label for="adm-clave" class="auth-label">Contraseña</label>
+            <div class="relative">
+              <input id="adm-clave" name="clave" type="password" autocomplete="current-password" required class="auth-input pr-12" maxlength="100" />
+              <button type="button" class="auth-eye" data-toggle-pw aria-label="Mostrar contraseña" aria-pressed="false"><i data-icon="eye" class="h-5 w-5"></i></button>
+            </div>
+          </div>
+          <p class="auth-error" data-error role="alert" hidden><i data-icon="circle-alert" class="mt-0.5 h-4 w-4 shrink-0"></i><span></span></p>
+          <button type="submit" class="btn-primary h-[54px] w-full text-[16px]" data-submit><span data-label>Ingresar</span><i data-icon="loader-circle" class="hidden h-5 w-5 animate-spin"></i></button>
+          <p class="text-[14px] text-ink/70">¿Olvidaste la contraseña? Creá una nueva desde el <a href="https://skielxi-ux.github.io/ReddeautosIA/admin.html" target="_blank" rel="noopener noreferrer" class="font-medium text-brand underline-offset-4 hover:underline">admin de la web actual</a> (te llega un código por WhatsApp). Es la misma.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- PANEL -->
+    <section id="adm-panel" hidden>
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 class="text-[28px] font-bold leading-tight md:text-[34px]">Panel del marketplace</h1>
+          <p class="mt-1 text-[15px] text-ink/70">Cuentas de particulares y agencias del marketplace nuevo.</p>
+        </div>
+        <button type="button" id="adm-refresh" class="btn-outline h-[44px] !px-4"><i data-icon="rotate-ccw" class="h-4 w-4"></i> Actualizar</button>
+      </div>
+
+      <div class="tabs-brand mt-6 flex gap-6 overflow-x-auto border-b border-line sm:gap-8" role="tablist" aria-label="Secciones del admin" id="adm-tabs">
+        <button type="button" role="tab" id="t-resumen" class="tab-btn is-active shrink-0" aria-selected="true" aria-controls="v-resumen" data-tab="resumen">Resumen</button>
+        <button type="button" role="tab" id="t-pendientes" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-pendientes" data-tab="pendientes">Agencias por revisar <span class="adm-badge" data-count-pend hidden></span></button>
+        <button type="button" role="tab" id="t-cuentas" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-cuentas" data-tab="cuentas">Cuentas</button>
+        <button type="button" role="tab" id="t-pruebas" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-pruebas" data-tab="pruebas">Pruebas <span class="adm-badge !bg-ink/60" data-count-pruebas hidden></span></button>
+      </div>
+
+      <div id="v-resumen" role="tabpanel" aria-labelledby="t-resumen" class="pt-8"></div>
+      <div id="v-pendientes" role="tabpanel" aria-labelledby="t-pendientes" class="pt-8" hidden></div>
+      <div id="v-cuentas" role="tabpanel" aria-labelledby="t-cuentas" class="pt-8" hidden>
+        <form id="adm-filtros" class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px_180px]" role="search">
+          <label class="sr-only" for="f-q">Buscar</label>
+          <div class="relative">
+            <i data-icon="search" class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/50"></i>
+            <input id="f-q" name="q" type="search" class="auth-input pl-11" placeholder="Nombre, ciudad, celular o CUIT" maxlength="60" />
+          </div>
+          <label class="sr-only" for="f-tipo">Tipo</label>
+          <div class="relative">
+            <select id="f-tipo" name="tipo" class="auth-input appearance-none pr-10"><option value="">Todos los tipos</option><option value="particular">Particulares</option><option value="agencia">Agencias</option></select>
+            <i data-icon="chevron-down" class="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2"></i>
+          </div>
+          <label class="sr-only" for="f-estado">Estado</label>
+          <div class="relative">
+            <select id="f-estado" name="estado" class="auth-input appearance-none pr-10"><option value="">Todos los estados</option><option value="activa">Activa</option><option value="pendiente">En revisión</option><option value="aprobada">Aprobada</option><option value="rechazada">Rechazada</option><option value="suspendida">Suspendida</option></select>
+            <i data-icon="chevron-down" class="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2"></i>
+          </div>
+        </form>
+        <div id="adm-lista" class="mt-6"></div>
+      </div>
+      <div id="v-pruebas" role="tabpanel" aria-labelledby="t-pruebas" class="pt-8" hidden></div>
+    </section>
+
+    <p id="adm-loading" class="py-20 text-center text-ink/60"><i data-icon="loader-circle" class="mx-auto mb-3 h-6 w-6 animate-spin"></i>Cargando…</p>
+  </main>
+
+  <!-- Diálogo de confirmación -->
+  <div id="adm-dialog" class="auth-modal" role="alertdialog" aria-modal="true" aria-labelledby="dlg-title" aria-describedby="dlg-text" hidden>
+    <div class="auth-backdrop" data-dlg-cancel></div>
+    <div class="auth-panel !max-w-[440px] p-6 sm:p-8">
+      <h2 id="dlg-title" class="text-[22px] font-bold leading-tight"></h2>
+      <p id="dlg-text" class="mt-2 whitespace-pre-line text-[15px] leading-[1.6] text-ink/75"></p>
+      <div data-dlg-extra></div>
+      <div class="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+        <button type="button" class="btn-outline h-[50px] justify-center !px-6" data-dlg-cancel>Cancelar</button>
+        <button type="button" class="btn-primary h-[50px] !px-6" data-dlg-ok>Confirmar</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

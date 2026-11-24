@@ -7,6 +7,7 @@ import { renderCarSlides, renderCarGrid } from '../app/src/render/carCard.js';
 import { renderHeadTags, renderJsonLd } from '../app/src/render/seo.js';
 import { renderForDealers, renderSellPrivate, renderStats, renderTestimonials, renderBrands, renderFooter } from '../app/src/render/home2.js';
 import { renderSiteHeader, renderToTop } from '../app/src/render/layout.js';
+import { logoSvg } from '../app/src/render/logo.js';
 import { renderFilters, renderSortOptions } from '../app/src/render/listing.js';
 import { cars, featuredTabs } from '../app/src/data/catalog.js';
 import { renderFicha, renderFichaHead, renderFichaJsonLd } from '../app/src/render/ficha.js';
@@ -42,6 +43,7 @@ const common = (isBuild) => ({
 
 // Slots de cada página (la clave es el nombre del archivo)
 const PAGES = {
+  'admin.html': () => ({ logo: logoSvg('h-8 w-auto') }),
   'index.html': () => ({
     head: renderHeadTags(),
     jsonld: renderJsonLd(featuredTabs[0].cars.concat(featuredTabs[1].cars), 'Autos destacados'),

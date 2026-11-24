@@ -62,6 +62,26 @@ async function sesion(tel: string, tipo: string) {
   return { email, otp: link.properties?.email_otp };
 }
 
+/** Aviso al admin por Telegram (texto plano). Si falla, no frena el registro. */
+async function avisarAdminTelegram(texto: string) {
+  try {
+    const token = env("TELEGRAM_BOT_TOKEN");
+    if (!token) return;
+    const { data: tel } = await db.rpc("config_privada", { p_clave: "admin_whatsapp" });
+    const admin = env("ADMIN_WHATSAPP") || (tel as string) || "";
+    if (!admin) return;
+    const { data: chat } = await db.from("telegram_chats").select("chat_id").eq("telefono", admin).maybeSingle();
+    if (!chat?.chat_id) return;
+    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: chat.chat_id, text: texto.slice(0, 3500), disable_web_page_preview: true }),
+    });
+  } catch (e) {
+    console.error("aviso telegram", e);
+  }
+}
+
 const publica = (c: A) => ({
   tipo: c.tipo, nombre: c.nombre, ciudad: c.ciudad, provincia: c.provincia, estado: c.estado,
   agencia_tipo: c.agencia_tipo, marca_oficial: c.marca_oficial,
@@ -91,6 +111,7 @@ Deno.serve(async (req) => {
       if (!u?.user?.email?.endsWith("@" + DOMINIO)) return err("Tu sesión venció. Volvé a ingresar.", 401);
       const { data: c } = await db.from("mkt_cuentas").select("*").eq("user_id", u.user.id).maybeSingle();
       if (!c) return err("Tu sesión venció. Volvé a ingresar.", 401);
+      if (c.estado === "suspendida" || c.estado === "rechazada") return err("Esta cuenta no está habilitada.", 403);
       return json({ cuenta: publica(c) });
     }
     return err("Acción desconocida");
@@ -147,6 +168,16 @@ async function registrar(b: A, json: J, err: J) {
   await db.rpc("mkt_set_pin", { p_tel: tel, p_pin: pin });
   const s = await sesion(tel, tipo);
   const { data: c } = await db.from("mkt_cuentas").select("*").eq("telefono", tel).single();
+  if (tipo === "agencia") {
+    const cuit = String(c.cuit);
+    await avisarAdminTelegram([
+      "🏢 Nueva agencia en el Marketplace (para revisar)",
+      `${c.nombre} · ${c.agencia_tipo === "oficial" ? `Concesionario oficial ${c.marca_oficial}` : "Agencia multimarca"}`,
+      `${c.ciudad}, ${c.provincia}`,
+      `CUIT ${cuit.slice(0, 2)}-${cuit.slice(2, 10)}-${cuit.slice(10)} · WhatsApp +${tel}`,
+      "Aprobala o rechazala en: https://skielxi-ux.github.io/RDA-Marketplace/admin.html",
+    ].join("\n"));
+  }
   return json({ email: s.email, otp: s.otp, cuenta: publica(c) });
 }
 

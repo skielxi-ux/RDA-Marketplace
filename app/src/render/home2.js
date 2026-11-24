@@ -158,8 +158,9 @@ export const renderFooter = () => `
 
       <div class="flex flex-col gap-3 border-t border-white/10 py-7 text-[14px] text-white/80 sm:flex-row sm:items-center sm:justify-between">
         <p>© ${new Date().getFullYear()} ${esc(SITE.name)}. Todos los derechos reservados.</p>
-        <ul class="flex gap-5">
+        <ul class="flex flex-wrap items-center gap-5">
           ${footer.legal.map(([label, href]) => `<li><a href="${esc(href)}" class="transition-colors hover:text-white">${esc(label)}</a></li>`).join('')}
+          <li><a href="./admin.html" rel="nofollow" class="text-[12px] text-white/15 transition-colors hover:text-white/50">Admin</a></li>
         </ul>
       </div>
     </div>
