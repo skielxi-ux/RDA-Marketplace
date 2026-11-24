@@ -105,8 +105,8 @@ export const renderFooter = () => `
         <a href="${esc(footer.join.cta.href)}" class="btn-primary h-[54px] shrink-0 px-8">${esc(footer.join.cta.label)} ${icon('arrow-up-right', 'h-4 w-4')}</a>
       </div>
 
-      <div class="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] md:py-[70px]">
-        <div>
+      <div class="grid grid-cols-2 gap-x-6 gap-y-10 py-12 md:grid-cols-4 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] md:py-[70px]">
+        <div class="col-span-2 md:col-span-4 lg:col-span-1">
           <a href="./" aria-label="Red de Autos, ir al inicio" class="inline-block">${logoSvg('h-10 w-auto', { text: '#FFFFFF' })}</a>
           <p class="mt-5 max-w-[300px] text-[15px] leading-[1.75] text-white/80">${esc(footer.about)}</p>
           <a href="tel:${esc(SITE.phone.tel)}" class="mt-5 inline-flex items-center gap-2 text-[15px] transition-colors hover:text-brand-hover">${icon('phone', 'h-4 w-4')} ${esc(SITE.phone.display)}</a>
