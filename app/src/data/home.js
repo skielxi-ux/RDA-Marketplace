@@ -1,17 +1,16 @@
 // Contenido de la segunda mitad de la home.
 
-export const sellCta = {
-  title: '¿Querés vender tu auto? Que las agencias te oferten',
-  text: 'Cargás tu auto una sola vez y lo ven las agencias y concesionarios verificados de la red. Vos elegís la mejor oferta.',
-  bullets: [
-    'Publicarlo es gratis y te lleva unos minutos',
-    'Te ofertan agencias verificadas de todo el país',
-    'Decidís si lo vendés o lo dejás en consignación',
-  ],
-  cta: { label: 'Empezar', href: '#vender' },
-  photos: [
-    { id: 'photo-1606152421802-db97b9c7a11b', alt: 'Sedán gris estacionado en la calle' },
-    { id: 'photo-1618843479313-40f8afb4b4d8', alt: 'Auto deportivo gris de frente' },
+// Bloque "Para particulares": venta directa entre particulares (decisión 24/11/2026).
+export const sellPrivate = {
+  eyebrow: 'Para particulares',
+  title: '¿Tenés un auto o una moto para vender? Publicalo sin costo.',
+  text: 'Tu publicación aparece junto al stock de agencias y concesionarios de todo el país, y los compradores te contactan directo por WhatsApp.',
+  primary: { label: 'Publicar mi vehículo', href: '#publicar' },
+  secondary: { label: 'Ver cómo funciona', href: '#como-funciona' },
+  steps: [
+    { icon: 'camera', title: 'Subí fotos y datos', text: 'Marca, modelo, año, kilómetros y precio. Lo completás en pocos minutos.' },
+    { icon: 'clipboard-check', title: 'Validamos tu publicación', text: 'Revisamos la información y las fotos antes de que salga online.' },
+    { icon: 'message-circle', title: 'Recibí consultas por WhatsApp', text: 'Coordinás directo con los compradores interesados.' },
   ],
 };
 

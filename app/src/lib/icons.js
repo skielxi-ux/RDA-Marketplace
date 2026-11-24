@@ -3,7 +3,7 @@
 import {
   Menu, Phone, User, Search, ChevronDown, ChevronLeft, ChevronRight, ArrowUpRight, ArrowUp,
   Gauge, Fuel, Cog, Calendar, Bookmark, X, BadgePercent, ShieldCheck, ReceiptText, Wrench,
-  Sparkle, BadgeCheck, Building2, Check, Quote,
+  Sparkle, BadgeCheck, Building2, Check, Quote, Camera, ClipboardCheck, MessageCircle, Plus,
 } from 'lucide';
 
 const NODES = {
@@ -12,7 +12,8 @@ const NODES = {
   'arrow-up': ArrowUp, gauge: Gauge, fuel: Fuel, cog: Cog, calendar: Calendar, bookmark: Bookmark,
   x: X, 'badge-percent': BadgePercent, 'shield-check': ShieldCheck, 'receipt-text': ReceiptText,
   wrench: Wrench, sparkle: Sparkle, 'badge-check': BadgeCheck, 'building-2': Building2,
-  check: Check, quote: Quote,
+  check: Check, quote: Quote, camera: Camera, 'clipboard-check': ClipboardCheck,
+  'message-circle': MessageCircle, plus: Plus,
 };
 
 const attrs = (o) => Object.entries(o).map(([k, v]) => `${k}="${v}"`).join(' ');

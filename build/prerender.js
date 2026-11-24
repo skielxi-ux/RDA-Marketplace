@@ -6,7 +6,7 @@ import { renderHeroSlides, renderMakeOptions, renderBodyTypes, renderReasons } f
 import { renderCarSlides } from '../app/src/render/carCard.js';
 import { renderHeadTags, renderJsonLd } from '../app/src/render/seo.js';
 import { featuredTabs } from '../app/src/data/catalog.js';
-import { renderSellCta, renderStats, renderTestimonials, renderBrands, renderFooter } from '../app/src/render/home2.js';
+import { renderSellPrivate, renderStats, renderTestimonials, renderBrands, renderFooter } from '../app/src/render/home2.js';
 import { logoSvg } from '../app/src/render/logo.js';
 
 // Content Security Policy: solo se permite lo nuestro + fotos de Unsplash.
@@ -48,7 +48,7 @@ export function prerenderHome() {
           'featured-tabs': renderFeaturedTabs(),
           featured: renderCarSlides(featuredTabs[0].cars),
           logo: logoSvg('h-8 w-auto sm:h-10 lg:h-11'),
-          sell: renderSellCta(),
+          sell: renderSellPrivate(),
           stats: renderStats(),
           testimonials: renderTestimonials(),
           brands: renderBrands(),

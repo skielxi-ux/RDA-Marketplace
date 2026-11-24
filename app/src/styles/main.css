@@ -80,6 +80,28 @@
   .field-label { @apply mb-1 block text-[15px] font-medium; }
   .field-select { @apply w-full cursor-pointer appearance-none truncate bg-transparent pr-6 text-[14px] text-ink/80 outline-none; }
 
+  /* Bloque "Para particulares" */
+  .btn-cta {
+    @apply inline-flex h-[58px] items-center gap-3 rounded-full bg-brand pl-2.5 pr-7 text-[16px] font-bold text-white
+           shadow-[0_8px_24px_-8px_rgba(64,95,242,0.6)] transition-all duration-300 ease-out
+           hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_14px_30px_-8px_rgba(64,95,242,0.75)]
+           active:translate-y-0 active:scale-[0.98];
+  }
+  .btn-cta-icon {
+    @apply grid h-[40px] w-[40px] place-items-center rounded-full bg-white/15 transition-transform duration-500 ease-out group-hover:rotate-90 group-hover:bg-white/25;
+  }
+  .btn-arrow {
+    @apply inline-flex items-center gap-1.5 text-[16px] font-bold text-ink underline-offset-[6px] transition-colors duration-300 hover:text-brand hover:underline;
+  }
+  .step-row {
+    @apply flex items-start gap-4 border-b border-line px-5 py-6 transition-colors duration-300 last:border-b-0 hover:bg-soft sm:gap-5 sm:px-8 sm:py-8;
+  }
+  .step-icon {
+    @apply grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-[#EEF1FB] text-brand transition-all duration-300
+           group-hover:scale-105 group-hover:bg-brand group-hover:text-white;
+  }
+  .step-num { @apply text-[15px] font-bold text-ink/40 transition-colors duration-300 group-hover:text-brand; }
+
   /* Carrocerías */
   .type-card img { transition: transform .6s var(--ease-boxcar); }
   .type-card:hover img { transform: scale(1.08); }

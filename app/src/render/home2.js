@@ -1,39 +1,45 @@
 // Plantillas de la segunda mitad de la home: vender tu auto, cifras, testimonios, marcas y footer.
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
-import { unsplash, srcset } from '../data/catalog.js';
 import { SITE } from '../data/site.js';
-import { sellCta, stats, testimonials, brands, footer } from '../data/home.js';
+import { sellPrivate, stats, testimonials, brands, footer } from '../data/home.js';
 import { logoSvg } from './logo.js';
 
-export function renderSellCta() {
-  const [small, tall] = sellCta.photos;
-  return `
+export const renderSellPrivate = () => `
   <section id="vender" aria-labelledby="sell-title" class="pt-20 md:pt-[110px]">
-    <div class="container-x grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-      <div class="reveal grid grid-cols-[0.85fr_1fr] items-end gap-4 sm:gap-6">
-        <img class="h-[220px] w-full rounded-2xl object-cover sm:h-[300px] lg:h-[330px]"
-          src="${esc(unsplash(small.id, 600, 660))}" srcset="${esc(srcset(small.id, 600 / 660, [300, 450, 600]))}"
-          sizes="(min-width:1024px) 22vw, 45vw" width="600" height="660" alt="${esc(small.alt)}" loading="lazy" decoding="async" />
-        <img class="h-[320px] w-full rounded-2xl object-cover sm:h-[440px] lg:h-[520px]"
-          src="${esc(unsplash(tall.id, 700, 1040))}" srcset="${esc(srcset(tall.id, 700 / 1040, [350, 520, 700]))}"
-          sizes="(min-width:1024px) 26vw, 52vw" width="700" height="1040" alt="${esc(tall.alt)}" loading="lazy" decoding="async" />
-      </div>
-      <div class="reveal lg:max-w-[560px]">
-        <h2 id="sell-title" class="section-title">${esc(sellCta.title)}</h2>
-        <p class="mt-6 text-[15px] leading-[1.75]">${esc(sellCta.text)}</p>
-        <ul class="mt-6 space-y-4">
-          ${sellCta.bullets.map((b) => `
-          <li class="flex items-start gap-3 text-[15px]">
-            <span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#EEF1FB] text-ink">${icon('check', 'h-3 w-3')}</span>
-            ${esc(b)}
+    <div class="container-x">
+      <div class="reveal grid items-center gap-10 rounded-[28px] border border-line bg-soft px-5 py-10 sm:px-10 md:py-14 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:px-[80px] lg:py-[80px]">
+        <div>
+          <p class="flex items-center gap-2.5 text-[13px] font-bold uppercase tracking-[0.12em] text-ink/80">
+            ${icon('user', 'h-4 w-4 text-brand')} ${esc(sellPrivate.eyebrow)}
+          </p>
+          <h2 id="sell-title" class="mt-5 text-[32px] font-bold leading-[1.08] tracking-tight sm:text-[42px] lg:text-[52px]">${esc(sellPrivate.title)}</h2>
+          <p class="mt-6 max-w-[560px] text-[16px] leading-[1.7] text-ink/80 sm:text-[18px]">${esc(sellPrivate.text)}</p>
+          <div class="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">
+            <a href="${esc(sellPrivate.primary.href)}" class="btn-cta group">
+              <span class="btn-cta-icon">${icon('plus', 'h-4 w-4')}</span>
+              ${esc(sellPrivate.primary.label)}
+            </a>
+            <a href="${esc(sellPrivate.secondary.href)}" class="btn-arrow group">
+              ${esc(sellPrivate.secondary.label)}
+              ${icon('chevron-right', 'h-4 w-4 transition-transform duration-300 group-hover:translate-x-1')}
+            </a>
+          </div>
+        </div>
+        <ol class="overflow-hidden rounded-2xl border border-line bg-white">
+          ${sellPrivate.steps.map((st, i) => `
+          <li class="step-row group">
+            <span class="step-icon">${icon(st.icon, 'h-6 w-6')}</span>
+            <div class="min-w-0 flex-1">
+              <h3 class="text-[18px] font-bold leading-snug sm:text-[20px]">${esc(st.title)}</h3>
+              <p class="mt-1.5 text-[15px] leading-[1.6] text-ink/75">${esc(st.text)}</p>
+            </div>
+            <span class="step-num" aria-hidden="true">${String(i + 1).padStart(2, '0')}</span>
           </li>`).join('')}
-        </ul>
-        <a href="${esc(sellCta.cta.href)}" class="btn-primary mt-9 h-[54px] px-7">${esc(sellCta.cta.label)} ${icon('arrow-up-right', 'h-4 w-4')}</a>
+        </ol>
       </div>
     </div>
   </section>`;
-}
 
 export const renderStats = () => `
   <section aria-label="La red en números" class="pt-16 md:pt-[90px]">
