@@ -1,6 +1,7 @@
 // RDA Marketplace · Edge Function: mkt-admin (panel del administrador del marketplace)
 // Sesión: la misma del admin de la web actual (login en la función "admin" con celular + contraseña).
-// Acciones: resumen, cuentas, cuenta (aprobar, rechazar, suspender, reactivar, reset_pin, prueba), borrar_pruebas.
+// Acciones: resumen, cuentas, cuenta (aprobar, rechazar, suspender, reactivar, reset_pin, prueba), borrar_pruebas,
+//           ferias, crear_feria, cancelar_feria, invitar_feria (WhatsApp a las agencias aprobadas).
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const env = (k: string, d = "") => Deno.env.get(k) ?? d;
@@ -18,6 +19,29 @@ async function adminEmail() {
   const { data } = await db.rpc("config_privada", { p_clave: "admin_whatsapp" });
   const tel = env("ADMIN_WHATSAPP") || (data as string) || "";
   return tel ? `admin-${tel}@admin.reddeautos.app` : "";
+}
+
+const SITIO = "https://skielxi-ux.github.io/RDA-Marketplace/";
+
+/** WhatsApp Cloud API (mismo método que la web actual): texto si la ventana de 24 h está abierta, si no plantilla. */
+async function wa(to: string, text: string) {
+  const { data: abierta } = await db.rpc("ventana_abierta", { p_tel: to });
+  const payload = abierta
+    ? { type: "text", text: { body: text.slice(0, 4000), preview_url: true } }
+    : { type: "template", template: { name: "actualizacion_pedido", language: { code: env("WA_TEMPLATE_LANG", "es_AR") },
+        components: [{ type: "body", parameters: [{ type: "text", text: text.replace(/\*/g, "").replace(/[\n\t]+/g, " ").slice(0, 900) }] }] } };
+  const enviar = async (dest: string) => {
+    const r = await fetch(`https://graph.facebook.com/${env("WA_API_VERSION", "v23.0")}/${env("WA_PHONE_NUMBER_ID")}/messages`, {
+      method: "POST", headers: { Authorization: `Bearer ${env("WA_TOKEN")}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ messaging_product: "whatsapp", recipient_type: "individual", to: dest, ...payload }),
+    });
+    return { r, d: await r.json().catch(() => ({})) };
+  };
+  let { r, d } = await enviar(to);
+  if (!r.ok && to.startsWith("549") && [131030, 100].includes(d?.error?.code)) ({ r, d } = await enviar("54" + to.slice(3)));
+  await db.from("wa_mensajes").insert({ direccion: "saliente", telefono: to, tipo: abierta ? "text" : "template:actualizacion_pedido", contenido: payload,
+    wa_message_id: d?.messages?.[0]?.id ?? null, error: r.ok ? null : JSON.stringify(d?.error ?? d).slice(0, 500) });
+  return r.ok;
 }
 
 const CAMPOS = "id, tipo, telefono, nombre, ciudad, provincia, agencia_tipo, marca_oficial, cuit, estado, es_prueba, user_id, intentos, bloqueado_hasta, revisado_at, created_at";
@@ -54,6 +78,10 @@ Deno.serve(async (req) => {
       case "cuentas": return json(await cuentas(b));
       case "cuenta": return json(await cuenta(b));
       case "borrar_pruebas": return json(await borrarPruebas(b));
+      case "ferias": return json(await ferias());
+      case "crear_feria": return json(await crearFeria(b));
+      case "cancelar_feria": return json(await cancelarFeria(b));
+      case "invitar_feria": return json(await invitarFeria(b));
     }
     return err("Acción desconocida");
   } catch (e) {
@@ -156,4 +184,60 @@ async function borrarPruebas(b: A) {
     if (error) throw error;
   }
   return { ok: true, borradas: lista.length };
+}
+
+// ---------- Ferias ----------
+const txt = (v: unknown, max: number) => String(v ?? "").replace(/[\u0000-\u001f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, max);
+const fechaAr = (iso: string) => new Date(iso).toLocaleString("es-AR", { timeZone: "America/Argentina/Buenos_Aires", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+
+async function ferias() {
+  const { data, error } = await db.from("mkt_ferias").select("*").order("empieza", { ascending: false }).limit(50);
+  if (error) throw error;
+  const { count } = await db.from("mkt_cuentas").select("id", { count: "exact", head: true }).eq("tipo", "agencia").eq("estado", "aprobada").eq("es_prueba", false);
+  return { ferias: data ?? [], agencias_aprobadas: count ?? 0 };
+}
+
+async function crearFeria(b: A) {
+  const nombre = txt(b.nombre, 80);
+  const descripcion = txt(b.descripcion, 160) || null;
+  const empieza = new Date(String(b.empieza ?? ""));
+  const termina = new Date(String(b.termina ?? ""));
+  if (nombre.length < 3) throw new Error("Escribí el nombre de la feria.");
+  if (isNaN(empieza.getTime()) || isNaN(termina.getTime())) throw new Error("Completá cuándo empieza y cuándo termina.");
+  if (termina <= empieza) throw new Error("La feria tiene que terminar después de empezar.");
+  if (termina <= new Date()) throw new Error("La fecha de fin ya pasó.");
+  if (termina.getTime() - empieza.getTime() > 60 * 864e5) throw new Error("La feria puede durar como máximo 60 días.");
+  const { data: choca } = await db.from("mkt_ferias").select("id, nombre").eq("estado", "activa")
+    .lt("empieza", termina.toISOString()).gt("termina", empieza.toISOString()).limit(1);
+  if (choca?.length) throw new Error(`Se superpone con "${choca[0].nombre}". Cancelala o cambiá las fechas.`);
+  const { data, error } = await db.from("mkt_ferias").insert({ nombre, descripcion, empieza: empieza.toISOString(), termina: termina.toISOString() }).select("*").single();
+  if (error) throw error;
+  return { ok: true, feria: data };
+}
+
+async function cancelarFeria(b: A) {
+  const { data, error } = await db.from("mkt_ferias").update({ estado: "cancelada" }).eq("id", String(b.id ?? "")).select("*").maybeSingle();
+  if (error) throw error;
+  if (!data) throw new Error("No encontré la feria.");
+  return { ok: true, feria: data };
+}
+
+async function invitarFeria(b: A) {
+  const { data: f } = await db.from("mkt_ferias").select("*").eq("id", String(b.id ?? "")).maybeSingle();
+  if (!f) throw new Error("No encontré la feria.");
+  if (f.estado !== "activa" || new Date(f.termina) <= new Date()) throw new Error("Esa feria ya no está activa.");
+  const { data: ags } = await db.from("mkt_cuentas").select("telefono, nombre").eq("tipo", "agencia").eq("estado", "aprobada").eq("es_prueba", false);
+  const lista = ags ?? [];
+  if (!lista.length) throw new Error("Todavía no hay agencias aprobadas para invitar.");
+  let ok = 0;
+  for (const a of lista) {
+    const texto = `🎉 Hola ${a.nombre}! Te invitamos a la *${f.nombre}* de Red de Autos, del ${fechaAr(f.empieza)} al ${fechaAr(f.termina)} h.` +
+      (f.descripcion ? `\n${f.descripcion}` : "") +
+      `\nSumá tus autos con precio de feria (el descuento lo elegís vos). Entrá: ${SITIO}`;
+    if (await wa(a.telefono, texto).catch(() => false)) ok++;
+  }
+  const { data, error } = await db.from("mkt_ferias").update({ invitacion_enviada_at: new Date().toISOString(), invitados: lista.length, invitados_ok: ok })
+    .eq("id", f.id).select("*").single();
+  if (error) throw error;
+  return { ok: true, feria: data, enviados: ok, total: lista.length };
 }

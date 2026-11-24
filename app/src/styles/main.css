@@ -127,6 +127,15 @@
   }
   .step-num { @apply text-[15px] font-bold text-ink/40 transition-colors duration-300 group-hover:text-brand; }
 
+  /* Feria online (home) */
+  .feria-card {
+    @apply relative grid gap-8 overflow-hidden rounded-[28px] bg-ink px-6 py-8 text-white sm:px-10 sm:py-10 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:px-14;
+    background-image: radial-gradient(120% 140% at 100% 0%, rgba(64, 95, 242, 0.55) 0%, rgba(5, 11, 32, 0) 55%);
+  }
+  .feria-num { @apply grid min-w-[64px] place-items-center rounded-2xl bg-white/10 px-2 py-3 text-center backdrop-blur-sm sm:min-w-[78px] sm:py-4; }
+  .feria-num span { @apply text-[26px] font-bold leading-none tabular-nums sm:text-[32px]; }
+  .feria-num small { @apply mt-1.5 text-[12px] text-white/60; }
+
   /* Bloque "Para agencias" */
   .feature-cell {
     @apply border-b border-white/15 p-6 transition-colors duration-300 hover:bg-white/[0.04] sm:p-8

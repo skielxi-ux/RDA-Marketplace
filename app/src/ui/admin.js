@@ -145,7 +145,7 @@ function renderResumen(r) {
         <p class="mt-1.5 text-[14px] text-ink/70">${esc(k)}</p>
       </div>`).join('')}
     </div>
-    ${r.pendientes ? `<button type="button" class="mt-6 flex w-full items-center justify-between gap-4 rounded-2xl bg-[#FFF6E5] px-5 py-4 text-left text-[#8A5A00] transition-colors hover:bg-[#FFEFD1]" data-go="pendientes"><span><b>${esc(r.pendientes)}</b> ${r.pendientes === 1 ? 'agencia espera' : 'agencias esperan'} revisión</span>${icon('arrow-right', 'h-5 w-5')}</button>` : ''}
+    ${r.pendientes ? `<button type="button" class="mt-6 flex w-full items-center justify-between gap-4 rounded-2xl bg-[#FFF6E5] px-5 py-4 text-left text-[#8A5A00] transition-colors hover:bg-[#FFEFD1]" data-go="concesionarios"><span><b>${esc(r.pendientes)}</b> ${r.pendientes === 1 ? 'agencia espera' : 'agencias esperan'} revisión</span>${icon('arrow-right', 'h-5 w-5')}</button>` : ''}
     <section class="mt-8 rounded-2xl border border-line bg-white p-5 sm:p-6" aria-labelledby="reg-title">
       <div class="flex flex-wrap items-end justify-between gap-3">
         <h2 id="reg-title" class="text-[20px] font-bold">Registros de los últimos 14 días</h2>
@@ -182,23 +182,163 @@ async function loadResumen() {
   renderResumen(resumenData);
 }
 
-async function loadPendientes() {
-  const box = $('#v-pendientes');
-  box.innerHTML = vacio('Cargando…');
-  const { cuentas } = await admin('cuentas', { tipo: 'agencia', estado: 'pendiente' });
-  box.innerHTML = cuentas.length
-    ? `<div class="grid gap-4 xl:grid-cols-2">${cuentas.map(cuentaCard).join('')}</div>`
-    : vacio('No hay agencias esperando revisión. ¡Todo al día!');
+// ---------- Particulares y Concesionarios ----------
+const LIST_TABS = {
+  particulares: {
+    tipo: 'particular', titulo: 'Particulares', placeholder: 'Buscar por nombre, ciudad o celular',
+    estados: [['', 'Todos los estados'], ['activa', 'Activa'], ['suspendida', 'Suspendida']],
+  },
+  concesionarios: {
+    tipo: 'agencia', titulo: 'Concesionarios y agencias', placeholder: 'Buscar por nombre, ciudad, celular o CUIT',
+    estados: [['', 'Todos los estados'], ['pendiente', 'En revisión'], ['aprobada', 'Aprobada'], ['rechazada', 'Rechazada'], ['suspendida', 'Suspendida']],
+  },
+};
+
+function listShell(tab) {
+  const box = $(`#v-${tab}`);
+  if (box.dataset.ready) return box;
+  const cfg = LIST_TABS[tab];
+  box.dataset.ready = '1';
+  box.innerHTML = `
+    ${tab === 'concesionarios' ? '<div data-pend></div>' : ''}
+    <form class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_220px]" role="search" aria-label="Buscar ${esc(cfg.titulo)}">
+      <label class="sr-only" for="q-${tab}">Buscar</label>
+      <div class="relative">
+        ${icon('search', 'pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/50')}
+        <input id="q-${tab}" name="q" type="search" class="auth-input pl-11" placeholder="${esc(cfg.placeholder)}" maxlength="60" />
+      </div>
+      <label class="sr-only" for="e-${tab}">Estado</label>
+      <div class="relative">
+        <select id="e-${tab}" name="estado" class="auth-input appearance-none pr-10">${cfg.estados.map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join('')}</select>
+        ${icon('chevron-down', 'pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2')}
+      </div>
+    </form>
+    <div data-lista class="mt-6"></div>`;
+  const f = $('form', box);
+  let t;
+  f.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => reload(tab), 350); });
+  f.addEventListener('submit', (e) => { e.preventDefault(); reload(tab); });
+  return box;
 }
 
-async function loadCuentas() {
-  const f = $('#adm-filtros');
-  const box = $('#adm-lista');
-  box.innerHTML = vacio('Cargando…');
-  const { cuentas } = await admin('cuentas', { q: f.elements.q.value, tipo: f.elements.tipo.value, estado: f.elements.estado.value });
-  box.innerHTML = cuentas.length
+async function loadList(tab) {
+  const cfg = LIST_TABS[tab];
+  const box = listShell(tab);
+  const f = $('form', box);
+  const lista = $('[data-lista]', box);
+  lista.innerHTML = vacio('Cargando…');
+  const estado = f.elements.estado.value;
+  const [todas, pend] = await Promise.all([
+    admin('cuentas', { tipo: cfg.tipo, q: f.elements.q.value, estado }),
+    tab === 'concesionarios' ? admin('cuentas', { tipo: 'agencia', estado: 'pendiente' }) : null,
+  ]);
+  let cuentas = todas.cuentas;
+  if (pend) {
+    $('[data-pend]', box).innerHTML = pend.cuentas.length ? `
+      <section class="mb-10 rounded-2xl bg-[#FFF6E5] p-4 sm:p-6" aria-labelledby="pend-title">
+        <h2 id="pend-title" class="mb-4 text-[20px] font-bold text-[#8A5A00]">Esperan revisión (${pend.cuentas.length})</h2>
+        <div class="grid gap-4 xl:grid-cols-2">${pend.cuentas.map(cuentaCard).join('')}</div>
+      </section>` : '';
+    if (!estado) cuentas = cuentas.filter((c) => c.estado !== 'pendiente'); // ya se muestran arriba
+  }
+  lista.innerHTML = cuentas.length
     ? `<p class="mb-4 text-[14px] text-ink/60">${cuentas.length} ${cuentas.length === 1 ? 'cuenta' : 'cuentas'}</p><div class="grid gap-4 xl:grid-cols-2">${cuentas.map(cuentaCard).join('')}</div>`
-    : vacio('No encontramos cuentas con esos filtros.');
+    : vacio(f.elements.q.value || estado ? 'No encontramos cuentas con esos filtros.' : `Todavía no hay ${cfg.titulo.toLowerCase()}.`);
+}
+
+// ---------- Feria ----------
+const fmtFeria = (d) => new Date(d).toLocaleString('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+function feriaEstado(f) {
+  const now = Date.now();
+  if (f.estado === 'cancelada') return ['Cancelada', 'bg-[#FDECEC] text-[#B42318]', false];
+  if (new Date(f.termina).getTime() <= now) return ['Terminada', 'bg-ink/10 text-ink', false];
+  if (new Date(f.empieza).getTime() <= now) return ['En curso', 'bg-[#E8F5E9] text-ok', true];
+  return ['Próxima', 'bg-[#EEF1FB] text-brand', true];
+}
+
+function feriaCard(f, aprobadas) {
+  const [txt, cls, viva] = feriaEstado(f);
+  const inv = f.invitacion_enviada_at
+    ? `Invitación enviada el ${esc(fmtFeria(f.invitacion_enviada_at))} a ${esc(f.invitados)} ${f.invitados === 1 ? 'agencia' : 'agencias'} (${esc(f.invitados_ok)} entregadas)`
+    : `Sin invitar · ${esc(aprobadas)} ${aprobadas === 1 ? 'agencia aprobada' : 'agencias aprobadas'} para invitar`;
+  return `
+  <article class="flex flex-col gap-4 rounded-2xl border border-line bg-white p-5 sm:p-6 md:flex-row md:items-start md:justify-between">
+    <div class="min-w-0">
+      ${chip(txt, cls)}
+      <h3 class="mt-3 text-[20px] font-bold leading-tight">${esc(f.nombre)}</h3>
+      ${f.descripcion ? `<p class="mt-1 text-[15px] text-ink/70">${esc(f.descripcion)}</p>` : ''}
+      <p class="mt-2 text-[15px]">${esc(fmtFeria(f.empieza))} → ${esc(fmtFeria(f.termina))}</p>
+      <p class="mt-1 text-[13px] text-ink/60">${inv}</p>
+    </div>
+    ${viva ? `<div class="flex shrink-0 flex-wrap gap-2">
+      <button type="button" class="btn-primary h-[46px] !px-5" data-feria-invitar="${esc(f.id)}">${icon('message-circle', 'h-4 w-4')} ${f.invitacion_enviada_at ? 'Volver a invitar' : 'Invitar agencias'}</button>
+      <button type="button" class="btn-outline h-[46px] !border-[#F3B8B4] !px-5 !text-[#B42318] hover:!border-[#D92D20] hover:!bg-[#D92D20] hover:!text-white" data-feria-cancelar="${esc(f.id)}">Cancelar</button>
+    </div>` : ''}
+  </article>`;
+}
+
+let feriaData = { ferias: [], agencias_aprobadas: 0 };
+async function loadFeria() {
+  const box = $('#feria-lista');
+  box.innerHTML = vacio('Cargando…');
+  feriaData = await admin('ferias');
+  box.innerHTML = feriaData.ferias.length
+    ? feriaData.ferias.map((f) => feriaCard(f, feriaData.agencias_aprobadas)).join('')
+    : vacio('Todavía no creaste ninguna feria.');
+}
+
+async function crearFeria(e) {
+  e.preventDefault();
+  const f = e.currentTarget;
+  const err = $('[data-error]', f);
+  err.hidden = true;
+  const fail = (m) => { $('span', err).textContent = m; err.hidden = false; };
+  const nombre = f.elements.nombre.value.trim();
+  const ini = f.elements.empieza.value;
+  const fin = f.elements.termina.value;
+  if (nombre.length < 3) return fail('Escribí el nombre de la feria.');
+  if (!ini || !fin) return fail('Completá cuándo empieza y cuándo termina.');
+  const empieza = new Date(ini);
+  const termina = new Date(fin);
+  if (termina <= empieza) return fail('La feria tiene que terminar después de empezar.');
+  if (termina <= new Date()) return fail('La fecha de fin ya pasó.');
+  const btnS = $('[data-submit]', f);
+  btnS.disabled = true;
+  try {
+    await admin('crear_feria', { nombre, descripcion: f.elements.descripcion.value.trim(), empieza: empieza.toISOString(), termina: termina.toISOString() });
+    f.reset();
+    toast('Feria creada');
+    await loadFeria();
+  } catch (ex) {
+    if (ex?.status === 401) return handleError(ex);
+    fail(ex.message);
+  } finally {
+    btnS.disabled = false;
+  }
+}
+
+async function invitarFeria(id) {
+  const f = feriaData.ferias.find((x) => x.id === id);
+  const n = feriaData.agencias_aprobadas;
+  if (!n) return dialog({ title: 'No hay a quién invitar', text: 'Todavía no hay agencias aprobadas en el marketplace. Aprobá alguna en "Concesionarios" y volvé.', ok: '', cancel: 'Entendido' });
+  const ok = await dialog({
+    title: f?.invitacion_enviada_at ? 'Volver a invitar' : 'Invitar agencias',
+    text: `Se envía un WhatsApp a ${n} ${n === 1 ? 'agencia aprobada' : 'agencias aprobadas'} con el nombre y las fechas de "${f?.nombre ?? ''}".\n\nMientras uses el número de prueba de WhatsApp, solo les llega a los números habilitados.`,
+    ok: 'Enviar invitaciones',
+  });
+  if (!ok) return;
+  try {
+    const r = await admin('invitar_feria', { id });
+    toast(`Invitación enviada a ${r.enviados} de ${r.total}`, r.enviados > 0);
+    await loadFeria();
+  } catch (e) { handleError(e); }
+}
+
+async function cancelarFeria(id) {
+  const f = feriaData.ferias.find((x) => x.id === id);
+  const ok = await dialog({ title: 'Cancelar feria', text: `"${f?.nombre ?? ''}" deja de mostrarse en el sitio. No se puede reactivar: si hace falta, creá una nueva.`, ok: 'Cancelar feria', cancel: 'Volver', danger: true });
+  if (!ok) return;
+  try { await admin('cancelar_feria', { id }); toast('Feria cancelada'); await loadFeria(); } catch (e) { handleError(e); }
 }
 
 async function loadPruebas() {
@@ -213,7 +353,13 @@ async function loadPruebas() {
     ${cuentas.length ? `<div class="grid gap-4 xl:grid-cols-2">${cuentas.map(cuentaCard).join('')}</div>` : vacio('No hay cuentas de prueba.')}`;
 }
 
-const LOADERS = { resumen: loadResumen, pendientes: loadPendientes, cuentas: loadCuentas, pruebas: loadPruebas };
+const LOADERS = {
+  resumen: loadResumen,
+  particulares: () => loadList('particulares'),
+  concesionarios: () => loadList('concesionarios'),
+  feria: loadFeria,
+  pruebas: loadPruebas,
+};
 let actual = 'resumen';
 const reload = async (tab = actual) => {
   try { await LOADERS[tab](); } catch (e) { handleError(e); }
@@ -258,7 +404,6 @@ async function runOp(op, id, card) {
     } else {
       toast('Listo, cambio guardado');
     }
-    if (card && actual !== 'pendientes') card.outerHTML = cuentaCard(r.cuenta);
     await Promise.all([loadResumen(), actual !== 'resumen' ? LOADERS[actual]() : null]);
   } catch (e) {
     handleError(e);
@@ -333,11 +478,14 @@ export async function initAdmin() {
     if (e.target.closest('[data-borrar-pruebas]')) borrarPruebas();
   });
 
-  // Filtros de cuentas
-  const f = $('#adm-filtros');
-  let t;
-  f.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => reload('cuentas'), 350); });
-  f.addEventListener('submit', (e) => { e.preventDefault(); reload('cuentas'); });
+  // Feria
+  $('#feria-form').addEventListener('submit', crearFeria);
+  document.addEventListener('click', (e) => {
+    const inv = e.target.closest('[data-feria-invitar]');
+    if (inv) invitarFeria(inv.dataset.feriaInvitar);
+    const can = e.target.closest('[data-feria-cancelar]');
+    if (can) cancelarFeria(can.dataset.feriaCancelar);
+  });
   $('#adm-refresh').addEventListener('click', () => Promise.all([reload('resumen'), actual !== 'resumen' ? reload(actual) : null]).then(() => toast('Actualizado')));
 
   // Mostrar contraseña

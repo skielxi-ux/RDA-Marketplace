@@ -73,6 +73,32 @@
       </div>
     </section>
 
+    <!-- ================= FERIA ONLINE (se muestra solo si hay una próxima o en curso) ================= -->
+    <section id="feria-banner" aria-labelledby="feria-nombre" class="pt-16 md:pt-[90px]" hidden>
+      <div class="container-x">
+        <div class="feria-card">
+          <div class="min-w-0">
+            <p class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1.5 text-[13px] font-medium text-[#9DB0FF]">
+              <i data-icon="tag" class="h-4 w-4"></i> <span data-feria-estado>Feria online</span>
+            </p>
+            <h2 id="feria-nombre" class="mt-4 text-[28px] font-bold leading-[1.1] text-balance sm:text-[36px]" data-feria-nombre></h2>
+            <p class="mt-3 max-w-[560px] text-[16px] leading-[1.6] text-white/75" data-feria-desc></p>
+            <p class="mt-3 text-[14px] text-white/60" data-feria-fechas></p>
+          </div>
+          <div class="flex flex-col gap-5 lg:items-end">
+            <p class="text-[14px] font-medium text-white/70" data-feria-cuenta-label>Empieza en</p>
+            <div class="grid grid-cols-4 gap-2 sm:gap-3" role="timer" aria-live="off">
+              <div class="feria-num"><span data-cd="d">0</span><small>días</small></div>
+              <div class="feria-num"><span data-cd="h">00</span><small>horas</small></div>
+              <div class="feria-num"><span data-cd="m">00</span><small>min</small></div>
+              <div class="feria-num"><span data-cd="s">00</span><small>seg</small></div>
+            </div>
+            <a href="./autos.html" class="btn-cta self-start lg:self-end"><span class="btn-cta-icon"><i data-icon="arrow-right" class="h-4 w-4"></i></span> Ver autos</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ================= CARROCERÍAS ================= -->
     <section aria-labelledby="types-title" class="pt-16 md:pt-[90px]">
       <div class="container-x">

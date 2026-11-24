@@ -56,32 +56,43 @@
 
       <div class="tabs-brand mt-6 flex gap-6 overflow-x-auto border-b border-line sm:gap-8" role="tablist" aria-label="Secciones del admin" id="adm-tabs">
         <button type="button" role="tab" id="t-resumen" class="tab-btn is-active shrink-0" aria-selected="true" aria-controls="v-resumen" data-tab="resumen">Resumen</button>
-        <button type="button" role="tab" id="t-pendientes" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-pendientes" data-tab="pendientes">Agencias por revisar <span class="adm-badge" data-count-pend hidden></span></button>
-        <button type="button" role="tab" id="t-cuentas" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-cuentas" data-tab="cuentas">Cuentas</button>
+        <button type="button" role="tab" id="t-particulares" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-particulares" data-tab="particulares">Particulares</button>
+        <button type="button" role="tab" id="t-concesionarios" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-concesionarios" data-tab="concesionarios">Concesionarios <span class="adm-badge" data-count-pend hidden></span></button>
+        <button type="button" role="tab" id="t-feria" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-feria" data-tab="feria">Feria</button>
         <button type="button" role="tab" id="t-pruebas" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-pruebas" data-tab="pruebas">Pruebas <span class="adm-badge !bg-ink/60" data-count-pruebas hidden></span></button>
       </div>
 
       <div id="v-resumen" role="tabpanel" aria-labelledby="t-resumen" class="pt-8"></div>
-      <div id="v-pendientes" role="tabpanel" aria-labelledby="t-pendientes" class="pt-8" hidden></div>
-      <div id="v-cuentas" role="tabpanel" aria-labelledby="t-cuentas" class="pt-8" hidden>
-        <form id="adm-filtros" class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px_180px]" role="search">
-          <label class="sr-only" for="f-q">Buscar</label>
-          <div class="relative">
-            <i data-icon="search" class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/50"></i>
-            <input id="f-q" name="q" type="search" class="auth-input pl-11" placeholder="Nombre, ciudad, celular o CUIT" maxlength="60" />
-          </div>
-          <label class="sr-only" for="f-tipo">Tipo</label>
-          <div class="relative">
-            <select id="f-tipo" name="tipo" class="auth-input appearance-none pr-10"><option value="">Todos los tipos</option><option value="particular">Particulares</option><option value="agencia">Agencias</option></select>
-            <i data-icon="chevron-down" class="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2"></i>
-          </div>
-          <label class="sr-only" for="f-estado">Estado</label>
-          <div class="relative">
-            <select id="f-estado" name="estado" class="auth-input appearance-none pr-10"><option value="">Todos los estados</option><option value="activa">Activa</option><option value="pendiente">En revisión</option><option value="aprobada">Aprobada</option><option value="rechazada">Rechazada</option><option value="suspendida">Suspendida</option></select>
-            <i data-icon="chevron-down" class="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2"></i>
+      <div id="v-particulares" role="tabpanel" aria-labelledby="t-particulares" class="pt-8" hidden></div>
+      <div id="v-concesionarios" role="tabpanel" aria-labelledby="t-concesionarios" class="pt-8" hidden></div>
+      <div id="v-feria" role="tabpanel" aria-labelledby="t-feria" class="pt-8" hidden>
+        <form id="feria-form" class="rounded-2xl border border-line bg-white p-5 sm:p-7" novalidate>
+          <h2 class="text-[22px] font-bold">Nueva feria online</h2>
+          <div class="mt-5 space-y-5">
+            <div>
+              <label for="fe-nombre" class="auth-label">Nombre</label>
+              <input id="fe-nombre" name="nombre" type="text" maxlength="80" required class="auth-input" placeholder="Feria de Usados: Fin de semana XXL" />
+            </div>
+            <div>
+              <label for="fe-desc" class="auth-label">Descripción corta (opcional)</label>
+              <input id="fe-desc" name="descripcion" type="text" maxlength="160" class="auth-input" placeholder="Unidades seleccionadas con precios de feria por tiempo limitado." />
+            </div>
+            <div class="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-end">
+              <div>
+                <label for="fe-empieza" class="auth-label">Empieza</label>
+                <input id="fe-empieza" name="empieza" type="datetime-local" required class="auth-input" />
+              </div>
+              <div>
+                <label for="fe-termina" class="auth-label">Termina</label>
+                <input id="fe-termina" name="termina" type="datetime-local" required class="auth-input" />
+              </div>
+              <button type="submit" class="btn-primary h-[52px] !px-6" data-submit><i data-icon="plus" class="h-4 w-4"></i> <span data-label>Crear feria</span></button>
+            </div>
+            <p class="auth-error" data-error role="alert" hidden><i data-icon="circle-alert" class="mt-0.5 h-4 w-4 shrink-0"></i><span></span></p>
+            <p class="text-[14px] leading-[1.6] text-ink/60">Después de crearla, tocá "Invitar agencias" para avisarles por WhatsApp. La feria aparece en la home 7 días antes (con cuenta regresiva). El descuento lo decide cada concesionario.</p>
           </div>
         </form>
-        <div id="adm-lista" class="mt-6"></div>
+        <div id="feria-lista" class="mt-6 space-y-4"></div>
       </div>
       <div id="v-pruebas" role="tabpanel" aria-labelledby="t-pruebas" class="pt-8" hidden></div>
     </section>

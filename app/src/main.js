@@ -10,6 +10,7 @@ import { initSearch } from './ui/search.js';
 import { initBodyTypes, initFeatured } from './ui/sliders.js';
 import { initReveal } from './ui/reveal.js';
 import { initCounters } from './ui/counters.js';
+import { initFeria } from './ui/feria.js';
 
 document.documentElement.classList.add('js');
 
@@ -22,3 +23,4 @@ initFeatured();
 initReveal();
 initCounters();
 initAuth();
+initFeria();
