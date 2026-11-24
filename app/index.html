@@ -7,6 +7,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <!--slot:head-->
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
   <link rel="manifest" href="./site.webmanifest" />
   <link rel="preconnect" href="https://images.unsplash.com" />
   <!--slot:jsonld-->
@@ -33,10 +34,7 @@
         </a>
       </div>
 
-      <a href="./" class="flex shrink-0 items-center gap-2" aria-label="Red de Autos, ir al inicio">
-        <span class="grid h-8 w-8 place-items-center rounded-lg bg-[#E11D2E] text-[19px] font-black italic leading-none text-white sm:h-9 sm:w-9 sm:text-[22px]" aria-hidden="true">R</span>
-        <span class="whitespace-nowrap text-[16px] font-black italic tracking-tight sm:text-[21px]">RED DE AUTOS</span>
-      </a>
+      <a href="./" class="flex shrink-0 items-center" aria-label="Red de Autos, ir al inicio"><!--slot:logo--></a>
 
       <div class="flex flex-1 items-center justify-end gap-3 sm:gap-6">
         <a href="#ingresar" class="hidden items-center gap-2 font-medium transition-colors duration-300 hover:text-brand sm:flex">
@@ -151,7 +149,7 @@
     </section>
 
     <!-- ================= DESTACADOS ================= -->
-    <section id="destacados" aria-labelledby="featured-title" class="pb-20 pt-20 md:pb-[120px] md:pt-[110px]">
+    <section id="destacados" aria-labelledby="featured-title" class="pt-20 md:pt-[110px]">
       <div class="container-x">
         <div class="reveal mb-6 flex items-end justify-between gap-4 md:mb-[30px]">
           <h2 id="featured-title" class="section-title">Autos destacados</h2>
@@ -165,7 +163,12 @@
         </div>
       </div>
     </section>
+
+    <!-- ================= SEGUNDA MITAD ================= -->
+    <!--slot:sell--><!--slot:stats--><!--slot:testimonials--><!--slot:brands-->
   </main>
+
+  <!--slot:footer-->
 
   <button id="to-top" type="button" class="to-top fixed bottom-5 right-5 z-30 grid h-[46px] w-[46px] place-items-center rounded-full bg-brand text-white shadow-lg transition-all duration-300 hover:bg-ink sm:bottom-[30px] sm:right-[30px]" aria-label="Volver arriba">
     <i data-icon="arrow-up" class="h-4 w-4"></i>

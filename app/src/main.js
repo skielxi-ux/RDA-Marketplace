@@ -8,6 +8,7 @@ import { initHero } from './ui/hero.js';
 import { initSearch } from './ui/search.js';
 import { initBodyTypes, initFeatured } from './ui/sliders.js';
 import { initReveal } from './ui/reveal.js';
+import { initCounters } from './ui/counters.js';
 
 document.documentElement.classList.add('js');
 
@@ -18,3 +19,4 @@ initSearch();
 initBodyTypes();
 initFeatured();
 initReveal();
+initCounters();
