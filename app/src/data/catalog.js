@@ -37,10 +37,10 @@ export const bodyTypeList = [
 ];
 
 export const reasons = [
-  { icon: 'badge-percent', title: 'Financiación a tu medida', text: 'Las agencias de la red te ofrecen créditos y planes para que pagues como te quede cómodo.' },
+  { icon: 'message-circle', title: 'Hablá directo con el vendedor', text: 'Escribile por WhatsApp a la agencia, al concesionario o al particular, sin intermediarios.' },
   { icon: 'shield-check', title: 'Agencias verificadas', text: 'Cada concesionario y agencia pasa por una verificación antes de publicar.' },
   { icon: 'receipt-text', title: 'Precios transparentes', text: 'Ves el precio publicado de cada unidad, sin letra chica ni sorpresas.' },
-  { icon: 'wrench', title: 'Servicio y garantía', text: 'Unidades revisadas y, en 0km, con la garantía oficial de fábrica.' },
+  { icon: 'car', title: '0km y usados en un solo lugar', text: 'Concesionarios oficiales, agencias y particulares en una misma búsqueda.' },
 ];
 
 // ---------- Vendedores (ficticios, de ejemplo) ----------

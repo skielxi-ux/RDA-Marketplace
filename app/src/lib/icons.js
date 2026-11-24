@@ -2,7 +2,7 @@
 // así no hace falta cargar ni escanear una librería de íconos en el navegador.
 import {
   Menu, Phone, User, Search, ChevronDown, ChevronLeft, ChevronRight, ArrowUpRight, ArrowUp,
-  Gauge, Fuel, Cog, Calendar, Bookmark, X, BadgePercent, ShieldCheck, ReceiptText, Wrench,
+  Gauge, Fuel, Cog, Calendar, Bookmark, X, ShieldCheck, ReceiptText,
   Sparkle, BadgeCheck, Building2, Check, Quote, Camera, ClipboardCheck, MessageCircle, Plus,
   Store, FileSpreadsheet, Images, Bot, ArrowRight,
   CircleCheck, Tag, Heart, MapPin, SlidersHorizontal, ArrowUpDown, RotateCcw,
@@ -14,8 +14,8 @@ const NODES = {
   menu: Menu, phone: Phone, user: User, search: Search, 'chevron-down': ChevronDown,
   'chevron-left': ChevronLeft, 'chevron-right': ChevronRight, 'arrow-up-right': ArrowUpRight,
   'arrow-up': ArrowUp, gauge: Gauge, fuel: Fuel, cog: Cog, calendar: Calendar, bookmark: Bookmark,
-  x: X, 'badge-percent': BadgePercent, 'shield-check': ShieldCheck, 'receipt-text': ReceiptText,
-  wrench: Wrench, sparkle: Sparkle, 'badge-check': BadgeCheck, 'building-2': Building2,
+  x: X, 'shield-check': ShieldCheck, 'receipt-text': ReceiptText,
+  sparkle: Sparkle, 'badge-check': BadgeCheck, 'building-2': Building2,
   check: Check, quote: Quote, camera: Camera, 'clipboard-check': ClipboardCheck,
   'message-circle': MessageCircle, plus: Plus, store: Store, 'file-spreadsheet': FileSpreadsheet,
   images: Images, bot: Bot, 'arrow-right': ArrowRight,
