@@ -39,3 +39,9 @@ El build escribe el sitio compilado en la raíz del repo (index.html + assets/),
 - Funciones SQL `mkt_set_pin` / `mkt_verificar_pin` (bcrypt, 5 intentos → bloqueo 15 min), solo para `service_role`.
 - Edge function `mkt-cuenta` (código en `supabase/functions/mkt-cuenta/`): `registrar`, `ingresar`, `perfil`. Valida todo del lado del servidor (celular, PIN, CUIT con dígito verificador, provincia) y solo acepta llamadas desde el sitio (CORS).
 - El sitio usa la clave *publishable* (pública por diseño) y carga `@supabase/supabase-js` solo cuando hace falta.
+
+## +Buscados
+
+- El buscador de la home registra cada búsqueda (marca obligatoria) con la RPC pública `mkt_registrar_busqueda` (valida marca y modelo, límite por visitante, sin guardar la IP).
+- `mkt_ranking_buscados()` devuelve el top 10 del mes y del año por marca + modelo, solo para el admin o cuentas activas / aprobadas.
+- Se muestra en `admin.html` (pestaña +Buscados) y en `mi-cuenta.html` (botón +Buscados, abre directo con `#buscados`). `mi-cuenta.html` tiene noindex y no va al sitemap.
