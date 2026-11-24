@@ -1,0 +1,91 @@
+@import "tailwindcss";
+@import "@fontsource-variable/dm-sans";
+
+@theme {
+  --font-sans: "DM Sans Variable", "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-brand: #405FF2;
+  --color-brand-hover: #4E6CFB;
+  --color-ink: #050B20;
+  --color-line: #E9E9E9;
+  --color-soft: #F9FBFC;
+  --color-ok: #3D923A;
+  --ease-boxcar: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-white font-sans text-[15px] text-ink antialiased; }
+  ::selection { background: var(--color-brand); color: #fff; }
+}
+
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-[1440px] px-4 sm:px-6 xl:px-[15px]; }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2 rounded-2xl border border-ink px-[25px] py-[9px] text-[15px] font-medium text-ink
+           transition-all duration-300 ease-in-out hover:border-brand hover:bg-brand hover:text-white;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand px-6 text-[15px] font-medium text-white
+           transition-all duration-300 ease-in-out hover:bg-brand-hover;
+  }
+  .link-view {
+    @apply inline-flex items-center gap-1.5 text-[15px] font-medium text-ink hover:underline underline-offset-4;
+  }
+
+  /* Header que se esconde al bajar y vuelve al subir */
+  .site-header { @apply transition-transform duration-300 ease-in-out; }
+  .site-header.is-sticky { @apply fixed inset-x-0 top-0 z-40 shadow-[0_2px_6px_rgba(0,0,0,0.05)]; }
+  .site-header.is-hidden { transform: translateY(-110%); }
+
+  /* Hero */
+  .hero-slide .hero-bg { transform: scale(1.12); transition: transform 7s ease-out; }
+  .hero-slide.swiper-slide-active .hero-bg { transform: scale(1); }
+  .hero-slide .hero-anim { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s ease; }
+  .hero-slide.swiper-slide-active .hero-anim { opacity: 1; transform: none; }
+  .hero-slide.swiper-slide-active .hero-anim.d1 { transition-delay: .35s; }
+  .hero-slide.swiper-slide-active .hero-anim.d2 { transition-delay: .6s; }
+
+  .hero-nav {
+    @apply absolute top-1/2 z-10 grid h-10 w-[60px] -translate-y-1/2 place-items-center rounded-[30px] bg-white/25 text-white backdrop-blur-md
+           transition-all duration-300 hover:bg-white hover:text-ink;
+  }
+
+  /* Pestañas con subrayado animado */
+  .tab-btn { @apply relative pb-2.5 text-[15px] font-medium transition-colors duration-300; }
+  .tab-btn::after {
+    content: ""; @apply absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 transition-transform duration-300;
+    background: currentColor;
+  }
+  .tab-btn.is-active::after { @apply scale-x-100; }
+
+  /* Selects del buscador */
+  .field-select { @apply w-full cursor-pointer appearance-none bg-transparent pr-6 text-[14px] text-ink/80 outline-none; }
+
+  /* Tarjetas de carrocería */
+  .type-card img { transition: transform .6s var(--ease-boxcar); }
+  .type-card:hover img { transform: scale(1.08); }
+
+  /* Tarjeta de auto */
+  .car-card .gallery-dots { @apply pointer-events-none absolute inset-x-0 bottom-3 flex justify-center gap-1.5 opacity-0 transition-opacity duration-300; }
+  .car-card:hover .gallery-dots { @apply opacity-100; }
+  .gallery-dots span { @apply h-[3px] w-5 rounded-full bg-white/50 transition-colors duration-200; }
+  .gallery-dots span.is-on { @apply bg-white; }
+  .car-card:hover .car-title { @apply underline underline-offset-4; }
+  .car-card .car-img { transition: opacity .25s ease; }
+
+  .round-nav {
+    @apply grid h-10 w-10 place-items-center rounded-full border border-ink/15 text-ink transition-all duration-300
+           hover:border-brand hover:bg-brand hover:text-white;
+  }
+  .round-nav.swiper-button-disabled { @apply pointer-events-none opacity-40; }
+
+  /* Entrada al hacer scroll */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.is-in { opacity: 1; transform: none; }
+
+  /* Menú lateral */
+  .drawer { transition: transform .45s var(--ease-boxcar); }
+  .drawer-backdrop { transition: opacity .35s ease, visibility .35s; }
+  .menu-link { @apply flex items-center justify-between border-b border-line py-4 text-[17px] font-medium transition-colors duration-300 hover:text-brand; }
+}
