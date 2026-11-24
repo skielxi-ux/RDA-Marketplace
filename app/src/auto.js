@@ -30,6 +30,7 @@ initAuth();
     document.title = 'Auto no disponible | Red de Autos';
     return;
   }
+  $('[data-ficha-error]').remove();
   const reales = await cargarAutosReales();
   $('[data-ficha-root]').innerHTML = renderFicha(c, [...reales, ...cars]);
   const titulo = `${carTitle(c)} ${c.year}`;

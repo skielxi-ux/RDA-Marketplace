@@ -245,7 +245,7 @@
   .pub-thumb { @apply relative w-[118px] cursor-grab active:cursor-grabbing sm:w-[132px]; }
   .pub-thumb img { @apply aspect-[4/3] w-full rounded-xl object-cover ring-1 ring-line; }
   .pub-thumb.is-dragging { @apply opacity-40; }
-  .pub-portada { @apply absolute left-1.5 top-1.5 rounded-full bg-brand px-2 py-0.5 text-[11px] font-bold text-white; }
+  .pub-portada { @apply absolute bottom-[26px] left-1.5 rounded-full bg-brand px-2 py-0.5 text-[11px] font-bold text-white; }
   .pub-thumb-actions { @apply absolute right-1.5 top-1.5 flex gap-1; }
   .pub-mini {
     @apply grid h-7 w-7 place-items-center rounded-full bg-white/95 text-ink shadow-sm transition-all duration-200
