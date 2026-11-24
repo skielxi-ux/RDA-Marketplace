@@ -1,7 +1,8 @@
 // RDA Marketplace · Edge Function: mkt-admin (panel del administrador del marketplace)
 // Sesión: la misma del admin de la web actual (login en la función "admin" con celular + contraseña).
 // Acciones: resumen, cuentas, cuenta (aprobar, rechazar, suspender, reactivar, reset_pin, prueba), borrar_pruebas,
-//           ferias, crear_feria, cancelar_feria, invitar_feria (WhatsApp a las agencias aprobadas).
+//           ferias, crear_feria, cancelar_feria, invitar_feria (WhatsApp a las agencias aprobadas),
+//           autos, auto_estado (pausar / volver a publicar autos cargados por las agencias).
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const env = (k: string, d = "") => Deno.env.get(k) ?? d;
@@ -82,6 +83,8 @@ Deno.serve(async (req) => {
       case "crear_feria": return json(await crearFeria(b));
       case "cancelar_feria": return json(await cancelarFeria(b));
       case "invitar_feria": return json(await invitarFeria(b));
+      case "autos": return json(await autos(b));
+      case "auto_estado": return json(await autoEstado(b));
     }
     return err("Acción desconocida");
   } catch (e) {
@@ -178,6 +181,9 @@ async function borrarPruebas(b: A) {
   const lista = data ?? [];
   for (const c of lista) {
     if (c.user_id) await db.auth.admin.deleteUser(c.user_id).catch((e) => console.error("borrar usuario", e));
+    // Fotos de sus autos (los autos se borran solos con la cuenta)
+    const { data: fotos } = await db.storage.from("mkt-fotos").list(c.id, { limit: 1000 });
+    if (fotos?.length) await db.storage.from("mkt-fotos").remove(fotos.map((f) => `${c.id}/${f.name}`));
   }
   if (lista.length) {
     const { error } = await db.from("mkt_cuentas").delete().in("id", lista.map((c) => c.id)).eq("es_prueba", true);
@@ -240,4 +246,24 @@ async function invitarFeria(b: A) {
     .eq("id", f.id).select("*").single();
   if (error) throw error;
   return { ok: true, feria: data, enviados: ok, total: lista.length };
+}
+
+// ---------- Autos cargados por las agencias ----------
+async function autos(b: A) {
+  const q = txt(b.q, 60).toLowerCase();
+  const { data, error } = await db.from("mkt_autos")
+    .select("id, codigo, marca, modelo, version, anio, condicion, precio, moneda, fotos, estado, pausado_por_admin, created_at, cuenta:mkt_cuentas(id, nombre, es_prueba)")
+    .order("created_at", { ascending: false }).limit(500);
+  if (error) throw error;
+  const lista = (data ?? []).filter((a: A) => !q || `${a.marca} ${a.modelo} ${a.version} ${a.codigo} ${(a.cuenta as A)?.nombre}`.toLowerCase().includes(q));
+  return { autos: lista };
+}
+
+async function autoEstado(b: A) {
+  const estado = b.estado === "pausado" ? "pausado" : b.estado === "publicado" ? "publicado" : "";
+  if (!estado || typeof b.id !== "string") throw new Error("Datos inválidos");
+  const { error } = await db.from("mkt_autos")
+    .update({ estado, pausado_por_admin: estado === "pausado", updated_at: new Date().toISOString() }).eq("id", b.id);
+  if (error) throw error;
+  return { ok: true };
 }

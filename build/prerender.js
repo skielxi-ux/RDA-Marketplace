@@ -18,7 +18,7 @@ const CSP = [
   "default-src 'self'",
   "script-src 'self'",
   "style-src 'self'",
-  "img-src 'self' data: https://images.unsplash.com",
+  "img-src 'self' data: blob: https://images.unsplash.com https://ytuecptdgtmrbiddyzht.supabase.co",
   "font-src 'self' data:",
   "connect-src 'self' https://ytuecptdgtmrbiddyzht.supabase.co wss://ytuecptdgtmrbiddyzht.supabase.co",
   'frame-src https://www.openstreetmap.org',
@@ -45,6 +45,8 @@ const common = (isBuild) => ({
 const PAGES = {
   'admin.html': () => ({ logo: logoSvg('h-8 w-auto') }),
   'mi-cuenta.html': () => ({}),
+  'publicar.html': () => ({}),
+  'auto.html': () => ({}),
   'index.html': () => ({
     head: renderHeadTags(),
     jsonld: renderJsonLd(featuredTabs[0].cars.concat(featuredTabs[1].cars), 'Autos destacados'),

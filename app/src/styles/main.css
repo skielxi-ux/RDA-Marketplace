@@ -229,6 +229,32 @@
   .mc-action.is-soon { @apply pointer-events-none opacity-55; }
   .mc-action-icon { @apply grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-[#EEF1FB] text-brand transition-all duration-300; }
   .mc-action:hover .mc-action-icon, .mc-action.is-active .mc-action-icon { @apply bg-brand text-white; }
+  /* Publicar vehículos (carga masiva) */
+  .pub-step { @apply relative flex flex-col rounded-[20px] border border-line bg-white p-6 pt-8; }
+  .pub-num { @apply absolute -top-4 left-6 grid h-8 w-8 place-items-center rounded-full bg-brand text-[15px] font-bold text-white; }
+  .pub-drop {
+    @apply flex min-h-[150px] cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-line bg-soft p-5 text-center text-[15px] transition-all duration-300
+           hover:border-brand hover:bg-[#F4F6FF];
+  }
+  .pub-drop.is-over { @apply scale-[1.01] border-brand bg-[#EEF1FB]; }
+  .pub-drop.is-done { @apply border-solid border-ok/50 bg-[#F3FAF3]; }
+  .pub-drop:focus-within { @apply border-brand; }
+  .pub-car { @apply rounded-[20px] border border-line bg-white p-5 transition-all duration-300 md:p-6; }
+  .pub-car.has-error { @apply border-[#F5B5B0]; }
+  .pub-car.is-over, [data-sueltas-box].is-over { @apply border-brand shadow-[0_14px_30px_-12px_rgba(64,95,242,0.45)]; }
+  .pub-thumb { @apply relative w-[118px] cursor-grab active:cursor-grabbing sm:w-[132px]; }
+  .pub-thumb img { @apply aspect-[4/3] w-full rounded-xl object-cover ring-1 ring-line; }
+  .pub-thumb.is-dragging { @apply opacity-40; }
+  .pub-portada { @apply absolute left-1.5 top-1.5 rounded-full bg-brand px-2 py-0.5 text-[11px] font-bold text-white; }
+  .pub-thumb-actions { @apply absolute right-1.5 top-1.5 flex gap-1; }
+  .pub-mini {
+    @apply grid h-7 w-7 place-items-center rounded-full bg-white/95 text-ink shadow-sm transition-all duration-200
+           hover:-translate-y-0.5 hover:bg-brand hover:text-white active:translate-y-0 active:scale-95 disabled:pointer-events-none disabled:opacity-35;
+  }
+  .pub-thumb-name { @apply mt-1 block truncate text-[12px] text-ink/60; }
+  .pub-asignar { @apply mt-1.5 w-full rounded-lg border border-line bg-white px-2 py-1.5 text-[13px] outline-none focus:border-brand; }
+  .pub-slot { @apply grid aspect-[4/3] w-[118px] place-items-center rounded-xl border-2 border-dashed border-line p-2 text-center text-[12px] text-ink/50 sm:w-[132px]; }
+  .pub-overlay { @apply fixed inset-0 z-[70] grid place-items-center bg-ink/60 p-4 backdrop-blur-sm; }
   .adm-badge { @apply ml-1.5 inline-grid h-5 min-w-5 place-items-center rounded-full bg-brand px-1.5 text-[12px] font-bold text-white; }
   .adm-bar { @apply block h-full transition-[width] duration-500; }
   .rk-bar { width: 0; transition: width .7s var(--ease-boxcar); }

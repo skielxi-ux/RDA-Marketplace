@@ -2,19 +2,20 @@
 import { esc, formatPrice, formatKm, jsonForScript } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { SITE } from '../data/site.js';
-import { unsplash, cars, sellers, SELLER_TYPES, bodyTypeList, carTitle, carUrl } from '../data/catalog.js';
+import { unsplash, cars, sellerOf, carShot, photoCount, SELLER_TYPES, BODY_NAMES, carTitle, carUrl } from '../data/catalog.js';
 import { renderCarSlides } from './carCard.js';
 
 const fullTitle = (c) => `${carTitle(c)} ${c.year}`;
 const absUrl = (c) => SITE.url + carUrl(c).replace('./', '');
-const bodyName = (slug) => bodyTypeList.find((b) => b.slug === slug)?.name ?? slug;
+const bodyName = (slug) => BODY_NAMES[slug] ?? slug;
 const initials = (name) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
-const shot = (c, i, w, h) => unsplash(c.gallery[i].id, w, h, c.gallery[i].crop);
+const shot = carShot;
+const fotosIdx = (c) => Array.from({ length: photoCount(c) }, (_, i) => i);
 
 /** Mensaje de WhatsApp ya armado. Sin número cargado, abre WhatsApp para elegir contacto. */
 export const whatsappUrl = (c) => {
   const text = `Hola, vi el ${fullTitle(c)} (${formatPrice(c.price, c.currency)}) en Red de Autos y me interesa. ¿Sigue disponible? ${absUrl(c)}`;
-  const phone = (sellers[c.seller].phone || '').replace(/\D/g, '');
+  const phone = (sellerOf(c).phone || '').replace(/\D/g, '');
   return `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
 };
 
@@ -22,7 +23,7 @@ export const whatsappUrl = (c) => {
 export function renderFichaHead(c) {
   const title = `${fullTitle(c)} · ${formatPrice(c.price, c.currency)} | Red de Autos`;
   const description = `${fullTitle(c)}, ${formatKm(c.km)}, ${c.fuel.toLowerCase()}, caja ${c.gear.toLowerCase()}. ${c.desc} ${c.city}, ${c.province}.`;
-  const image = unsplash(c.photo, 1200, 630);
+  const image = c.real ? shot(c, 0) : unsplash(c.photo, 1200, 630);
   return `
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(description)}" />
@@ -45,7 +46,7 @@ export function renderFichaHead(c) {
 }
 
 export function renderFichaJsonLd(c) {
-  const seller = sellers[c.seller];
+  const seller = sellerOf(c);
   const data = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -54,7 +55,7 @@ export function renderFichaJsonLd(c) {
         name: fullTitle(c),
         description: c.desc,
         url: absUrl(c),
-        image: c.gallery.map((_, i) => shot(c, i, 1200, 900)),
+        image: fotosIdx(c).map((i) => shot(c, i, 1200, 900)),
         brand: { '@type': 'Brand', name: c.brand },
         model: c.model,
         vehicleConfiguration: c.version,
@@ -95,10 +96,9 @@ export function renderFichaJsonLd(c) {
 const chip = (ic, text, sr) => `<li class="inline-flex items-center gap-2 rounded-full bg-[#EEF1FB] px-4 py-2 text-[14px] font-medium text-ink">${icon(ic, 'h-4 w-4 text-brand')}<span class="sr-only">${esc(sr)}: </span>${esc(text)}</li>`;
 
 function renderGallery(c) {
-  const n = c.gallery.length;
+  const n = photoCount(c);
   const alt = (i) => `${fullTitle(c)}, foto ${i + 1} de ${n}`;
-  const thumbs = c.gallery.slice(1, 5).map((_, k) => {
-    const i = k + 1;
+  const thumbs = fotosIdx(c).slice(1, 5).map((i) => {
     const last = i === 4 && n > 5;
     return `
       <button type="button" class="gallery-thumb group" data-open-photo="${i}" aria-label="Ver foto ${i + 1} de ${n}">
@@ -111,7 +111,7 @@ function renderGallery(c) {
     <!-- Celular: slider -->
     <div id="ficha-slider" class="swiper overflow-hidden rounded-2xl md:!hidden" aria-label="Fotos del auto">
       <div class="swiper-wrapper">
-        ${c.gallery.map((_, i) => `
+        ${fotosIdx(c).map((i) => `
         <div class="swiper-slide">
           <button type="button" class="block aspect-[4/3] w-full" data-open-photo="${i}" aria-label="Ampliar foto ${i + 1} de ${n}">
             <img src="${esc(shot(c, i, 900, 675))}" width="900" height="675" alt="${esc(alt(i))}" ${i ? 'loading="lazy"' : 'fetchpriority="high"'} decoding="async" class="h-full w-full object-cover" />
@@ -121,11 +121,11 @@ function renderGallery(c) {
       <p class="pointer-events-none absolute bottom-3 right-3 z-10 rounded-full bg-ink/70 px-3 py-1 text-[13px] text-white"><span data-slide-index>1</span> / ${n}</p>
     </div>
     <!-- Escritorio: foto grande + 4 chicas -->
-    <div class="hidden gap-4 md:grid md:h-[460px] md:grid-cols-[1.35fr_1fr] lg:h-[540px]">
+    <div class="hidden gap-4 md:grid md:h-[460px] ${n > 1 ? 'md:grid-cols-[1.35fr_1fr]' : ''} lg:h-[540px]">
       <button type="button" class="gallery-thumb group" data-open-photo="0" aria-label="Ampliar foto 1 de ${n}">
         <img src="${esc(shot(c, 0, 1200, 900))}" width="1200" height="900" alt="${esc(alt(0))}" fetchpriority="high" decoding="async" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
       </button>
-      <div class="grid grid-cols-2 grid-rows-2 gap-4">${thumbs}</div>
+      ${n > 1 ? `<div class="grid grid-cols-2 grid-rows-2 gap-4">${thumbs}</div>` : ''}
     </div>
     <button type="button" data-open-photo="0" class="btn-outline absolute bottom-4 left-4 z-10 hidden h-[42px] border-white bg-white md:inline-flex">${icon('images', 'h-4 w-4')} Ver las ${n} fotos</button>
   </div>`;
@@ -158,7 +158,7 @@ const renderDescription = (c) => `
     <p class="max-w-[720px] text-[16px] leading-[1.8] text-ink/80">${esc(c.desc)}</p>
   </section>`;
 
-const renderFeatures = (c) => `
+const renderFeatures = (c) => !c.features ? '' : `
   <section aria-labelledby="feat-title" class="ficha-section">
     <h2 id="feat-title" class="ficha-h2">Equipamiento</h2>
     <div class="grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
@@ -224,7 +224,7 @@ function renderReviews(c) {
 }
 
 function renderSellerCard(c) {
-  const s = sellers[c.seller];
+  const s = sellerOf(c);
   const isPrivate = s.type === 'particular';
   const phone = (s.phone || '').replace(/\D/g, '');
   return `
@@ -243,19 +243,20 @@ function renderSellerCard(c) {
       </a>
       ${phone ? `<a href="tel:+${esc(phone)}" class="btn-outline h-[54px] w-full justify-center">${icon('phone', 'h-4 w-4')} Llamar</a>` : ''}
     </div>
-    ${isPrivate ? '' : `<a href="./autos.html?agencia=${encodeURIComponent(c.seller)}" class="link-view mt-5 w-full justify-center">Ver todo su stock ${icon('arrow-up-right', 'h-4 w-4')}</a>`}
+    ${isPrivate ? '' : `<a href="./autos.html?agencia=${encodeURIComponent(c.real ? s.id : c.seller)}" class="link-view mt-5 w-full justify-center">Ver todo su stock ${icon('arrow-up-right', 'h-4 w-4')}</a>`}
     <p class="mt-5 rounded-xl bg-soft px-4 py-3 text-[13px] leading-[1.6] text-ink/70">Nunca hagas pagos por adelantado sin ver el auto y la documentación.</p>
   </aside>`;
 }
 
-function related(c) {
+function related(c, pool = cars) {
   const score = (o) => (o.body === c.body) * 2 + (o.brand === c.brand) * 2 + (o.condition === c.condition);
-  return cars.filter((o) => o.id !== c.id).sort((a, b) => score(b) - score(a) || b.published - a.published).slice(0, 8);
+  return pool.filter((o) => o.id !== c.id).sort((a, b) => score(b) - score(a) || b.published - a.published).slice(0, 8);
 }
 
-export function renderFicha(c) {
+/** pool: autos para "Autos similares" (en el navegador se suman los reales). */
+export function renderFicha(c, pool = cars) {
   const title = fullTitle(c);
-  const seller = sellers[c.seller];
+  const seller = sellerOf(c);
   return `
   <div class="container-x pt-6 md:pt-8">
     <nav aria-label="Migas de pan" class="text-[14px] text-ink/60">
@@ -305,7 +306,7 @@ export function renderFicha(c) {
         <h2 id="related-title" class="section-title">Autos similares</h2>
         <a href="./autos.html?carroceria=${encodeURIComponent(c.body)}" class="link-view">Ver todos ${icon('arrow-up-right', 'h-4 w-4')}</a>
       </div>
-      <div id="related" class="swiper"><div class="swiper-wrapper">${renderCarSlides(related(c))}</div></div>
+      <div id="related" class="swiper"><div class="swiper-wrapper">${renderCarSlides(related(c, pool))}</div></div>
       <div class="mt-8 flex gap-4">
         <button type="button" class="round-nav related-prev" aria-label="Autos anteriores">${icon('chevron-left', 'h-4 w-4')}</button>
         <button type="button" class="round-nav related-next" aria-label="Autos siguientes">${icon('chevron-right', 'h-4 w-4')}</button>
@@ -328,7 +329,7 @@ export function renderFicha(c) {
     <button type="button" class="lightbox-btn left-4 top-1/2 -translate-y-1/2" data-lb-prev aria-label="Foto anterior">${icon('chevron-left', 'h-5 w-5')}</button>
     <img data-lb-img alt="" class="max-h-[82vh] max-w-[92vw] rounded-xl object-contain" />
     <button type="button" class="lightbox-btn right-4 top-1/2 -translate-y-1/2" data-lb-next aria-label="Foto siguiente">${icon('chevron-right', 'h-5 w-5')}</button>
-    <p class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[14px] text-white/80"><span data-lb-index>1</span> / ${c.gallery.length}</p>
+    <p class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[14px] text-white/80"><span data-lb-index>1</span> / ${photoCount(c)}</p>
   </div>
-  <script type="application/json" id="ficha-data">${jsonForScript({ id: c.id, title, photos: c.gallery.map((_, i) => shot(c, i, 1600, 1200)) })}</script>`;
+  <script type="application/json" id="ficha-data">${jsonForScript({ id: c.id, title, photos: fotosIdx(c).map((i) => shot(c, i, 1600, 1200)) })}</script>`;
 }

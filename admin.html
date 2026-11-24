@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://images.unsplash.com; font-src 'self' data:; connect-src 'self' https://ytuecptdgtmrbiddyzht.supabase.co wss://ytuecptdgtmrbiddyzht.supabase.co; frame-src https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob: https://images.unsplash.com https://ytuecptdgtmrbiddyzht.supabase.co; font-src 'self' data:; connect-src 'self' https://ytuecptdgtmrbiddyzht.supabase.co wss://ytuecptdgtmrbiddyzht.supabase.co; frame-src https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
   <meta name="referrer" content="no-referrer" />
   <meta name="robots" content="noindex, nofollow, noarchive" />
   <title>Administrador · Red de Autos</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-  <script type="module" crossorigin src="./assets/admin-Be2vr7LH.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/site-COUhFATs.js">
+  <script type="module" crossorigin src="./assets/admin-ORqPNwG_.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/site-Dlu_XqSV.js">
   <link rel="modulepreload" crossorigin href="./assets/dist-BzsuwOS1.js">
-  <link rel="modulepreload" crossorigin href="./assets/icons-DZbHwVj_.js">
-  <link rel="modulepreload" crossorigin href="./assets/ranking-Dy27pgvD.js">
-  <link rel="stylesheet" crossorigin href="./assets/site-D31CgfrZ.css">
+  <link rel="modulepreload" crossorigin href="./assets/fotos-CLrCvvI0.js">
+  <link rel="modulepreload" crossorigin href="./assets/ranking-B1h7ZRft.js">
+  <link rel="stylesheet" crossorigin href="./assets/site-D0cCLgoj.css">
 </head>
 <body class="bg-soft">
   <header class="sticky top-0 z-40 border-b border-line bg-white">
@@ -64,6 +64,7 @@
         <button type="button" role="tab" id="t-particulares" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-particulares" data-tab="particulares">Particulares</button>
         <button type="button" role="tab" id="t-concesionarios" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-concesionarios" data-tab="concesionarios">Concesionarios <span class="adm-badge" data-count-pend hidden></span></button>
         <button type="button" role="tab" id="t-feria" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-feria" data-tab="feria">Feria</button>
+        <button type="button" role="tab" id="t-autos" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-autos" data-tab="autos">Autos</button>
         <button type="button" role="tab" id="t-buscados" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-buscados" data-tab="buscados">+Buscados</button>
         <button type="button" role="tab" id="t-pruebas" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-pruebas" data-tab="pruebas">Pruebas <span class="adm-badge !bg-ink/60" data-count-pruebas hidden></span></button>
       </div>
@@ -100,6 +101,7 @@
         </form>
         <div id="feria-lista" class="mt-6 space-y-4"></div>
       </div>
+      <div id="v-autos" role="tabpanel" aria-labelledby="t-autos" class="pt-8" hidden></div>
       <div id="v-buscados" role="tabpanel" aria-labelledby="t-buscados" class="pt-8" hidden></div>
       <div id="v-pruebas" role="tabpanel" aria-labelledby="t-pruebas" class="pt-8" hidden></div>
     </section>

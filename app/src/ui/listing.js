@@ -1,7 +1,8 @@
 // Listado de autos: filtros, orden y estado en la URL (?condicion=0km&marca=Ford...).
 import { $, $$ } from './dom.js';
 import { initCards } from './cards.js';
-import { cars, sellers } from '../data/catalog.js';
+import { cars, sellers, sellerOf } from '../data/catalog.js';
+import { cargarAutosReales, esIdReal } from '../data/autosReales.js';
 import { isSearchBrand, isSearchModel } from '../data/modelos.js';
 import { renderCarGrid } from '../render/carCard.js';
 import { renderModelOptions } from '../render/sections.js';
@@ -27,7 +28,8 @@ function readState() {
     carroceria: list('carroceria'),
     vendedor: list('vendedor'),
     orden: SORTS.has(q.get('orden')) ? q.get('orden') : 'recientes',
-    agencia: Object.hasOwn(sellers, q.get('agencia') ?? '') ? q.get('agencia') : '',
+    // Agencia: una de ejemplo (slug) o una real (id de la cuenta)
+    agencia: Object.hasOwn(sellers, q.get('agencia') ?? '') || esIdReal(q.get('agencia')) ? q.get('agencia') : '',
   };
   // Rango de precio que viene del buscador de la home (en dólares): ?precio=15000-30000
   const precio = q.get('precio');
@@ -52,9 +54,13 @@ function writeUrl(state) {
   history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
 }
 
+// Autos de ejemplo + autos reales cargados por las agencias (se suman cuando llegan)
+let pool = cars;
+const sellerKey = (c) => (c.real ? c.sellerInfo.id : c.seller);
+
 function filterCars(s) {
   const cond = CONDITIONS[s.condicion];
-  return cars.filter((c) =>
+  return pool.filter((c) =>
     (!cond || c.condition === cond) &&
     (!s.marca || c.brand === s.marca) &&
     (!s.modelo || c.model === s.modelo) &&
@@ -63,8 +69,8 @@ function filterCars(s) {
     (!s.moneda || s.pmin == null || c.price >= s.pmin) &&
     (!s.moneda || s.pmax == null || c.price <= s.pmax) &&
     (!s.carroceria.length || s.carroceria.includes(c.body)) &&
-    (!s.vendedor.length || s.vendedor.includes(sellers[c.seller].type)) &&
-    (!s.agencia || c.seller === s.agencia),
+    (!s.vendedor.length || s.vendedor.includes(sellerOf(c).type)) &&
+    (!s.agencia || sellerKey(c) === s.agencia),
   );
 }
 
@@ -115,7 +121,8 @@ export function initListing() {
     $$('[data-count], [data-count-short]').forEach((el) => { el.textContent = String(list.length); });
     priceRange.hidden = !state.moneda;
     priceHint.hidden = !!state.moneda;
-    const title = state.agencia ? `Autos de ${sellers[state.agencia].name}` : TITLES[state.condicion] + (state.marca ? ` ${state.marca}` : '');
+    const agencia = state.agencia ? pool.find((c) => sellerKey(c) === state.agencia) : null;
+    const title = agencia ? `Autos de ${sellerOf(agencia).name}` : TITLES[state.condicion] + (state.marca ? ` ${state.marca}` : '');
     $('#listing-title').textContent = title;
     document.title = `${title} | Red de Autos`;
     const n = activeCount(state);
@@ -178,4 +185,15 @@ export function initListing() {
 
   paintForm();
   render();
+
+  // Sumar los autos de las agencias y actualizar los contadores de los filtros
+  cargarAutosReales().then((reales) => {
+    if (!reales.length) return;
+    pool = [...reales, ...cars];
+    $$('[data-filter-count]').forEach((el) => {
+      const [name, value] = el.dataset.filterCount.split(':');
+      el.textContent = String(pool.filter((c) => (name === 'carroceria' ? c.body : sellerOf(c).type) === value).length);
+    });
+    render();
+  });
 }

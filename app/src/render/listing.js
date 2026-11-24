@@ -1,7 +1,7 @@
 // Plantillas del listado de autos (autos.html): filtros y barra de resultados.
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
-import { bodyTypes, countBy, sellers, SELLER_TYPES } from '../data/catalog.js';
+import { BODY_NAMES, countBy, sellers, SELLER_TYPES } from '../data/catalog.js';
 import { searchBrands } from '../data/modelos.js';
 
 export const YEAR_OPTIONS = [2026, 2024, 2022, 2020, 2018, 2015, 2010];
@@ -28,7 +28,7 @@ const check = (name, value, label, count) => `
   <label class="filter-check">
     <input type="checkbox" name="${esc(name)}" value="${esc(value)}" />
     <span class="flex-1">${esc(label)}</span>
-    <span class="text-[13px] text-ink/50">${esc(count)}</span>
+    <span class="text-[13px] text-ink/50" data-filter-count="${esc(name)}:${esc(value)}">${esc(count)}</span>
   </label>`;
 
 export const renderFilters = () => `
@@ -66,7 +66,7 @@ export const renderFilters = () => `
       <label class="block"><span class="mb-1 block text-[13px] text-ink/70">Hasta</span><input type="number" name="pmax" min="0" step="1000" inputmode="numeric" class="filter-input" placeholder="Máx." /></label>
     </div>`)}
 
-  ${group('Carrocería', `<div class="space-y-1">${bodyTypes.map((t) => check('carroceria', t.slug, t.name, t.count)).join('')}</div>`)}
+  ${group('Carrocería', `<div class="space-y-1">${Object.entries(BODY_NAMES).map(([slug, name]) => check('carroceria', slug, name, countBy((c) => c.body === slug))).join('')}</div>`)}
 
   ${group('Vendedor', `<div class="space-y-1">${Object.entries(SELLER_TYPES).map(([k, v]) => check('vendedor', k, v, sellerCount(k))).join('')}</div>`)}
 

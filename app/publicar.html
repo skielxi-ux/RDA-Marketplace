@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--slot:csp-->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Publicar vehículos · Red de Autos</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <script type="module" src="/src/publicar.js"></script>
+</head>
+<body>
+  <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
+  <!--slot:site-header-->
+
+  <main id="contenido" class="min-h-[60vh]">
+    <section class="border-b border-line bg-soft">
+      <div class="container-x py-8 md:py-12">
+        <nav aria-label="Migas de pan" class="text-[14px] text-ink/60">
+          <ol class="flex flex-wrap items-center gap-2"><li><a href="./" class="transition-colors hover:text-brand">Inicio</a></li><li aria-hidden="true">/</li><li><a href="./mi-cuenta.html" class="transition-colors hover:text-brand">Mi cuenta</a></li><li aria-hidden="true">/</li><li aria-current="page" class="text-ink">Publicar vehículos</li></ol>
+        </nav>
+        <h1 class="mt-3 text-[30px] font-bold leading-[1.1] sm:text-[38px] md:text-[44px]">Publicar vehículos</h1>
+        <p class="mt-2 max-w-[640px] text-[16px] text-ink/70">Cargá todo tu stock de una vez: completá la plantilla de Excel, arrastrá la carpeta de fotos (hasta 7 por auto), revisá y publicá.</p>
+      </div>
+    </section>
+
+    <div class="container-x py-8 md:py-12">
+      <!-- Sin permiso -->
+      <div data-pub-guard hidden class="mx-auto max-w-[560px] rounded-[24px] border border-line bg-white p-8 text-center">
+        <span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-[#EEF1FB] text-brand"><i data-icon="lock" class="h-6 w-6"></i></span>
+        <p class="mt-5 text-[22px] font-bold" data-pub-guard-title>Ingresá con tu agencia</p>
+        <p class="mt-2 text-[15px] text-ink/70" data-pub-guard-text>La carga de autos es para agencias y concesionarios aprobados.</p>
+        <button type="button" class="btn-primary mx-auto mt-6 h-[54px] !px-8" data-auth-open data-pub-login><i data-icon="user" class="h-4 w-4"></i> <span>Ingresar</span></button>
+      </div>
+
+      <div data-pub-app hidden>
+        <ol class="grid gap-5 lg:grid-cols-3">
+          <li class="pub-step">
+            <span class="pub-num">1</span>
+            <h2 class="text-[19px] font-bold">Descargá la plantilla</h2>
+            <p class="mt-1.5 text-[15px] text-ink/70">Una fila por auto, con un <b>Código</b> distinto para cada uno (A001, A002…). Las listas desplegables evitan errores de tipeo.</p>
+            <a href="./plantilla-autos.xlsx" download class="btn-outline mt-5 h-[48px] justify-center"><i data-icon="file-spreadsheet" class="h-4 w-4"></i> Descargar plantilla</a>
+          </li>
+          <li class="pub-step">
+            <span class="pub-num">2</span>
+            <h2 class="text-[19px] font-bold">Subí el Excel</h2>
+            <p class="mt-1.5 text-[15px] text-ink/70">Si un código ya está publicado, ese auto se actualiza (no se duplica).</p>
+            <label class="pub-drop mt-5" data-drop="excel">
+              <input type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" class="sr-only" data-input-excel />
+              <i data-icon="file-spreadsheet" class="h-6 w-6 text-brand"></i>
+              <span class="font-medium" data-excel-label>Arrastrá el Excel o tocá para elegirlo</span>
+            </label>
+          </li>
+          <li class="pub-step">
+            <span class="pub-num">3</span>
+            <h2 class="text-[19px] font-bold">Arrastrá las fotos</h2>
+            <p class="mt-1.5 text-[15px] text-ink/70">Una carpeta por auto con el código como nombre (<code>A001/</code>) o fotos que empiecen con el código (<code>A001-1.jpg</code>). Máximo 7 por auto.</p>
+            <div class="pub-drop mt-5" data-drop="fotos" tabindex="-1">
+              <i data-icon="images" class="h-6 w-6 text-brand"></i>
+              <span class="font-medium" data-fotos-label>Arrastrá la carpeta de fotos acá</span>
+              <span class="flex flex-wrap justify-center gap-2">
+                <label class="btn-outline h-[40px] cursor-pointer !px-4 text-[14px]"><input type="file" webkitdirectory multiple class="sr-only" data-input-carpeta /> Elegir carpeta</label>
+                <label class="btn-outline h-[40px] cursor-pointer !px-4 text-[14px]"><input type="file" accept="image/jpeg,image/png,image/webp" multiple class="sr-only" data-input-fotos /> Elegir fotos</label>
+              </span>
+            </div>
+          </li>
+        </ol>
+
+        <p class="mt-6 hidden rounded-2xl bg-[#FDECEC] px-5 py-4 text-[15px] text-[#B42318]" role="alert" data-pub-error></p>
+
+        <!-- Revisión -->
+        <section class="mt-12" aria-labelledby="rev-title" data-pub-review hidden>
+          <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h2 id="rev-title" class="section-title">Revisá antes de publicar</h2>
+              <p class="mt-2 text-[15px] text-ink/70" data-pub-summary aria-live="polite"></p>
+            </div>
+            <button type="button" class="btn-primary h-[54px] shrink-0 !px-8" data-pub-publicar disabled><i data-icon="check" class="h-4 w-4"></i> <span data-pub-publicar-label>Publicar</span></button>
+          </div>
+
+          <div class="mt-6 hidden rounded-2xl border border-dashed border-[#F0B44C] bg-[#FFF8EB] p-5" data-sueltas-box data-drop-target="sueltas">
+            <p class="font-bold">Fotos sin asignar <span class="font-normal text-ink/60" data-sueltas-count></span></p>
+            <p class="mt-1 text-[14px] text-ink/70">No encontramos su código. Arrastralas a un auto o elegí a cuál van. Las que queden acá no se publican.</p>
+            <ul class="mt-4 flex flex-wrap gap-3" data-sueltas></ul>
+          </div>
+
+          <ul class="mt-6 grid gap-5" data-pub-list></ul>
+        </section>
+
+        <!-- Progreso / listo -->
+        <div class="pub-overlay" data-pub-progress hidden role="dialog" aria-modal="true" aria-labelledby="prog-title">
+          <div class="w-full max-w-[460px] rounded-[24px] bg-white p-8 text-center">
+            <div data-prog-run>
+              <i data-icon="loader-circle" class="mx-auto h-10 w-10 animate-spin text-brand"></i>
+              <p id="prog-title" class="mt-4 text-[20px] font-bold" data-prog-text>Preparando fotos…</p>
+              <div class="mt-5 h-2 overflow-hidden rounded-full bg-soft"><span class="adm-bar rounded-full bg-brand" data-prog-bar></span></div>
+              <p class="mt-3 text-[14px] text-ink/60">No cierres esta página hasta que termine.</p>
+            </div>
+            <div data-prog-done hidden>
+              <span class="mx-auto grid h-14 w-14 place-items-center rounded-full bg-[#E8F5E9] text-ok"><i data-icon="check" class="h-7 w-7"></i></span>
+              <p class="mt-4 text-[22px] font-bold">¡Listo!</p>
+              <p class="mt-1 text-[15px] text-ink/70" data-prog-result></p>
+              <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <a href="./mi-cuenta.html#mis-autos" class="btn-primary h-[50px] justify-center !px-6"><i data-icon="car" class="h-4 w-4"></i> Ver mis autos</a>
+                <button type="button" class="btn-outline h-[50px] justify-center !px-6" data-prog-otra>Cargar otra tanda</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!--slot:footer-->
+  <!--slot:to-top-->
+</body>
+</html>

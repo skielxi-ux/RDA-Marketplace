@@ -27,7 +27,7 @@ export const renderSiteHeader = () => `
         <button type="button" data-auth-open aria-haspopup="dialog" aria-expanded="false" class="flex items-center gap-2 font-medium transition-colors duration-300 hover:text-brand max-sm:h-10 max-sm:w-10 max-sm:justify-center max-sm:rounded-full max-sm:border max-sm:border-line" >
           <i data-icon="user" class="h-4 w-4"></i> <span data-auth-label class="max-w-[140px] truncate max-sm:sr-only">Ingresar</span>
         </button>
-        <a href="./#vender" class="btn-outline max-sm:px-3.5 max-sm:py-[7px] max-sm:text-[14px]">
+        <a href="./#vender" data-publicar-link class="btn-outline max-sm:px-3.5 max-sm:py-[7px] max-sm:text-[14px]">
           <i data-icon="plus" class="hidden h-4 w-4 sm:block"></i>Publicar<span class="hidden sm:inline">&nbsp;auto</span>
         </a>
       </div>

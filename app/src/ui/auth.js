@@ -59,6 +59,9 @@ async function callFn(body, accessToken) {
 // ---------- Header: botón Ingresar / menú de usuario ----------
 function paintHeader(cuenta) {
   window.dispatchEvent(new CustomEvent('rda:cuenta', { detail: cuenta }));
+  // "Publicar auto": las agencias aprobadas van directo a la carga masiva
+  const agencia = cuenta?.tipo === 'agencia' && cuenta.estado === 'aprobada';
+  $$('[data-publicar-link]').forEach((a) => a.setAttribute('href', agencia ? './publicar.html' : './#vender'));
   $$('[data-auth-open]').forEach((b) => {
     const label = $('[data-auth-label]', b);
     if (label) label.textContent = cuenta ? `Hola, ${cuenta.nombre.split(' ')[0]}` : 'Ingresar';

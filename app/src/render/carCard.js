@@ -1,7 +1,7 @@
 // Tarjeta de auto (una sola para todo el sitio: destacados de la home y listado).
 import { esc, formatPrice, formatKm } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
-import { unsplash, srcset, sellers, SELLER_TYPES, carTitle, carUrl } from '../data/catalog.js';
+import { srcset, sellerOf, carShot, photoCount, SELLER_TYPES, carTitle, carUrl } from '../data/catalog.js';
 
 export { carTitle };
 
@@ -35,9 +35,9 @@ function renderSeller(seller) {
 /** Tarjeta de auto. `lazy` = false para las primeras visibles. `slide` = envolverla en un swiper-slide. */
 export function renderCarCard(c, { lazy = true, slide = false } = {}) {
   const title = `${carTitle(c)} ${c.year}`;
-  const seller = sellers[c.seller];
+  const seller = sellerOf(c);
   const badge = c.badge ? BADGES[c.badge] : null;
-  const shots = c.gallery.map((g) => unsplash(g.id, 900, 675, g.crop));
+  const shots = Array.from({ length: photoCount(c) }, (_, i) => carShot(c, i, 900, 675));
   const url = carUrl(c);
 
   const card = `
@@ -45,7 +45,7 @@ export function renderCarCard(c, { lazy = true, slide = false } = {}) {
     <div class="car-media" data-gallery="${esc(JSON.stringify(shots))}">
       <img class="car-img h-full w-full object-cover"
         src="${esc(shots[0])}"
-        srcset="${esc(srcset(c.photo, 4 / 3, [450, 700, 900]))}"
+        ${c.real ? '' : `srcset="${esc(srcset(c.photo, 4 / 3, [450, 700, 900]))}"`}
         sizes="(min-width:1200px) 25vw, (min-width:900px) 33vw, (min-width:640px) 45vw, 90vw"
         width="900" height="675" alt="${esc(title)}" ${lazy ? 'loading="lazy"' : ''} decoding="async" />
       <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-ink/85 via-ink/40 to-transparent"></div>

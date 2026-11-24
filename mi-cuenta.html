@@ -3,18 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://images.unsplash.com; font-src 'self' data:; connect-src 'self' https://ytuecptdgtmrbiddyzht.supabase.co wss://ytuecptdgtmrbiddyzht.supabase.co; frame-src https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob: https://images.unsplash.com https://ytuecptdgtmrbiddyzht.supabase.co; font-src 'self' data:; connect-src 'self' https://ytuecptdgtmrbiddyzht.supabase.co wss://ytuecptdgtmrbiddyzht.supabase.co; frame-src https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta name="robots" content="noindex, nofollow" />
   <title>Mi cuenta · Red de Autos</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
-  <script type="module" crossorigin src="./assets/mi-cuenta-B3E5kxUH.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/site-COUhFATs.js">
-  <link rel="modulepreload" crossorigin href="./assets/auth-B5gpiWks.js">
-  <link rel="modulepreload" crossorigin href="./assets/icons-DZbHwVj_.js">
-  <link rel="modulepreload" crossorigin href="./assets/ranking-Dy27pgvD.js">
-  <link rel="stylesheet" crossorigin href="./assets/site-D31CgfrZ.css">
+  <script type="module" crossorigin src="./assets/mi-cuenta-CtovQQM8.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/site-Dlu_XqSV.js">
+  <link rel="modulepreload" crossorigin href="./assets/auth-Dl4iuwNT.js">
+  <link rel="modulepreload" crossorigin href="./assets/fotos-CLrCvvI0.js">
+  <link rel="modulepreload" crossorigin href="./assets/ranking-B1h7ZRft.js">
+  <link rel="modulepreload" crossorigin href="./assets/autosApi-ZFC1luWU.js">
+  <link rel="modulepreload" crossorigin href="./assets/catalog-Bvstg05i.js">
+  <link rel="stylesheet" crossorigin href="./assets/site-D0cCLgoj.css">
 </head>
 <body>
   <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
@@ -43,7 +45,7 @@
         <button type="button" data-auth-open aria-haspopup="dialog" aria-expanded="false" class="flex items-center gap-2 font-medium transition-colors duration-300 hover:text-brand max-sm:h-10 max-sm:w-10 max-sm:justify-center max-sm:rounded-full max-sm:border max-sm:border-line" >
           <svg xmlns="http://www.w3.org/2000/svg" class="i-user h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> <span data-auth-label class="max-w-[140px] truncate max-sm:sr-only">Ingresar</span>
         </button>
-        <a href="./#vender" class="btn-outline max-sm:px-3.5 max-sm:py-[7px] max-sm:text-[14px]">
+        <a href="./#vender" data-publicar-link class="btn-outline max-sm:px-3.5 max-sm:py-[7px] max-sm:text-[14px]">
           <svg xmlns="http://www.w3.org/2000/svg" class="i-plus hidden h-4 w-4 sm:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="M12 5v14"/></svg>Publicar<span class="hidden sm:inline">&nbsp;auto</span>
         </a>
       </div>
@@ -100,16 +102,23 @@
             <span class="mc-action-icon"><svg xmlns="http://www.w3.org/2000/svg" class="i-search h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg></span>
             <span class="text-left"><span class="block text-[19px] font-bold">+Buscados</span><span class="mt-1 block text-[14px] text-ink/70">Los 10 vehículos más buscados del mes y del año.</span></span>
           </button>
-          <div class="mc-action is-soon" aria-disabled="true">
+          <a href="./publicar.html" class="mc-action is-soon" aria-disabled="true" tabindex="-1" data-mc-publicar>
             <span class="mc-action-icon"><svg xmlns="http://www.w3.org/2000/svg" class="i-plus h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span>
-            <span><span class="block text-[19px] font-bold">Publicar vehículo</span><span class="mt-1 block text-[14px] text-ink/70">Próximamente.</span></span>
-          </div>
-          <div class="mc-action is-soon" aria-disabled="true">
+            <span><span class="block text-[19px] font-bold">Publicar vehículo</span><span class="mt-1 block text-[14px] text-ink/70" data-mc-publicar-sub>Próximamente.</span></span>
+          </a>
+          <button type="button" class="mc-action is-soon" disabled aria-controls="mis-autos" aria-expanded="false" data-mc-misautos>
             <span class="mc-action-icon"><svg xmlns="http://www.w3.org/2000/svg" class="i-car h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg></span>
-            <span><span class="block text-[19px] font-bold">Mis autos</span><span class="mt-1 block text-[14px] text-ink/70">Próximamente.</span></span>
-          </div>
+            <span class="text-left"><span class="block text-[19px] font-bold">Mis autos</span><span class="mt-1 block text-[14px] text-ink/70" data-mc-misautos-sub>Próximamente.</span></span>
+          </button>
         </div>
         <p class="mt-6 hidden rounded-2xl bg-[#FFF6E5] px-5 py-4 text-[15px] text-[#8A5A00]" data-mc-pending>Tu agencia está en revisión. Cuando la aprobemos vas a poder ver el ranking y publicar tu stock.</p>
+        <section id="mis-autos" class="mt-10 scroll-mt-28" aria-labelledby="mis-autos-title" hidden>
+          <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <h2 id="mis-autos-title" class="section-title">Mis autos</h2>
+            <a href="./publicar.html" class="btn-outline h-[46px]"><svg xmlns="http://www.w3.org/2000/svg" class="i-plus h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Cargar o actualizar</a>
+          </div>
+          <div data-mis-autos aria-live="polite"></div>
+        </section>
         <section id="buscados" class="mt-10 scroll-mt-28" aria-label="+Buscados" hidden></section>
       </div>
     </div>

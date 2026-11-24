@@ -1,0 +1,192 @@
+// RDA Marketplace · Edge Function: mkt-autos
+// Carga masiva de autos de agencias aprobadas (plantilla Excel + carpeta de fotos).
+// Con sesión de agencia aprobada: mios · urls_fotos · publicar · estado
+// Las fotos se suben directo a Storage (bucket mkt-fotos) con URLs firmadas que da esta función,
+// siempre dentro de la carpeta de la cuenta. Datos en public.mkt_autos (sin acceso público directo).
+import { createClient } from "npm:@supabase/supabase-js@2";
+
+const env = (k: string, d = "") => Deno.env.get(k) ?? d;
+const db = createClient(env("SUPABASE_URL"), env("SUPABASE_SERVICE_ROLE_KEY"), { auth: { persistSession: false } });
+const DOMINIO = "mkt.reddeautos.app";
+const BUCKET = "mkt-fotos";
+const MAX_FOTOS = 7;
+const MAX_AUTOS = 200;
+
+const ORIGENES = new Set(["https://skielxi-ux.github.io", "http://localhost:5173", "http://localhost:4173"]);
+const cors = (origin: string | null) => ({
+  "Access-Control-Allow-Origin": origin && ORIGENES.has(origin) ? origin : "https://skielxi-ux.github.io",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Vary": "Origin",
+});
+
+type A = Record<string, unknown>;
+
+const texto = (v: unknown, max: number) => String(v ?? "").replace(/[\u0000-\u001f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, max);
+const CODIGO = /^[A-Za-z0-9_-]{1,30}$/;
+const COMBUSTIBLES = new Set(["Nafta", "Diésel", "Híbrido", "Eléctrico", "GNC"]);
+const TRANSMISIONES = new Set(["Manual", "Automática"]);
+const CARROCERIAS = new Set(["suv", "sedan", "hatchback", "pickup", "deportivo", "utilitario"]);
+const PROVINCIAS = new Set([
+  "Buenos Aires", "CABA", "Catamarca", "Chaco", "Chubut", "Córdoba", "Corrientes", "Entre Ríos", "Formosa", "Jujuy",
+  "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquén", "Río Negro", "Salta", "San Juan", "San Luis", "Santa Cruz",
+  "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucumán",
+]);
+const CAMPOS = "id, codigo, marca, modelo, version, anio, condicion, km, precio, moneda, combustible, transmision, carroceria, ciudad, provincia, motor, puertas, color, traccion, descripcion, fotos, estado, pausado_por_admin, created_at, updated_at";
+
+/** Valida un auto que viene de la plantilla. Devuelve el auto limpio o el motivo del error. */
+function validarAuto(x: A, anioMax: number): { ok: A } | { error: string } {
+  const codigo = String(x.codigo ?? "").trim();
+  if (!CODIGO.test(codigo)) return { error: "Código inválido (letras, números, - o _, hasta 30)." };
+  const marca = texto(x.marca, 40), modelo = texto(x.modelo, 60), version = texto(x.version, 80);
+  if (!marca || !modelo || !version) return { error: "Faltan marca, modelo o versión." };
+  const anio = Number(x.anio);
+  if (!Number.isInteger(anio) || anio < 1950 || anio > anioMax) return { error: "Año inválido." };
+  const condicion = x.condicion === "0km" ? "0km" : x.condicion === "usado" ? "usado" : "";
+  if (!condicion) return { error: "Condición inválida." };
+  const km = Number(x.km);
+  if (!Number.isInteger(km) || km < 0 || km > 2000000) return { error: "Km inválidos." };
+  const precio = Number(x.precio);
+  if (!Number.isFinite(precio) || precio <= 0 || precio >= 1e11) return { error: "Precio inválido." };
+  const moneda = x.moneda === "USD" ? "USD" : x.moneda === "ARS" ? "ARS" : "";
+  if (!moneda) return { error: "Moneda inválida." };
+  const combustible = String(x.combustible ?? ""), transmision = String(x.transmision ?? ""), carroceria = String(x.carroceria ?? "");
+  if (!COMBUSTIBLES.has(combustible)) return { error: "Combustible inválido." };
+  if (!TRANSMISIONES.has(transmision)) return { error: "Transmisión inválida." };
+  if (!CARROCERIAS.has(carroceria)) return { error: "Carrocería inválida." };
+  const ciudad = texto(x.ciudad, 60), provincia = texto(x.provincia, 40);
+  if (!ciudad) return { error: "Falta la ciudad." };
+  if (!PROVINCIAS.has(provincia)) return { error: "Provincia inválida." };
+  const puertas = x.puertas == null || x.puertas === "" ? null : Number(x.puertas);
+  if (puertas !== null && (!Number.isInteger(puertas) || puertas < 2 || puertas > 5)) return { error: "Puertas inválidas." };
+  return {
+    ok: {
+      codigo, marca, modelo, version, anio, condicion, km, precio: Math.round(precio), moneda, combustible, transmision, carroceria,
+      ciudad, provincia, puertas,
+      motor: texto(x.motor, 40) || null, color: texto(x.color, 30) || null, traccion: texto(x.traccion, 30) || null,
+      descripcion: texto(x.descripcion, 1000) || null,
+    },
+  };
+}
+
+Deno.serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const H = cors(origin);
+  const json = (b: unknown, status = 200) => new Response(JSON.stringify(b), { status, headers: { ...H, "Content-Type": "application/json" } });
+  const err = (m: string, s = 400) => json({ error: m }, s);
+
+  if (req.method === "OPTIONS") return new Response("ok", { headers: H });
+  if (req.method !== "POST") return err("Método no permitido", 405);
+  if (origin && !ORIGENES.has(origin)) return err("Origen no permitido", 403);
+
+  // Sesión: solo agencias aprobadas
+  const token = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+  const { data: u } = await db.auth.getUser(token);
+  if (!u?.user?.email?.endsWith("@" + DOMINIO)) return err("Tu sesión venció. Volvé a ingresar.", 401);
+  const { data: cuenta } = await db.from("mkt_cuentas").select("id, tipo, estado").eq("user_id", u.user.id).maybeSingle();
+  if (!cuenta) return err("Tu sesión venció. Volvé a ingresar.", 401);
+  if (cuenta.tipo !== "agencia" || cuenta.estado !== "aprobada") return err("La carga de autos está disponible para agencias aprobadas.", 403);
+
+  let b: A;
+  try { b = await req.json(); } catch { return err("Datos inválidos"); }
+  if (!b || typeof b !== "object") return err("Datos inválidos");
+
+  try {
+    // ---- Mis autos ----
+    if (b.accion === "mios") {
+      const { data, error } = await db.from("mkt_autos").select(CAMPOS).eq("cuenta_id", cuenta.id).order("created_at", { ascending: false });
+      if (error) throw error;
+      return json({ autos: data });
+    }
+
+    // ---- URLs firmadas para subir fotos (WebP ya comprimidas en el navegador) ----
+    if (b.accion === "urls_fotos") {
+      const n = Number(b.cantidad);
+      if (!Number.isInteger(n) || n < 1 || n > MAX_AUTOS * MAX_FOTOS) return err("Cantidad de fotos inválida.");
+      const ext = b.formato === "jpg" ? "jpg" : "webp";
+      const urls = [];
+      for (let i = 0; i < n; i++) {
+        const path = `${cuenta.id}/${crypto.randomUUID()}.${ext}`;
+        const { data, error } = await db.storage.from(BUCKET).createSignedUploadUrl(path);
+        if (error) throw error;
+        urls.push({ path, token: data.token });
+      }
+      return json({ urls });
+    }
+
+    // ---- Publicar (crea o actualiza por código) ----
+    if (b.accion === "publicar") {
+      const lista = Array.isArray(b.autos) ? b.autos as A[] : [];
+      if (!lista.length) return err("No hay autos para publicar.");
+      if (lista.length > MAX_AUTOS) return err(`Podés publicar hasta ${MAX_AUTOS} autos por carga.`);
+      const anioMax = new Date().getFullYear() + 1;
+      const codigos = new Set<string>();
+      const limpios: { auto: A; fotos: string[] }[] = [];
+      for (const [i, x] of lista.entries()) {
+        const v = validarAuto(x, anioMax);
+        if ("error" in v) return err(`Fila ${i + 1}: ${v.error}`);
+        const cod = String(v.ok.codigo).toUpperCase();
+        if (codigos.has(cod)) return err(`El código ${v.ok.codigo} está repetido.`);
+        codigos.add(cod);
+        const fotos = Array.isArray(x.fotos) ? (x.fotos as unknown[]).map(String) : [];
+        if (fotos.length > MAX_FOTOS) return err(`${v.ok.codigo}: máximo ${MAX_FOTOS} fotos.`);
+        if (fotos.some((p) => !new RegExp(`^${cuenta.id}/[0-9a-f-]{36}\\.(webp|jpg)$`).test(p))) return err(`${v.ok.codigo}: fotos inválidas.`);
+        limpios.push({ auto: v.ok, fotos });
+      }
+
+      // Las fotos tienen que existir en Storage y ser de esta cuenta
+      const todas = limpios.flatMap((l) => l.fotos);
+      if (todas.length) {
+        const { data: objs, error } = await db.rpc("mkt_fotos_existentes", { p_names: todas });
+        if (error) throw error;
+        const existen = new Set(((objs ?? []) as unknown[]).map(String));
+        const falta = limpios.find((l) => l.fotos.some((p) => !existen.has(p)));
+        if (falta) return err(`${falta.auto.codigo}: alguna foto no terminó de subir. Probá de nuevo.`);
+      }
+
+      const { data: previos } = await db.from("mkt_autos").select("id, codigo, fotos").eq("cuenta_id", cuenta.id).in("codigo", [...new Set(limpios.map((l) => String(l.auto.codigo)))]);
+      const prev = new Map((previos ?? []).map((p: A) => [String(p.codigo), p]));
+      const sinFotos = limpios.find((l) => !l.fotos.length && !prev.has(String(l.auto.codigo)));
+      if (sinFotos) return err(`${sinFotos.auto.codigo}: un auto nuevo necesita al menos una foto.`);
+
+      const viejas: string[] = [];
+      let nuevos = 0, actualizados = 0;
+      for (const { auto, fotos } of limpios) {
+        const p = prev.get(String(auto.codigo)) as A | undefined;
+        if (p) {
+          const cambios: A = { ...auto, updated_at: new Date().toISOString() };
+          if (fotos.length) {
+            cambios.fotos = fotos;
+            viejas.push(...((p.fotos as string[]) ?? []).filter((f) => !fotos.includes(f)));
+          }
+          const { error } = await db.from("mkt_autos").update(cambios).eq("id", p.id);
+          if (error) throw error;
+          actualizados++;
+        } else {
+          const { error } = await db.from("mkt_autos").insert({ ...auto, fotos, cuenta_id: cuenta.id });
+          if (error) throw error;
+          nuevos++;
+        }
+      }
+      if (viejas.length) await db.storage.from(BUCKET).remove(viejas);
+      return json({ ok: true, nuevos, actualizados });
+    }
+
+    // ---- Pausar / volver a publicar un auto propio ----
+    if (b.accion === "estado") {
+      const estado = b.estado === "pausado" ? "pausado" : b.estado === "publicado" ? "publicado" : "";
+      if (!estado || typeof b.id !== "string") return err("Datos inválidos");
+      const { data: a } = await db.from("mkt_autos").select("id, pausado_por_admin").eq("id", b.id).eq("cuenta_id", cuenta.id).maybeSingle();
+      if (!a) return err("No encontramos ese auto.", 404);
+      if (estado === "publicado" && a.pausado_por_admin) return err("Este auto lo pausó Red de Autos. Escribinos para revisarlo.", 403);
+      const { error } = await db.from("mkt_autos").update({ estado, updated_at: new Date().toISOString() }).eq("id", a.id);
+      if (error) throw error;
+      return json({ ok: true });
+    }
+
+    return err("Acción desconocida");
+  } catch (e) {
+    console.error("mkt-autos", b?.accion, e);
+    return err("Algo salió mal. Probá de nuevo en un rato.", 500);
+  }
+});

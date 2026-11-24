@@ -42,16 +42,23 @@
             <span class="mc-action-icon"><i data-icon="search" class="h-6 w-6"></i></span>
             <span class="text-left"><span class="block text-[19px] font-bold">+Buscados</span><span class="mt-1 block text-[14px] text-ink/70">Los 10 vehículos más buscados del mes y del año.</span></span>
           </button>
-          <div class="mc-action is-soon" aria-disabled="true">
+          <a href="./publicar.html" class="mc-action is-soon" aria-disabled="true" tabindex="-1" data-mc-publicar>
             <span class="mc-action-icon"><i data-icon="plus" class="h-6 w-6"></i></span>
-            <span><span class="block text-[19px] font-bold">Publicar vehículo</span><span class="mt-1 block text-[14px] text-ink/70">Próximamente.</span></span>
-          </div>
-          <div class="mc-action is-soon" aria-disabled="true">
+            <span><span class="block text-[19px] font-bold">Publicar vehículo</span><span class="mt-1 block text-[14px] text-ink/70" data-mc-publicar-sub>Próximamente.</span></span>
+          </a>
+          <button type="button" class="mc-action is-soon" disabled aria-controls="mis-autos" aria-expanded="false" data-mc-misautos>
             <span class="mc-action-icon"><i data-icon="car" class="h-6 w-6"></i></span>
-            <span><span class="block text-[19px] font-bold">Mis autos</span><span class="mt-1 block text-[14px] text-ink/70">Próximamente.</span></span>
-          </div>
+            <span class="text-left"><span class="block text-[19px] font-bold">Mis autos</span><span class="mt-1 block text-[14px] text-ink/70" data-mc-misautos-sub>Próximamente.</span></span>
+          </button>
         </div>
         <p class="mt-6 hidden rounded-2xl bg-[#FFF6E5] px-5 py-4 text-[15px] text-[#8A5A00]" data-mc-pending>Tu agencia está en revisión. Cuando la aprobemos vas a poder ver el ranking y publicar tu stock.</p>
+        <section id="mis-autos" class="mt-10 scroll-mt-28" aria-labelledby="mis-autos-title" hidden>
+          <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <h2 id="mis-autos-title" class="section-title">Mis autos</h2>
+            <a href="./publicar.html" class="btn-outline h-[46px]"><i data-icon="plus" class="h-4 w-4"></i> Cargar o actualizar</a>
+          </div>
+          <div data-mis-autos aria-live="polite"></div>
+        </section>
         <section id="buscados" class="mt-10 scroll-mt-28" aria-label="+Buscados" hidden></section>
       </div>
     </div>

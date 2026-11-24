@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--slot:csp-->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <!-- Ficha de autos cargados por agencias: se arma en el navegador con los datos de Supabase -->
+  <meta name="robots" content="noindex, follow" />
+  <title>Auto en venta | Red de Autos</title>
+  <meta name="description" content="Auto en venta en Red de Autos: 0km y usados de agencias, concesionarios oficiales y particulares." />
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <link rel="manifest" href="./site.webmanifest" />
+  <script type="module" src="/src/auto.js"></script>
+</head>
+<body>
+  <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
+  <!--slot:site-header-->
+  <main id="contenido" class="pb-24 lg:pb-4" aria-busy="true">
+    <div class="container-x pt-8" data-ficha-cargando>
+      <div class="h-4 w-56 animate-pulse rounded bg-soft"></div>
+      <div class="mt-5 h-10 w-full max-w-[520px] animate-pulse rounded-lg bg-soft"></div>
+      <div class="mt-8 aspect-[4/3] w-full animate-pulse rounded-2xl bg-soft md:aspect-auto md:h-[460px]"></div>
+    </div>
+    <div class="container-x py-16 text-center" data-ficha-error hidden>
+      <span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-[#EEF1FB] text-brand"><i data-icon="car" class="h-6 w-6"></i></span>
+      <h1 class="mt-5 text-[26px] font-bold">Este auto ya no está publicado</h1>
+      <p class="mt-2 text-[16px] text-ink/70">Puede que se haya vendido o que la agencia lo haya pausado.</p>
+      <a href="./autos.html" class="btn-primary mx-auto mt-6 h-[54px] w-fit !px-8">Ver autos en venta <i data-icon="arrow-right" class="h-4 w-4"></i></a>
+    </div>
+    <div data-ficha-root></div>
+  </main>
+  <!--slot:footer-->
+  <!--slot:to-top-->
+</body>
+</html>

@@ -115,8 +115,18 @@ const car = (o) => {
   return { reviews: [], dims: null, ...o, ...x, features: FEATURES[x.features ?? 'base'], gallery: gallery(o.photo), coords: CITY_COORDS[o.city] ?? null };
 };
 
-/** Nombre del archivo de la ficha de cada auto (todas en la raíz del sitio). */
-export const carUrl = (c) => `./auto-${c.id}.html`;
+/** Ficha de cada auto: las de ejemplo se arman en el build (auto-<id>.html); las cargadas por agencias, en auto.html?id=. */
+export const carUrl = (c) => (c.real ? `./auto.html?id=${encodeURIComponent(c.id)}` : `./auto-${c.id}.html`);
+
+// ---- Accesos comunes a autos de ejemplo y autos reales (cargados por agencias) ----
+/** Vendedor del auto: { name, type, phone } (en los reales viene de la cuenta que lo publicó). */
+export const sellerOf = (c) => c.sellerInfo ?? sellers[c.seller];
+/** Cantidad de fotos del auto. */
+export const photoCount = (c) => (c.photoUrls ? c.photoUrls.length : c.gallery.length);
+/** URL de la foto i (las reales ya vienen achicadas a 1600 px; w y h solo se usan con Unsplash). */
+export const carShot = (c, i, w, h) => (c.photoUrls ? c.photoUrls[i] : unsplash(c.gallery[i].id, w, h, c.gallery[i].crop));
+/** Nombres de todas las carrocerías (incluye las que solo pueden cargar las agencias). */
+export const BODY_NAMES = { suv: 'SUV', sedan: 'Sedán', hatchback: 'Hatchback', pickup: 'Pick-up', deportivo: 'Deportivo', utilitario: 'Utilitario', electrico: 'Eléctrico' };
 
 export const cars = [
   car({ id: 'toyota-corolla-xei-2026', brand: 'Toyota', model: 'Corolla', version: 'XEi 2.0 CVT', year: 2026, km: 0, condition: 'new', fuel: 'Nafta', gear: 'Automática', body: 'sedan', price: 41500000, currency: 'ARS', desc: 'Entrega en 30 días. Versión híbrida disponible, garantía oficial de 3 años.', city: 'San Miguel de Tucumán', province: 'Tucumán', seller: 'jardin-automotores', badge: 'nuevo', published: 20, photo: 'photo-1619682817481-e994891cd1f5' }),

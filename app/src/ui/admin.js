@@ -2,10 +2,11 @@
 // Ingreso con la misma contraseña del admin de la web actual (función "admin"); los datos salen de "mkt-admin".
 import { createClient } from '@supabase/supabase-js';
 import { $, $$, initTabs } from './dom.js';
-import { esc } from '../lib/html.js';
+import { esc, formatPrice } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { SITE } from '../data/site.js';
 import { renderRanking } from './ranking.js';
+import { fotoUrl } from '../lib/fotos.js';
 
 const sb = createClient(SITE.supabase.url, SITE.supabase.publishableKey, {
   auth: { persistSession: true, autoRefreshToken: true, storageKey: 'rda-mkt-admin' },
@@ -354,11 +355,60 @@ async function loadPruebas() {
     ${cuentas.length ? `<div class="grid gap-4 xl:grid-cols-2">${cuentas.map(cuentaCard).join('')}</div>` : vacio('No hay cuentas de prueba.')}`;
 }
 
+// ---------- Autos cargados por las agencias ----------
+let autosQ = '';
+async function loadAutos() {
+  const box = $('#v-autos');
+  if (!box.dataset.listo) {
+    box.dataset.listo = '1';
+    box.innerHTML = `
+      <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-[15px] text-ink/70">Autos cargados por las agencias. Si pausás uno, la agencia no puede volver a publicarlo.</p>
+        <label class="relative block sm:w-[320px]"><span class="sr-only">Buscar autos</span>
+          <input type="search" data-autos-q placeholder="Buscar marca, modelo, código o agencia" class="auth-input !pl-10" />
+          ${icon('search', 'pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/50')}
+        </label>
+      </div>
+      <div data-autos-list></div>`;
+    let t;
+    $('[data-autos-q]', box).addEventListener('input', (e) => { clearTimeout(t); t = setTimeout(() => { autosQ = e.target.value; loadAutos(); }, 350); });
+    box.addEventListener('click', async (e) => {
+      const b = e.target.closest('[data-auto-estado]');
+      if (!b) return;
+      b.disabled = true;
+      try { await admin('auto_estado', { id: b.dataset.id, estado: b.dataset.autoEstado }); await loadAutos(); } catch (err) { b.disabled = false; handleError(err); }
+    });
+  }
+  const list = $('[data-autos-list]', box);
+  const { autos } = await admin('autos', { q: autosQ });
+  if (!autos.length) { list.innerHTML = `<p class="rounded-2xl bg-soft px-5 py-8 text-center text-ink/60">${autosQ ? 'No hay autos con esa búsqueda.' : 'Todavía no hay autos cargados por agencias.'}</p>`; return; }
+  list.innerHTML = `<p class="mb-3 text-[14px] text-ink/60">${autos.length} ${autos.length === 1 ? 'auto' : 'autos'}</p><ul class="grid gap-3">${autos.map((a) => {
+    const foto = fotoUrl(a.fotos?.[0] ?? '');
+    const pausado = a.estado === 'pausado';
+    return `
+    <li class="flex flex-col gap-3 rounded-2xl border border-line bg-white p-4 sm:flex-row sm:items-center">
+      <div class="flex min-w-0 flex-1 items-center gap-4">
+        ${foto ? `<img src="${esc(foto)}" alt="" width="96" height="72" loading="lazy" class="h-[64px] w-[86px] shrink-0 rounded-lg object-cover ${pausado ? 'opacity-50 grayscale' : ''}" />` : '<span class="h-[64px] w-[86px] shrink-0 rounded-lg bg-soft"></span>'}
+        <div class="min-w-0">
+          <p class="truncate font-bold">${esc(`${a.marca} ${a.modelo} ${a.version} ${a.anio}`)}</p>
+          <p class="text-[14px] text-ink/70">${esc(formatPrice(Number(a.precio), a.moneda))} · ${esc(a.cuenta?.nombre ?? '')} · ${esc(a.codigo)}${a.cuenta?.es_prueba ? ' · <b>prueba</b>' : ''}</p>
+          <p class="text-[13px] ${pausado ? 'text-[#8A5A00]' : 'text-ok'}">${pausado ? (a.pausado_por_admin ? 'Pausado por vos' : 'Pausado por la agencia') : 'Publicado'} · ${esc(fmtFecha(a.created_at))}</p>
+        </div>
+      </div>
+      <div class="flex shrink-0 gap-2">
+        ${pausado ? '' : `<a href="./auto.html?id=${encodeURIComponent(a.id)}" target="_blank" rel="noopener noreferrer" class="btn-outline h-[40px] !px-4 text-[14px]">${icon('eye', 'h-4 w-4')} Ver</a>`}
+        <button type="button" class="btn-outline h-[40px] !px-4 text-[14px]" data-auto-estado="${pausado ? 'publicado' : 'pausado'}" data-id="${esc(a.id)}">${pausado ? 'Volver a publicar' : 'Pausar'}</button>
+      </div>
+    </li>`;
+  }).join('')}</ul>`;
+}
+
 const LOADERS = {
   resumen: loadResumen,
   particulares: () => loadList('particulares'),
   concesionarios: () => loadList('concesionarios'),
   feria: loadFeria,
+  autos: () => loadAutos(),
   buscados: () => renderRanking($('#v-buscados'), sb),
   pruebas: loadPruebas,
 };
