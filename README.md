@@ -33,3 +33,9 @@ El build escribe el sitio compilado en la raíz del repo (index.html + assets/),
 - SEO: HTML ya armado en el build, meta tags, Open Graph, JSON-LD (Car / ItemList), alt en imágenes.
 - Seguridad: todo dato pasa por `esc()`; CSP estricta (sin scripts ni estilos en línea); sin claves en el front.
 - Mientras el catálogo sea de ejemplo el sitio va con `noindex` (`SITE.indexable` en `app/src/data/site.js`).
+
+## Cuentas (Supabase)
+- Proyecto Supabase "RED DE AUTOS IA". Tabla propia `public.mkt_cuentas` (particulares y agencias), sin acceso público (RLS sin políticas).
+- Funciones SQL `mkt_set_pin` / `mkt_verificar_pin` (bcrypt, 5 intentos → bloqueo 15 min), solo para `service_role`.
+- Edge function `mkt-cuenta` (código en `supabase/functions/mkt-cuenta/`): `registrar`, `ingresar`, `perfil`. Valida todo del lado del servidor (celular, PIN, CUIT con dígito verificador, provincia) y solo acepta llamadas desde el sitio (CORS).
+- El sitio usa la clave *publishable* (pública por diseño) y carga `@supabase/supabase-js` solo cuando hace falta.
