@@ -5,6 +5,7 @@ import { SITE } from '../data/site.js';
 import { forDealers, sellPrivate, stats, testimonials, brands, footer } from '../data/home.js';
 import { logoSvg } from './logo.js';
 import { brandLogoSvg } from './brandLogos.js';
+import { countBy } from '../data/catalog.js';
 
 export const renderForDealers = () => `
   <section id="agencias" aria-labelledby="dealers-title" class="pt-20 md:pt-[110px]">
@@ -112,15 +113,15 @@ export const renderBrands = () => `
         <div class="relative py-12 md:py-[70px]">
           <div class="reveal mb-8 flex items-end justify-between gap-4 md:mb-10">
             <h2 id="brands-title" class="section-title">Explorá por marca</h2>
-            <a href="#marcas" class="link-view">Ver todas ${icon('arrow-up-right', 'h-4 w-4')}</a>
+            <a href="./autos.html" class="link-view">Ver todas ${icon('arrow-up-right', 'h-4 w-4')}</a>
           </div>
           <ul class="reveal grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 lg:gap-6">
             ${brands.map((b) => `
             <li>
-              <a href="#marca-${esc(b.slug)}" class="group flex h-[150px] flex-col items-center justify-center gap-1.5 rounded-2xl border border-line bg-white text-center transition-all duration-300 hover:-translate-y-1 hover:border-brand hover:shadow-[0_10px_30px_rgba(5,11,32,0.07)] active:translate-y-0 active:scale-[0.98] sm:h-[170px]">
+              <a href="./autos.html?marca=${encodeURIComponent(b.name)}" class="group flex h-[150px] flex-col items-center justify-center gap-1.5 rounded-2xl border border-line bg-white text-center transition-all duration-300 hover:-translate-y-1 hover:border-brand hover:shadow-[0_10px_30px_rgba(5,11,32,0.07)] active:translate-y-0 active:scale-[0.98] sm:h-[170px]">
                 <span class="mb-2 text-ink transition-all duration-300 group-hover:scale-110 group-hover:text-brand">${brandLogoSvg(b.slug, 'h-10 w-10 sm:h-11 sm:w-11')}</span>
                 <span class="text-[17px] font-bold tracking-tight transition-colors duration-300 group-hover:text-brand sm:text-[18px]">${esc(b.name)}</span>
-                <span class="text-[14px] text-ink/70">${esc(b.count)} autos</span>
+                ${((n) => `<span class="text-[14px] text-ink/70">${n ? `${n} ${n === 1 ? 'auto' : 'autos'}` : 'Ver autos'}</span>`)(countBy((c) => c.brand === b.name))}
               </a>
             </li>`).join('')}
           </ul>

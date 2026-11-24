@@ -16,58 +16,7 @@
 <body>
   <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
 
-  <!-- ================= HEADER ================= -->
-  <div class="h-[72px] sm:h-[86px]" aria-hidden="true"></div>
-  <header id="site-header" class="site-header absolute inset-x-0 top-0 z-40 border-b border-line bg-white">
-    <div class="container-x flex h-[72px] items-center justify-between gap-3 sm:h-[86px]">
-      <div class="flex flex-1 items-center gap-8">
-        <button id="menu-open" type="button" class="group flex items-center gap-2.5 font-medium transition-colors duration-300 hover:text-brand"
-          aria-label="Abrir menú" aria-controls="drawer" aria-expanded="false">
-          <span class="flex flex-col gap-[5px]" aria-hidden="true">
-            <span class="block h-[1.5px] w-5 bg-current"></span>
-            <span class="block h-[1.5px] w-3.5 bg-current transition-all duration-300 group-hover:w-5"></span>
-          </span>
-          <span class="hidden sm:inline">Menú</span>
-        </button>
-        <a href="tel:+543810000000" class="hidden items-center gap-2 font-medium transition-colors duration-300 hover:text-brand md:flex">
-          <i data-icon="phone" class="h-4 w-4"></i> 381 000-0000
-        </a>
-      </div>
-
-      <a href="./" class="flex shrink-0 items-center" aria-label="Red de Autos, ir al inicio"><!--slot:logo--></a>
-
-      <div class="flex flex-1 items-center justify-end gap-3 sm:gap-6">
-        <a href="#ingresar" class="hidden items-center gap-2 font-medium transition-colors duration-300 hover:text-brand sm:flex">
-          <i data-icon="user" class="h-4 w-4"></i> Ingresar
-        </a>
-        <a href="#publicar" class="btn-outline max-sm:px-3.5 max-sm:py-[7px] max-sm:text-[14px]">
-          <i data-icon="plus" class="hidden h-4 w-4 sm:block"></i>Publicar<span class="hidden sm:inline">&nbsp;auto</span>
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- ================= MENÚ LATERAL ================= -->
-  <div id="drawer-backdrop" class="drawer-backdrop fixed inset-0 z-50 bg-ink/50"></div>
-  <aside id="drawer" class="drawer fixed inset-y-0 left-0 z-50 flex w-[380px] max-w-[88vw] flex-col overflow-y-auto bg-white p-6 sm:p-8" aria-label="Menú principal">
-    <div class="mb-8 flex items-center justify-between">
-      <p class="text-[20px] font-medium">Menú principal</p>
-      <button id="menu-close" type="button" class="round-nav" aria-label="Cerrar menú"><i data-icon="x" class="h-4 w-4"></i></button>
-    </div>
-    <nav aria-label="Principal" class="flex flex-col">
-      <a href="./" class="menu-link">Inicio</a>
-      <a href="#destacados" class="menu-link">Autos 0km <i data-icon="chevron-right" class="h-4 w-4"></i></a>
-      <a href="#destacados" class="menu-link">Autos usados <i data-icon="chevron-right" class="h-4 w-4"></i></a>
-      <a href="#concesionarios" class="menu-link">Concesionarios oficiales</a>
-      <a href="#agencias" class="menu-link">Agencias multimarca</a>
-      <a href="#vender" class="menu-link">Vendé tu auto</a>
-      <a href="#contacto" class="menu-link">Contacto</a>
-    </nav>
-    <div class="mt-auto space-y-3 pt-8">
-      <a href="#sumate" class="btn-primary h-[55px] w-full">Sumá tu agencia <i data-icon="arrow-right" class="h-4 w-4"></i></a>
-      <a href="#ingresar" class="btn-outline h-[55px] w-full justify-center"><i data-icon="user" class="h-4 w-4"></i> Ingresar</a>
-    </div>
-  </aside>
+  <!--slot:site-header-->
 
   <main id="contenido">
     <!-- ================= HERO (todo el ancho) + BUSCADOR ================= -->
@@ -90,7 +39,7 @@
             <button type="button" role="tab" id="tab-cond-0km" class="tab-btn" aria-selected="false" tabindex="-1" data-cond="0km">0km</button>
             <button type="button" role="tab" id="tab-cond-usados" class="tab-btn" aria-selected="false" tabindex="-1" data-cond="usados">Usados</button>
           </div>
-          <form id="search-form" role="search" action="#destacados" class="grid grid-cols-2 items-center gap-x-6 gap-y-5 rounded-b-2xl bg-white px-6 py-6 shadow-[0_10px_40px_rgba(5,11,32,0.07)] md:px-[42px] lg:grid-cols-[1fr_1fr_1fr_1fr_216px] lg:py-[22px]">
+          <form id="search-form" role="search" action="./autos.html" method="get" class="grid grid-cols-2 items-center gap-x-6 gap-y-5 rounded-b-2xl bg-white px-6 py-6 shadow-[0_10px_40px_rgba(5,11,32,0.07)] md:px-[42px] lg:grid-cols-[1fr_1fr_1fr_1fr_216px] lg:py-[22px]">
             <input type="hidden" name="condicion" id="search-condition" value="todos" />
             <div class="relative">
               <label for="sel-make" class="field-label">Marca</label>
@@ -153,7 +102,7 @@
       <div class="container-x">
         <div class="reveal mb-6 flex items-end justify-between gap-4 md:mb-[30px]">
           <h2 id="featured-title" class="section-title">Autos destacados</h2>
-          <a href="#autos" class="link-view">Ver todos <i data-icon="arrow-up-right" class="h-4 w-4"></i></a>
+          <a href="./autos.html" class="link-view">Ver todos <i data-icon="arrow-up-right" class="h-4 w-4"></i></a>
         </div>
         <div id="featured-tabs" class="tabs-brand reveal mb-10 flex gap-7 overflow-x-auto border-b border-line md:mb-[50px]" role="tablist" aria-label="Tipo de auto"><!--slot:featured-tabs--></div>
         <div id="featured" class="swiper reveal" role="tabpanel" aria-labelledby="tab-nuevos"><div class="swiper-wrapper"><!--slot:featured--></div></div>
@@ -170,8 +119,6 @@
 
   <!--slot:footer-->
 
-  <button id="to-top" type="button" class="to-top fixed bottom-5 right-5 z-30 grid h-[46px] w-[46px] place-items-center rounded-full bg-brand text-white sm:bottom-[30px] sm:right-[30px]" aria-label="Volver arriba">
-    <i data-icon="arrow-up" class="h-4 w-4"></i>
-  </button>
+  <!--slot:to-top-->
 </body>
 </html>

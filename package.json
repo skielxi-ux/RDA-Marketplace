@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",
-    "build": "rm -rf assets index.html favicon.svg apple-touch-icon.png site.webmanifest robots.txt sitemap.xml && vite build",
+    "build": "rm -rf assets index.html autos.html favicon.svg apple-touch-icon.png site.webmanifest robots.txt sitemap.xml && vite build",
     "preview": "vite preview"
   },
   "keywords": [],

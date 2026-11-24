@@ -13,9 +13,5 @@ export function initSearch() {
 
   initTabs($('#search-tabs'), (tab) => { condition.value = tab.dataset.cond; });
 
-  // Todavía no hay página de resultados: por ahora lleva a los destacados.
-  $('#search-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    $('#destacados').scrollIntoView({ behavior: 'smooth' });
-  });
+  // El formulario va a autos.html por GET (funciona aun sin JavaScript).
 }

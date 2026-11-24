@@ -3,7 +3,7 @@
 // (por ejemplo, al cambiar de pestaña). Todo dato pasa por esc().
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
-import { unsplash, srcset, heroSlides, makes, bodyTypes, reasons } from '../data/catalog.js';
+import { unsplash, srcset, heroSlides, brandsInStock, modelsByBrand, bodyTypes, reasons } from '../data/catalog.js';
 
 export const renderHeroSlides = () =>
   heroSlides
@@ -21,18 +21,18 @@ export const renderHeroSlides = () =>
     </div>`)
     .join('');
 
-export const renderMakeOptions = () =>
-  Object.keys(makes).map((m) => `<option value="${esc(m)}">${esc(m)}</option>`).join('');
+export const renderMakeOptions = (selected = '') =>
+  brandsInStock.map((m) => `<option value="${esc(m)}"${m === selected ? ' selected' : ''}>${esc(m)}</option>`).join('');
 
-export const renderModelOptions = (make) =>
+export const renderModelOptions = (make, selected = '') =>
   '<option value="">Todos los modelos</option>' +
-  (makes[make] || []).map((m) => `<option value="${esc(m)}">${esc(m)}</option>`).join('');
+  [...(modelsByBrand[make] || [])].sort().map((m) => `<option value="${esc(m)}"${m === selected ? ' selected' : ''}>${esc(m)}</option>`).join('');
 
 export const renderBodyTypes = () =>
   bodyTypes
     .map((t) => `
     <div class="swiper-slide">
-      <a href="#autos-${esc(t.slug)}" class="type-card group relative block h-[260px] overflow-hidden rounded-2xl sm:h-[290px]">
+      <a href="./autos.html?carroceria=${esc(t.slug)}" class="type-card group relative block h-[260px] overflow-hidden rounded-2xl sm:h-[290px]">
         <img class="absolute inset-0 h-full w-full object-cover"
           src="${esc(unsplash(t.photo, 600, 700))}"
           srcset="${esc(srcset(t.photo, 6 / 7, [300, 450, 600]))}"
@@ -40,7 +40,7 @@ export const renderBodyTypes = () =>
           width="600" height="700" alt="" loading="lazy" decoding="async" />
         <div class="absolute inset-0 bg-gradient-to-b from-ink/75 via-ink/10 to-transparent"></div>
         <div class="relative p-[30px] text-white">
-          <p class="text-[15px]">${esc(t.count)} autos</p>
+          <p class="text-[15px]">${esc(t.count)} ${t.count === 1 ? 'auto' : 'autos'}</p>
           <h3 class="mt-1 text-[18px] font-medium">${esc(t.name)}</h3>
         </div>
       </a>

@@ -18,23 +18,12 @@ export const heroSlides = [
   { photo: 'photo-1555215695-3004980ad54e', title: 'Comprar el auto correcto, simple', alt: 'Sedán blanco estacionado junto a palmeras' },
 ];
 
-export const makes = {
-  Toyota: ['Corolla', 'Hilux', 'Yaris', 'SW4', 'Corolla Cross'],
-  Volkswagen: ['Polo', 'Taos', 'Amarok', 'T-Cross', 'Nivus'],
-  Ford: ['Ranger', 'Territory', 'Mustang', 'Bronco Sport'],
-  Chevrolet: ['Cruze', 'Tracker', 'Onix', 'S10', 'Camaro'],
-  Fiat: ['Cronos', 'Pulse', 'Toro', '500'],
-  Audi: ['A3', 'A4', 'A6', 'A7', 'Q3', 'Q5'],
-  BMW: ['Serie 1', 'Serie 3', 'M4', 'X1', 'X3'],
-  Peugeot: ['208', '2008', '3008', 'Partner'],
-};
-
-export const bodyTypes = [
-  { slug: 'suv', name: 'SUV', count: 128, photo: 'photo-1563720223185-11003d516935' },
-  { slug: 'sedan', name: 'Sedán', count: 96, photo: 'photo-1616422285623-13ff0162193c' },
-  { slug: 'hatchback', name: 'Hatchback', count: 74, photo: 'photo-1541899481282-d53bffe3c35d' },
-  { slug: 'electrico', name: 'Eléctrico', count: 12, photo: 'photo-1606016159991-dfe4f2746ad5' },
-  { slug: 'deportivo', name: 'Deportivo', count: 21, photo: 'photo-1632245889029-e406faaa34cd' },
+export const bodyTypeList = [
+  { slug: 'suv', name: 'SUV', photo: 'photo-1563720223185-11003d516935' },
+  { slug: 'sedan', name: 'Sedán', photo: 'photo-1616422285623-13ff0162193c' },
+  { slug: 'hatchback', name: 'Hatchback', photo: 'photo-1541899481282-d53bffe3c35d' },
+  { slug: 'electrico', name: 'Eléctrico', photo: 'photo-1606016159991-dfe4f2746ad5' },
+  { slug: 'deportivo', name: 'Deportivo', photo: 'photo-1632245889029-e406faaa34cd' },
 ];
 
 export const reasons = [
@@ -44,26 +33,57 @@ export const reasons = [
   { icon: 'wrench', title: 'Servicio y garantía', text: 'Unidades revisadas y, en 0km, con la garantía oficial de fábrica.' },
 ];
 
-// condition: 'new' | 'used' · seller: 'oficial' (concesionario oficial) | 'multimarca' (agencia)
-const car = (o) => ({ currency: 'USD', ...o, gallery: gallery(o.photo) });
-
-const cars = {
-  corolla: car({ id: 'toyota-corolla-xei-2026', brand: 'Toyota', model: 'Corolla XEi 2.0 CVT', sub: 'Híbrido disponible · Entrega en 30 días', condition: 'new', km: 0, fuel: 'Nafta', gear: 'Automática', year: 2026, price: 34900, badge: { text: 'Mejor precio', tone: 'ok' }, seller: 'oficial', city: 'Tucumán', photo: 'photo-1619682817481-e994891cd1f5' }),
-  polo: car({ id: 'volkswagen-polo-track-2026', brand: 'Volkswagen', model: 'Polo Track 1.6', sub: 'Manual 5 velocidades', condition: 'new', km: 0, fuel: 'Nafta', gear: 'Manual', year: 2026, price: 19800, badge: null, seller: 'oficial', city: 'Córdoba', photo: 'photo-1541899481282-d53bffe3c35d' }),
-  a7: car({ id: 'audi-a7-sportback-2026', brand: 'Audi', model: 'A7 Sportback 45 TFSI', sub: 'quattro S tronic', condition: 'new', km: 0, fuel: 'Nafta', gear: 'Automática', year: 2026, price: 118000, badge: { text: 'Oficial', tone: 'brand' }, seller: 'oficial', city: 'CABA', photo: 'photo-1616422285623-13ff0162193c' }),
-  rrsport: car({ id: 'range-rover-sport-p400-2026', brand: 'Land Rover', model: 'Range Rover Sport P400', sub: 'Dynamic SE', condition: 'new', km: 0, fuel: 'Híbrido', gear: 'Automática', year: 2026, price: 165000, badge: null, seller: 'oficial', city: 'Rosario', photo: 'photo-1563720223185-11003d516935' }),
-  boxster: car({ id: 'porsche-718-boxster-2026', brand: 'Porsche', model: '718 Boxster', sub: 'PDK', condition: 'new', km: 0, fuel: 'Nafta', gear: 'Automática', year: 2026, price: 142500, badge: { text: 'Oferta', tone: 'ok' }, seller: 'oficial', city: 'CABA', photo: 'photo-1632245889029-e406faaa34cd' }),
-  amggt: car({ id: 'mercedes-amg-gt-63-2026', brand: 'Mercedes-Benz', model: 'AMG GT 63', sub: '4MATIC+', condition: 'new', km: 0, fuel: 'Nafta', gear: 'Automática', year: 2026, price: 210000, badge: null, seller: 'oficial', city: 'Mendoza', photo: 'photo-1605559424843-9e4c228bf1c2' }),
-  mustang: car({ id: 'ford-mustang-gt-2019', brand: 'Ford', model: 'Mustang GT 5.0', sub: 'Único dueño · Service oficial', condition: 'used', km: 28000, fuel: 'Nafta', gear: 'Automática', year: 2019, price: 52000, badge: { text: 'Pocos km', tone: 'brand' }, seller: 'multimarca', city: 'Tucumán', photo: 'photo-1494976388531-d1058494cdd8' }),
-  camaro: car({ id: 'chevrolet-camaro-ss-2018', brand: 'Chevrolet', model: 'Camaro SS', sub: 'Impecable · Escape deportivo', condition: 'used', km: 41500, fuel: 'Nafta', gear: 'Automática', year: 2018, price: 45900, badge: null, seller: 'multimarca', city: 'Salta', photo: 'photo-1552519507-da3b142c6e3d' }),
-  fiat500: car({ id: 'fiat-500-lounge-2016', brand: 'Fiat', model: '500 Lounge 1.4', sub: 'Ideal ciudad · Techo panorámico', condition: 'used', km: 62000, fuel: 'Nafta', gear: 'Manual', year: 2016, price: 13500, badge: { text: 'Mejor precio', tone: 'ok' }, seller: 'multimarca', city: 'Córdoba', photo: 'photo-1549317661-bd32c8ce0db2' }),
-  m4: car({ id: 'bmw-m4-competition-2021', brand: 'BMW', model: 'M4 Competition', sub: 'Garantía de agencia 6 meses', condition: 'used', km: 19000, fuel: 'Nafta', gear: 'Automática', year: 2021, price: 98000, badge: { text: 'Pocos km', tone: 'brand' }, seller: 'multimarca', city: 'CABA', photo: 'photo-1580273916550-e323be2ae537' }),
-  a6: car({ id: 'audi-a6-45-tfsi-2020', brand: 'Audi', model: 'A6 45 TFSI', sub: 'Full · Libro de service', condition: 'used', km: 55000, fuel: 'Nafta', gear: 'Automática', year: 2020, price: 47000, badge: null, seller: 'oficial', city: 'Rosario', photo: 'photo-1606664515524-ed2f786a0bd6' }),
-  explorer: car({ id: 'ford-explorer-limited-2019', brand: 'Ford', model: 'Explorer Limited', sub: '7 asientos · 4x4', condition: 'used', km: 73000, fuel: 'Nafta', gear: 'Automática', year: 2019, price: 39900, badge: null, seller: 'multimarca', city: 'Tucumán', photo: 'photo-1533473359331-0135ef1b58bf' }),
+// ---------- Vendedores (ficticios, de ejemplo) ----------
+// type: 'oficial' (concesionario oficial) | 'multimarca' (agencia) | 'particular'
+export const sellers = {
+  'jardin-automotores': { name: 'Jardín Automotores', type: 'oficial' },
+  'sol-motors': { name: 'Sol Motors', type: 'oficial' },
+  'ruta9-autos': { name: 'Ruta 9 Autos', type: 'multimarca' },
+  'garage-38': { name: 'Garage 38', type: 'multimarca' },
+  'juan-pablo-m': { name: 'Juan Pablo M.', type: 'particular' },
+  'carolina-r': { name: 'Carolina R.', type: 'particular' },
 };
 
+export const SELLER_TYPES = {
+  oficial: 'Concesionario oficial',
+  multimarca: 'Agencia multimarca',
+  particular: 'Particular',
+};
+
+// ---------- Autos (ejemplo) ----------
+// condition: 'new' | 'used' · currency: 'ARS' | 'USD' (la que cargó el vendedor)
+// badge: 'nuevo' | 'pocos-km' | 'mejor-precio' | 'oferta' | null · body: slug de bodyTypeList
+const car = (o) => ({ ...o, gallery: gallery(o.photo) });
+
+export const cars = [
+  car({ id: 'toyota-corolla-xei-2026', brand: 'Toyota', model: 'Corolla', version: 'XEi 2.0 CVT', year: 2026, km: 0, condition: 'new', fuel: 'Nafta', gear: 'Automática', body: 'sedan', price: 41500000, currency: 'ARS', desc: 'Entrega en 30 días. Versión híbrida disponible, garantía oficial de 3 años.', city: 'San Miguel de Tucumán', province: 'Tucumán', seller: 'jardin-automotores', badge: 'nuevo', published: 20, photo: 'photo-1619682817481-e994891cd1f5' }),
+  car({ id: 'volkswagen-polo-track-2026', brand: 'Volkswagen', model: 'Polo', version: 'Track 1.6', year: 2026, km: 0, condition: 'new', fuel: 'Nafta', gear: 'Manual', body: 'hatchback', price: 26900000, currency: 'ARS', desc: 'Caja manual de 5 velocidades, aire acondicionado y pantalla táctil.', city: 'Córdoba', province: 'Córdoba', seller: 'sol-motors', badge: 'mejor-precio', published: 19, photo: 'photo-1541899481282-d53bffe3c35d' }),
+  car({ id: 'audi-a7-sportback-2026', brand: 'Audi', model: 'A7', version: 'Sportback 45 TFSI', year: 2026, km: 0, condition: 'new', fuel: 'Nafta', gear: 'Automática', body: 'sedan', price: 118000, currency: 'USD', desc: 'Tracción quattro, caja S tronic, techo panorámico y faros Matrix LED.', city: 'CABA', province: 'Buenos Aires', seller: 'sol-motors', badge: 'nuevo', published: 18, photo: 'photo-1616422285623-13ff0162193c' }),
+  car({ id: 'range-rover-sport-p400-2026', brand: 'Land Rover', model: 'Range Rover Sport', version: 'P400 Dynamic SE', year: 2026, km: 0, condition: 'new', fuel: 'Híbrido', gear: 'Automática', body: 'suv', price: 165000, currency: 'USD', desc: 'Motor híbrido enchufable, suspensión neumática y asientos con masaje.', city: 'Rosario', province: 'Santa Fe', seller: 'jardin-automotores', badge: 'nuevo', published: 17, photo: 'photo-1563720223185-11003d516935' }),
+  car({ id: 'porsche-718-boxster-2026', brand: 'Porsche', model: '718 Boxster', version: 'PDK', year: 2026, km: 0, condition: 'new', fuel: 'Nafta', gear: 'Automática', body: 'deportivo', price: 142500, currency: 'USD', desc: 'Descapotable con caja PDK, llantas de 20" y paquete Sport Chrono.', city: 'CABA', province: 'Buenos Aires', seller: 'sol-motors', badge: 'oferta', published: 16, photo: 'photo-1632245889029-e406faaa34cd' }),
+  car({ id: 'mercedes-amg-gt-63-2026', brand: 'Mercedes-Benz', model: 'AMG GT', version: '63 4MATIC+', year: 2026, km: 0, condition: 'new', fuel: 'Nafta', gear: 'Automática', body: 'deportivo', price: 210000, currency: 'USD', desc: 'V8 biturbo, tracción integral 4MATIC+ y escape deportivo AMG.', city: 'Mendoza', province: 'Mendoza', seller: 'jardin-automotores', badge: 'nuevo', published: 15, photo: 'photo-1605559424843-9e4c228bf1c2' }),
+  car({ id: 'ford-mustang-gt-2019', brand: 'Ford', model: 'Mustang', version: 'GT 5.0', year: 2019, km: 28000, condition: 'used', fuel: 'Nafta', gear: 'Automática', body: 'deportivo', price: 52000, currency: 'USD', desc: 'Único dueño, services oficiales al día y cubiertas nuevas.', city: 'Yerba Buena', province: 'Tucumán', seller: 'ruta9-autos', badge: 'pocos-km', published: 14, photo: 'photo-1494976388531-d1058494cdd8' }),
+  car({ id: 'chevrolet-camaro-ss-2018', brand: 'Chevrolet', model: 'Camaro', version: 'SS', year: 2018, km: 41500, condition: 'used', fuel: 'Nafta', gear: 'Automática', body: 'deportivo', price: 45900, currency: 'USD', desc: 'Impecable, escape deportivo, butacas de cuero y cámara de retroceso.', city: 'Salta', province: 'Salta', seller: 'garage-38', badge: 'pocos-km', published: 13, photo: 'photo-1552519507-da3b142c6e3d' }),
+  car({ id: 'fiat-500-lounge-2016', brand: 'Fiat', model: '500', version: 'Lounge 1.4', year: 2016, km: 62000, condition: 'used', fuel: 'Nafta', gear: 'Manual', body: 'hatchback', price: 13500000, currency: 'ARS', desc: 'Ideal ciudad. Techo panorámico, aire acondicionado y llantas de aleación.', city: 'Córdoba', province: 'Córdoba', seller: 'carolina-r', badge: 'mejor-precio', published: 12, photo: 'photo-1549317661-bd32c8ce0db2' }),
+  car({ id: 'bmw-m4-competition-2021', brand: 'BMW', model: 'M4', version: 'Competition', year: 2021, km: 19000, condition: 'used', fuel: 'Nafta', gear: 'Automática', body: 'deportivo', price: 98000, currency: 'USD', desc: 'Garantía de agencia por 6 meses, fibra de carbono y frenos M.', city: 'CABA', province: 'Buenos Aires', seller: 'garage-38', badge: 'pocos-km', published: 11, photo: 'photo-1580273916550-e323be2ae537' }),
+  car({ id: 'audi-a6-45-tfsi-2020', brand: 'Audi', model: 'A6', version: '45 TFSI', year: 2020, km: 55000, condition: 'used', fuel: 'Nafta', gear: 'Automática', body: 'sedan', price: 47000, currency: 'USD', desc: 'Full equipo, libro de service completo y tapizado de cuero.', city: 'Rosario', province: 'Santa Fe', seller: 'sol-motors', badge: null, published: 10, photo: 'photo-1606664515524-ed2f786a0bd6' }),
+  car({ id: 'ford-explorer-limited-2019', brand: 'Ford', model: 'Explorer', version: 'Limited 4x4', year: 2019, km: 73000, condition: 'used', fuel: 'Nafta', gear: 'Automática', body: 'suv', price: 39900, currency: 'USD', desc: 'Siete asientos, tracción 4x4, techo solar y sensores de estacionamiento.', city: 'San Miguel de Tucumán', province: 'Tucumán', seller: 'ruta9-autos', badge: null, published: 9, photo: 'photo-1533473359331-0135ef1b58bf' }),
+  car({ id: 'bmw-320i-2019', brand: 'BMW', model: 'Serie 3', version: '320i Sport Line', year: 2019, km: 64000, condition: 'used', fuel: 'Nafta', gear: 'Automática', body: 'sedan', price: 38500000, currency: 'ARS', desc: 'Services en concesionario, llantas de 18" y faros LED.', city: 'Yerba Buena', province: 'Tucumán', seller: 'juan-pablo-m', badge: null, published: 8, photo: 'photo-1555215695-3004980ad54e' }),
+  car({ id: 'bmw-m240i-2018', brand: 'BMW', model: 'Serie 2', version: 'M240i Coupé', year: 2018, km: 47000, condition: 'used', fuel: 'Nafta', gear: 'Automática', body: 'deportivo', price: 42000, currency: 'USD', desc: 'Coupé de 340 CV, butacas deportivas y equipo de audio Harman Kardon.', city: 'Mendoza', province: 'Mendoza', seller: 'garage-38', badge: 'pocos-km', published: 7, photo: 'photo-1502877338535-766e1452684a' }),
+];
+
+/** Datos derivados del catálogo (así los números siempre coinciden con el listado). */
+export const carTitle = (c) => `${c.brand} ${c.model} ${c.version}`;
+export const brandsInStock = [...new Set(cars.map((c) => c.brand))].sort((a, b) => a.localeCompare(b, 'es'));
+export const modelsByBrand = cars.reduce((acc, c) => {
+  (acc[c.brand] ||= new Set()).add(c.model);
+  return acc;
+}, {});
+export const countBy = (fn) => cars.filter(fn).length;
+export const bodyTypes = bodyTypeList.map((t) => ({ ...t, count: countBy((c) => c.body === t.slug) }));
+
 export const featuredTabs = [
-  { key: 'nuevos', label: '0km', cars: [cars.corolla, cars.polo, cars.a7, cars.rrsport, cars.boxster, cars.amggt] },
-  { key: 'usados', label: 'Usados', cars: [cars.mustang, cars.camaro, cars.fiat500, cars.m4, cars.a6, cars.explorer] },
-  { key: 'inmediata', label: 'Entrega inmediata', cars: [cars.corolla, cars.fiat500, cars.polo, cars.mustang, cars.explorer, cars.rrsport] },
+  { key: 'nuevos', label: '0km', cars: cars.filter((c) => c.condition === 'new').slice(0, 8) },
+  { key: 'usados', label: 'Usados', cars: cars.filter((c) => c.condition === 'used').slice(0, 8) },
+  { key: 'particulares', label: 'De particulares', cars: cars.filter((c) => sellers[c.seller].type === 'particular') },
 ];

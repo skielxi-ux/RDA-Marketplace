@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
 import { prerenderHome } from './build/prerender.js';
 
@@ -8,5 +9,12 @@ export default defineConfig({
   root: 'app',
   base: './',
   plugins: [tailwindcss(), prerenderHome()],
-  build: { outDir: '..', emptyOutDir: false, assetsDir: 'assets' },
+  build: {
+    outDir: '..',
+    emptyOutDir: false,
+    assetsDir: 'assets',
+    rollupOptions: {
+      input: { index: resolve(import.meta.dirname, 'app/index.html'), autos: resolve(import.meta.dirname, 'app/autos.html') },
+    },
+  },
 });
