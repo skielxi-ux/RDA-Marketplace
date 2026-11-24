@@ -27,21 +27,54 @@
   .container-x { @apply mx-auto w-full max-w-[1440px] px-4 sm:px-6 xl:px-[15px]; }
   .section-title { @apply text-[28px] font-bold leading-[1.1] sm:text-[34px] md:text-[40px]; }
 
-  /* Botones y links */
-  .btn-outline {
-    @apply inline-flex items-center gap-2 rounded-2xl border border-ink px-[25px] py-[9px] text-[15px] font-medium text-ink
-           transition-all duration-300 ease-in-out hover:border-brand hover:bg-brand hover:text-white;
-  }
+  /* Botones y links: todos comparten la misma microinteracción
+     (se elevan, se marca la sombra, se "hunden" al hacer clic y el ícono se anima). */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand px-6 text-[15px] font-medium text-white
-           transition-all duration-300 ease-in-out hover:bg-brand-hover;
+           shadow-[0_8px_24px_-10px_rgba(64,95,242,0.6)] transition-all duration-300 ease-out
+           hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_14px_30px_-8px_rgba(64,95,242,0.75)]
+           active:translate-y-0 active:scale-[0.98];
   }
-  .link-view { @apply inline-flex shrink-0 items-center gap-1.5 text-[15px] font-medium text-ink underline-offset-4 hover:underline; }
+  .btn-outline {
+    @apply inline-flex items-center gap-2 rounded-2xl border border-ink px-[25px] py-[9px] text-[15px] font-medium text-ink
+           transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-brand hover:bg-brand hover:text-white
+           hover:shadow-[0_14px_30px_-8px_rgba(64,95,242,0.6)] active:translate-y-0 active:scale-[0.98];
+  }
+  .btn-cta {
+    @apply inline-flex h-[58px] items-center gap-3 rounded-full bg-brand pl-2.5 pr-7 text-[16px] font-bold text-white
+           shadow-[0_8px_24px_-8px_rgba(64,95,242,0.6)] transition-all duration-300 ease-out
+           hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_14px_30px_-8px_rgba(64,95,242,0.75)]
+           active:translate-y-0 active:scale-[0.98];
+  }
+  .btn-cta-icon {
+    @apply grid h-[40px] w-[40px] place-items-center rounded-full bg-white/15 transition-colors duration-300;
+  }
+  .btn-cta:hover .btn-cta-icon { @apply bg-white/25; }
+  .btn-arrow {
+    @apply inline-flex items-center gap-1.5 text-[16px] font-bold text-ink underline-offset-[6px] transition-colors duration-300 hover:text-brand hover:underline;
+  }
+  .link-view { @apply inline-flex shrink-0 items-center gap-1.5 text-[15px] font-medium text-ink underline-offset-4 transition-colors duration-300 hover:text-brand hover:underline; }
   .round-nav {
-    @apply grid h-10 w-10 place-items-center rounded-full border border-ink/15 text-ink transition-all duration-300
-           hover:border-brand hover:bg-brand hover:text-white;
+    @apply grid h-10 w-10 place-items-center rounded-full border border-ink/15 text-ink transition-all duration-300 ease-out
+           hover:-translate-y-0.5 hover:border-brand hover:bg-brand hover:text-white hover:shadow-[0_10px_24px_-8px_rgba(64,95,242,0.7)]
+           active:translate-y-0 active:scale-95;
   }
   .round-nav.swiper-button-disabled { @apply pointer-events-none opacity-40; }
+  .icon-btn { @apply transition-all duration-300 ease-out hover:scale-110 hover:shadow-[0_8px_20px_-6px_rgba(64,95,242,0.6)] active:scale-95; }
+
+  /* Animación de los íconos dentro de botones y links */
+  :is(.btn-primary, .btn-outline, .btn-cta, .btn-arrow, .link-view, .round-nav, .hero-nav, .to-top, .icon-btn, .car-card a) svg {
+    transition: translate .35s ease, rotate .45s ease, scale .35s ease;
+  }
+  :is(.btn-primary, .btn-outline, .btn-cta, .icon-btn):hover .i-plus,
+  :is(.round-nav):hover .i-x { rotate: 90deg; }
+  :is(.btn-primary, .btn-outline, .btn-cta, .btn-arrow, .link-view, .round-nav, .hero-nav):hover :is(.i-arrow-right, .i-chevron-right) { translate: 3px 0; }
+  :is(.round-nav, .hero-nav):hover .i-chevron-left { translate: -3px 0; }
+  :is(.btn-primary, .btn-outline, .btn-cta, .link-view, .car-card a):hover .i-arrow-up-right { translate: 2px -2px; }
+  .to-top:hover .i-arrow-up { translate: 0 -3px; }
+  :is(.btn-primary, .btn-outline):hover .i-search { rotate: -12deg; scale: 1.12; }
+  :is(.btn-primary, .btn-outline):hover .i-user,
+  .icon-btn:hover .i-bookmark { scale: 1.12; }
 
   /* Header: se esconde al bajar y vuelve al subir */
   .site-header { @apply transition-transform duration-300 ease-in-out; }
@@ -62,7 +95,7 @@
   .hero-slide.swiper-slide-active .hero-anim { opacity: 1; transform: none; transition-delay: .35s; }
   .hero-nav {
     @apply absolute top-1/2 z-10 hidden h-10 w-[60px] -translate-y-1/2 place-items-center rounded-[30px] bg-white/25 text-white backdrop-blur-md
-           transition-all duration-300 hover:bg-white hover:text-ink md:grid;
+           transition-all duration-300 ease-out hover:scale-105 hover:bg-white hover:text-ink active:scale-95 md:grid;
   }
 
   /* Pestañas con subrayado animado */
@@ -81,18 +114,6 @@
   .field-select { @apply w-full cursor-pointer appearance-none truncate bg-transparent pr-6 text-[14px] text-ink/80 outline-none; }
 
   /* Bloque "Para particulares" */
-  .btn-cta {
-    @apply inline-flex h-[58px] items-center gap-3 rounded-full bg-brand pl-2.5 pr-7 text-[16px] font-bold text-white
-           shadow-[0_8px_24px_-8px_rgba(64,95,242,0.6)] transition-all duration-300 ease-out
-           hover:-translate-y-0.5 hover:bg-brand-hover hover:shadow-[0_14px_30px_-8px_rgba(64,95,242,0.75)]
-           active:translate-y-0 active:scale-[0.98];
-  }
-  .btn-cta-icon {
-    @apply grid h-[40px] w-[40px] place-items-center rounded-full bg-white/15 transition-transform duration-500 ease-out group-hover:rotate-90 group-hover:bg-white/25;
-  }
-  .btn-arrow {
-    @apply inline-flex items-center gap-1.5 text-[16px] font-bold text-ink underline-offset-[6px] transition-colors duration-300 hover:text-brand hover:underline;
-  }
   .step-row {
     @apply flex items-start gap-4 border-b border-line px-5 py-6 transition-colors duration-300 last:border-b-0 hover:bg-soft sm:gap-5 sm:px-8 sm:py-8;
   }
@@ -101,6 +122,16 @@
            group-hover:scale-105 group-hover:bg-brand group-hover:text-white;
   }
   .step-num { @apply text-[15px] font-bold text-ink/40 transition-colors duration-300 group-hover:text-brand; }
+
+  /* Bloque "Para agencias" */
+  .feature-cell {
+    @apply border-b border-white/15 p-6 transition-colors duration-300 hover:bg-white/[0.04] sm:p-8
+           sm:[&:nth-child(odd)]:border-r sm:[&:nth-last-child(-n+2)]:border-b-0 [&:last-child]:border-b-0;
+  }
+  .feature-icon {
+    @apply grid h-11 w-11 place-items-center rounded-xl bg-white/10 text-[#9DB0FF] transition-all duration-300
+           group-hover:scale-105 group-hover:bg-brand group-hover:text-white;
+  }
 
   /* Carrocerías */
   .type-card img { transition: transform .6s var(--ease-boxcar); }
@@ -116,8 +147,12 @@
   #featured.is-switching { opacity: 0; }
 
   /* Volver arriba */
-  .to-top { @apply pointer-events-none translate-y-4 opacity-0; }
+  .to-top {
+    @apply pointer-events-none translate-y-4 opacity-0 shadow-[0_8px_24px_-8px_rgba(64,95,242,0.6)] transition-all duration-300 ease-out;
+  }
   .to-top.is-visible { @apply pointer-events-auto translate-y-0 opacity-100; }
+  .to-top.is-visible:hover { @apply -translate-y-1 bg-brand-hover shadow-[0_14px_30px_-8px_rgba(64,95,242,0.75)]; }
+  .to-top.is-visible:active { @apply translate-y-0 scale-95; }
 
   /* Aparición al hacer scroll (solo si hay JS: sin JS todo se ve) */
   .js .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform .8s ease; }

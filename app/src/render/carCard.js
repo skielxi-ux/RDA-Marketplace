@@ -28,7 +28,7 @@ export function renderCarCard(c, { lazy = true } = {}) {
           sizes="(min-width:1200px) 25vw, (min-width:900px) 33vw, (min-width:640px) 45vw, 85vw"
           width="900" height="600" alt="${esc(title)} ${esc(c.year)}" ${lazy ? 'loading="lazy"' : ''} decoding="async" />
         ${c.badge ? `<span class="absolute left-5 top-5 rounded-full px-[15px] py-1 text-[14px] font-medium text-white ${BADGE_TONE[c.badge.tone] ?? 'bg-brand'}">${esc(c.badge.text)}</span>` : ''}
-        <button type="button" class="absolute right-5 top-5 grid h-9 w-9 place-items-center rounded-full bg-white text-ink transition-all duration-300 hover:bg-brand hover:text-white" aria-label="Guardar ${esc(title)}">
+        <button type="button" class="icon-btn absolute right-5 top-5 grid h-9 w-9 place-items-center rounded-full bg-white text-ink hover:bg-brand hover:text-white" aria-label="Guardar ${esc(title)}">
           ${icon('bookmark', 'h-3.5 w-3.5')}
         </button>
         <div class="gallery-dots" aria-hidden="true">${shots.map((_, i) => `<span class="${i === 0 ? 'is-on' : ''}"></span>`).join('')}</div>

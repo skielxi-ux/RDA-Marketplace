@@ -4,6 +4,7 @@ import {
   Menu, Phone, User, Search, ChevronDown, ChevronLeft, ChevronRight, ArrowUpRight, ArrowUp,
   Gauge, Fuel, Cog, Calendar, Bookmark, X, BadgePercent, ShieldCheck, ReceiptText, Wrench,
   Sparkle, BadgeCheck, Building2, Check, Quote, Camera, ClipboardCheck, MessageCircle, Plus,
+  Store, FileSpreadsheet, Images, Bot, ArrowRight,
 } from 'lucide';
 
 const NODES = {
@@ -13,7 +14,8 @@ const NODES = {
   x: X, 'badge-percent': BadgePercent, 'shield-check': ShieldCheck, 'receipt-text': ReceiptText,
   wrench: Wrench, sparkle: Sparkle, 'badge-check': BadgeCheck, 'building-2': Building2,
   check: Check, quote: Quote, camera: Camera, 'clipboard-check': ClipboardCheck,
-  'message-circle': MessageCircle, plus: Plus,
+  'message-circle': MessageCircle, plus: Plus, store: Store, 'file-spreadsheet': FileSpreadsheet,
+  images: Images, bot: Bot, 'arrow-right': ArrowRight,
 };
 
 const attrs = (o) => Object.entries(o).map(([k, v]) => `${k}="${v}"`).join(' ');
@@ -23,5 +25,5 @@ export function icon(name, cls = 'h-4 w-4') {
   const node = NODES[name];
   if (!node) throw new Error(`Ícono no registrado: ${name}`);
   const children = node.map(([tag, a]) => `<${tag} ${attrs(a)}/>`).join('');
-  return `<svg xmlns="http://www.w3.org/2000/svg" class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${children}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" class="i-${name} ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${children}</svg>`;
 }

@@ -1,5 +1,19 @@
 // Contenido de la segunda mitad de la home.
 
+// Bloque "Para agencias y concesionarios".
+export const forDealers = {
+  eyebrow: 'Para agencias y concesionarios',
+  title: '¿Tenés una agencia o un concesionario? Sumalo a Red de Autos.',
+  text: 'Subí tu stock en minutos, mantenelo al día sin complicarte y recibí compradores que ya saben lo que buscan.',
+  cta: { label: 'Sumá tu agencia', href: '#sumate' },
+  features: [
+    { icon: 'file-spreadsheet', title: 'Carga masiva con Excel', text: 'Subí todo tu stock desde una planilla y en 2 minutos queda publicado.' },
+    { icon: 'images', title: 'Fichas completas con fotos', text: 'Cada auto sale con sus fotos, datos y precio, listo para recibir consultas.' },
+    { icon: 'bot', title: 'Cambios con solo pedírselo al bot', text: 'Escribile al bot “bajá el Corolla a US$ 33.000” o “marcá vendido el Polo” y se actualiza solo.' },
+    { icon: 'message-circle', title: 'Consultas por WhatsApp', text: 'Los compradores te escriben directo, con el auto que les interesa.' },
+  ],
+};
+
 // Bloque "Para particulares": venta directa entre particulares (decisión 24/11/2026).
 export const sellPrivate = {
   eyebrow: 'Para particulares',
@@ -38,8 +52,8 @@ export const brands = [
 export const footer = {
   about: 'Marketplace de autos 0km y usados de agencias multimarca y concesionarios oficiales de todo el país.',
   join: {
-    title: '¿Tenés una agencia o un concesionario?',
-    text: 'Sumate a la red y recibí compradores que ya saben lo que buscan.',
+    title: '¿Listo para vender más?',
+    text: 'Publicá tu stock hoy y empezá a recibir consultas por WhatsApp.',
     cta: { label: 'Sumá tu agencia', href: '#sumate' },
   },
   columns: [

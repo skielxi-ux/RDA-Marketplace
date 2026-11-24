@@ -2,8 +2,35 @@
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { SITE } from '../data/site.js';
-import { sellPrivate, stats, testimonials, brands, footer } from '../data/home.js';
+import { forDealers, sellPrivate, stats, testimonials, brands, footer } from '../data/home.js';
 import { logoSvg } from './logo.js';
+
+export const renderForDealers = () => `
+  <section id="agencias" aria-labelledby="dealers-title" class="pt-20 md:pt-[110px]">
+    <div class="container-x">
+      <div class="reveal grid items-center gap-10 rounded-[28px] bg-ink px-5 py-10 text-white sm:px-10 md:px-14 md:py-14 xl:grid-cols-[1.05fr_1fr] xl:gap-14 xl:px-[80px] xl:py-[80px]">
+        <div>
+          <p class="flex items-center gap-2.5 text-[13px] font-bold uppercase tracking-[0.12em] text-[#9DB0FF]">
+            ${icon('store', 'h-4 w-4')} ${esc(forDealers.eyebrow)}
+          </p>
+          <h2 id="dealers-title" class="mt-5 max-w-[640px] text-[32px] font-bold leading-[1.08] tracking-tight text-balance sm:text-[42px] xl:text-[52px]">${esc(forDealers.title)}</h2>
+          <p class="mt-6 max-w-[560px] text-[16px] leading-[1.7] text-white/80 sm:text-[18px]">${esc(forDealers.text)}</p>
+          <a href="${esc(forDealers.cta.href)}" class="btn-cta group mt-9">
+            <span class="btn-cta-icon">${icon('arrow-right', 'h-4 w-4')}</span>
+            ${esc(forDealers.cta.label)}
+          </a>
+        </div>
+        <ul class="grid overflow-hidden rounded-2xl border border-white/15 sm:grid-cols-2">
+          ${forDealers.features.map((f) => `
+          <li class="feature-cell group">
+            <span class="feature-icon">${icon(f.icon, 'h-6 w-6')}</span>
+            <h3 class="mt-5 text-[18px] font-bold leading-snug sm:text-[19px]">${esc(f.title)}</h3>
+            <p class="mt-2 text-[15px] leading-[1.65] text-white/75">${esc(f.text)}</p>
+          </li>`).join('')}
+        </ul>
+      </div>
+    </div>
+  </section>`;
 
 export const renderSellPrivate = () => `
   <section id="vender" aria-labelledby="sell-title" class="pt-20 md:pt-[110px]">
@@ -22,7 +49,7 @@ export const renderSellPrivate = () => `
             </a>
             <a href="${esc(sellPrivate.secondary.href)}" class="btn-arrow group">
               ${esc(sellPrivate.secondary.label)}
-              ${icon('chevron-right', 'h-4 w-4 transition-transform duration-300 group-hover:translate-x-1')}
+              ${icon('chevron-right', 'h-4 w-4')}
             </a>
           </div>
         </div>
@@ -108,7 +135,7 @@ export const renderFooter = () => `
           <p class="text-[24px] font-medium md:text-[30px]">${esc(footer.join.title)}</p>
           <p class="mt-2 text-[15px] text-white/80">${esc(footer.join.text)}</p>
         </div>
-        <a href="${esc(footer.join.cta.href)}" class="btn-primary h-[54px] shrink-0 px-8">${esc(footer.join.cta.label)} ${icon('arrow-up-right', 'h-4 w-4')}</a>
+        <a href="${esc(footer.join.cta.href)}" class="btn-primary h-[54px] shrink-0 px-8">${esc(footer.join.cta.label)} ${icon('arrow-right', 'h-4 w-4')}</a>
       </div>
 
       <div class="grid grid-cols-2 gap-x-6 gap-y-10 py-12 md:grid-cols-4 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] md:py-[70px]">
