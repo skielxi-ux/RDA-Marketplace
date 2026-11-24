@@ -3,7 +3,8 @@
 // (por ejemplo, al cambiar de pestaña). Todo dato pasa por esc().
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
-import { unsplash, srcset, heroSlides, brandsInStock, modelsByBrand, bodyTypes, reasons } from '../data/catalog.js';
+import { unsplash, srcset, heroSlides, bodyTypes, reasons } from '../data/catalog.js';
+import { SEARCH_MAKES, searchBrands } from '../data/modelos.js';
 
 export const renderHeroSlides = () =>
   heroSlides
@@ -22,11 +23,11 @@ export const renderHeroSlides = () =>
     .join('');
 
 export const renderMakeOptions = (selected = '') =>
-  brandsInStock.map((m) => `<option value="${esc(m)}"${m === selected ? ' selected' : ''}>${esc(m)}</option>`).join('');
+  searchBrands.map((m) => `<option value="${esc(m)}"${m === selected ? ' selected' : ''}>${esc(m)}</option>`).join('');
 
 export const renderModelOptions = (make, selected = '') =>
   '<option value="">Todos los modelos</option>' +
-  [...(modelsByBrand[make] || [])].sort().map((m) => `<option value="${esc(m)}"${m === selected ? ' selected' : ''}>${esc(m)}</option>`).join('');
+  (Object.hasOwn(SEARCH_MAKES, make ?? '') ? SEARCH_MAKES[make] : []).map((m) => `<option value="${esc(m)}"${m === selected ? ' selected' : ''}>${esc(m)}</option>`).join('');
 
 export const renderBodyTypes = () =>
   bodyTypes

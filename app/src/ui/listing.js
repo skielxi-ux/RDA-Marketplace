@@ -1,7 +1,8 @@
 // Listado de autos: filtros, orden y estado en la URL (?condicion=0km&marca=Ford...).
 import { $, $$ } from './dom.js';
 import { initCards } from './cards.js';
-import { cars, sellers, modelsByBrand } from '../data/catalog.js';
+import { cars, sellers } from '../data/catalog.js';
+import { isSearchBrand, isSearchModel } from '../data/modelos.js';
 import { renderCarGrid } from '../render/carCard.js';
 import { renderModelOptions } from '../render/sections.js';
 import { SORT_OPTIONS } from '../render/listing.js';
@@ -17,7 +18,7 @@ function readState() {
   const list = (k) => q.getAll(k).flatMap((v) => v.split(',')).map((v) => v.trim()).filter(Boolean);
   const state = {
     condicion: Object.hasOwn(CONDITIONS, q.get('condicion') ?? '') ? q.get('condicion') : 'todos',
-    marca: Object.hasOwn(modelsByBrand, q.get('marca') ?? '') ? q.get('marca') : '',
+    marca: isSearchBrand(q.get('marca')) ? q.get('marca') : '',
     modelo: q.get('modelo') || '',
     anio: num(q.get('anio')),
     moneda: ['ARS', 'USD'].includes(q.get('moneda')) ? q.get('moneda') : '',
@@ -34,7 +35,7 @@ function readState() {
     const [a, b] = precio.split('-');
     Object.assign(state, { moneda: 'USD', pmin: num(a), pmax: num(b) });
   }
-  if (!state.marca || !modelsByBrand[state.marca].has(state.modelo)) state.modelo = '';
+  if (!isSearchModel(state.marca, state.modelo)) state.modelo = '';
   return state;
 }
 

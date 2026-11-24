@@ -44,6 +44,7 @@ const common = (isBuild) => ({
 // Slots de cada página (la clave es el nombre del archivo)
 const PAGES = {
   'admin.html': () => ({ logo: logoSvg('h-8 w-auto') }),
+  'mi-cuenta.html': () => ({}),
   'index.html': () => ({
     head: renderHeadTags(),
     jsonld: renderJsonLd(featuredTabs[0].cars.concat(featuredTabs[1].cars), 'Autos destacados'),

@@ -5,6 +5,7 @@ import { $, $$, initTabs } from './dom.js';
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { SITE } from '../data/site.js';
+import { renderRanking } from './ranking.js';
 
 const sb = createClient(SITE.supabase.url, SITE.supabase.publishableKey, {
   auth: { persistSession: true, autoRefreshToken: true, storageKey: 'rda-mkt-admin' },
@@ -358,6 +359,7 @@ const LOADERS = {
   particulares: () => loadList('particulares'),
   concesionarios: () => loadList('concesionarios'),
   feria: loadFeria,
+  buscados: () => renderRanking($('#v-buscados'), sb),
   pruebas: loadPruebas,
 };
 let actual = 'resumen';

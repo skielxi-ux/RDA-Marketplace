@@ -1,7 +1,8 @@
 // Plantillas del listado de autos (autos.html): filtros y barra de resultados.
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
-import { bodyTypes, brandsInStock, countBy, sellers, SELLER_TYPES } from '../data/catalog.js';
+import { bodyTypes, countBy, sellers, SELLER_TYPES } from '../data/catalog.js';
+import { searchBrands } from '../data/modelos.js';
 
 export const YEAR_OPTIONS = [2026, 2024, 2022, 2020, 2018, 2015, 2010];
 export const SORT_OPTIONS = [
@@ -41,7 +42,7 @@ export const renderFilters = () => `
   ${group('Marca y modelo', `
     <label for="f-marca" class="sr-only">Marca</label>
     <div class="relative">
-      <select id="f-marca" name="marca" class="filter-select"><option value="">Todas las marcas</option>${brandsInStock.map((b) => `<option value="${esc(b)}">${esc(b)}</option>`).join('')}</select>
+      <select id="f-marca" name="marca" class="filter-select"><option value="">Todas las marcas</option>${searchBrands.map((b) => `<option value="${esc(b)}">${esc(b)}</option>`).join('')}</select>
       ${icon('chevron-down', 'pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2')}
     </div>
     <label for="f-modelo" class="sr-only">Modelo</label>

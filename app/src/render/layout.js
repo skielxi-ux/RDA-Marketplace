@@ -65,7 +65,13 @@ export const renderAccountUi = () => `
       <p class="text-[13px] text-ink/60" data-user-type></p>
       <p class="mt-2 rounded-lg bg-[#FFF6E5] px-2.5 py-1.5 text-[12px] text-[#8A5A00]" data-user-pending hidden>Tu agencia está en revisión.</p>
     </div>
-    <button type="button" role="menuitem" data-logout class="mt-1 flex w-full items-center gap-2.5 rounded-lg px-4 py-2.5 text-left text-[15px] transition-colors hover:bg-soft hover:text-brand">
+    <a href="./mi-cuenta.html" role="menuitem" class="mt-1 flex w-full items-center gap-2.5 rounded-lg px-4 py-2.5 text-left text-[15px] transition-colors hover:bg-soft hover:text-brand">
+      <i data-icon="user" class="h-4 w-4"></i> Mi cuenta
+    </a>
+    <a href="./mi-cuenta.html#buscados" role="menuitem" class="flex w-full items-center gap-2.5 rounded-lg px-4 py-2.5 text-left text-[15px] transition-colors hover:bg-soft hover:text-brand">
+      <i data-icon="search" class="h-4 w-4"></i> +Buscados
+    </a>
+    <button type="button" role="menuitem" data-logout class="flex w-full items-center gap-2.5 rounded-lg px-4 py-2.5 text-left text-[15px] transition-colors hover:bg-soft hover:text-brand">
       <i data-icon="log-out" class="h-4 w-4"></i> Cerrar sesión
     </button>
   </div>

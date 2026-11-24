@@ -223,8 +223,17 @@
   .auth-type:hover .i-chevron-right { translate: 4px 0; @apply text-brand; }
   .auth-type .i-chevron-right { transition: translate .35s ease; }
   .btn-primary:disabled { @apply pointer-events-none; }
+  .mc-action {
+    @apply flex w-full items-center gap-4 rounded-2xl border border-line bg-white p-5 text-left transition-all duration-300 ease-out
+           hover:-translate-y-0.5 hover:border-brand hover:shadow-[0_14px_30px_-12px_rgba(64,95,242,0.45)] active:translate-y-0 active:scale-[0.99];
+  }
+  .mc-action.is-active { @apply border-brand shadow-[0_14px_30px_-12px_rgba(64,95,242,0.45)]; }
+  .mc-action.is-soon { @apply pointer-events-none opacity-55; }
+  .mc-action-icon { @apply grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-[#EEF1FB] text-brand transition-all duration-300; }
+  .mc-action:hover .mc-action-icon, .mc-action.is-active .mc-action-icon { @apply bg-brand text-white; }
   .adm-badge { @apply ml-1.5 inline-grid h-5 min-w-5 place-items-center rounded-full bg-brand px-1.5 text-[12px] font-bold text-white; }
   .adm-bar { @apply block h-full transition-[width] duration-500; }
+  .rk-bar { width: 0; transition: width .7s var(--ease-boxcar); }
   .user-menu { @apply absolute z-[60] w-[260px] rounded-2xl border border-line bg-white p-2 pt-3 shadow-[0_20px_50px_-15px_rgba(5,11,32,0.3)]; }
 
   /* Listado: filtros */

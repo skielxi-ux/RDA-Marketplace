@@ -32,7 +32,7 @@ function cuitOk(c) {
 const pinWeak = (p) => /^(\d)\1{5}$/.test(p) || ['123456', '654321', '012345', '123123', '121212', '112233'].includes(p);
 
 let supabasePromise = null;
-function supa() {
+export function supa() {
   supabasePromise ||= import('@supabase/supabase-js').then(({ createClient }) =>
     createClient(SITE.supabase.url, SITE.supabase.publishableKey, {
       auth: { persistSession: true, autoRefreshToken: true, storageKey: STORAGE_KEY },
@@ -58,6 +58,7 @@ async function callFn(body, accessToken) {
 
 // ---------- Header: botón Ingresar / menú de usuario ----------
 function paintHeader(cuenta) {
+  window.dispatchEvent(new CustomEvent('rda:cuenta', { detail: cuenta }));
   $$('[data-auth-open]').forEach((b) => {
     const label = $('[data-auth-label]', b);
     if (label) label.textContent = cuenta ? `Hola, ${cuenta.nombre.split(' ')[0]}` : 'Ingresar';
@@ -74,6 +75,9 @@ function paintHeader(cuenta) {
     pend.hidden = cuenta.estado !== 'pendiente';
   }
 }
+
+/** Cuenta guardada en este navegador (se confirma con el servidor al cargar). */
+export const cuentaGuardada = () => store.get(PROFILE_KEY);
 
 export function initAuth() {
   const modal = $('#auth');

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--slot:csp-->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Mi cuenta · Red de Autos</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <script type="module" src="/src/mi-cuenta.js"></script>
+</head>
+<body>
+  <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
+  <!--slot:site-header-->
+
+  <main id="contenido" class="min-h-[60vh]">
+    <section class="border-b border-line bg-soft">
+      <div class="container-x py-8 md:py-12">
+        <nav aria-label="Migas de pan" class="text-[14px] text-ink/60">
+          <ol class="flex items-center gap-2"><li><a href="./" class="transition-colors hover:text-brand">Inicio</a></li><li aria-hidden="true">/</li><li aria-current="page" class="text-ink">Mi cuenta</li></ol>
+        </nav>
+        <h1 class="mt-3 text-[30px] font-bold leading-[1.1] sm:text-[38px] md:text-[44px]" data-mc-title>Mi cuenta</h1>
+        <p class="mt-2 text-[16px] text-ink/70" data-mc-sub>Tu espacio en Red de Autos.</p>
+      </div>
+    </section>
+
+    <div class="container-x py-8 md:py-12">
+      <!-- Sin sesión -->
+      <div data-mc-guest hidden class="mx-auto max-w-[520px] rounded-[24px] border border-line bg-white p-8 text-center">
+        <span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-[#EEF1FB] text-brand"><i data-icon="lock" class="h-6 w-6"></i></span>
+        <p class="mt-5 text-[22px] font-bold">Ingresá para ver tu cuenta</p>
+        <p class="mt-2 text-[15px] text-ink/70">Con tu celular y tu PIN de 6 números.</p>
+        <button type="button" class="btn-primary mx-auto mt-6 h-[54px] !px-8" data-auth-open><i data-icon="user" class="h-4 w-4"></i> <span>Ingresar</span></button>
+      </div>
+
+      <!-- Con sesión -->
+      <div data-mc-panel hidden>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <button type="button" class="mc-action group" data-mc-buscados aria-controls="buscados" aria-expanded="false">
+            <span class="mc-action-icon"><i data-icon="search" class="h-6 w-6"></i></span>
+            <span class="text-left"><span class="block text-[19px] font-bold">+Buscados</span><span class="mt-1 block text-[14px] text-ink/70">Los 10 vehículos más buscados del mes y del año.</span></span>
+          </button>
+          <div class="mc-action is-soon" aria-disabled="true">
+            <span class="mc-action-icon"><i data-icon="plus" class="h-6 w-6"></i></span>
+            <span><span class="block text-[19px] font-bold">Publicar vehículo</span><span class="mt-1 block text-[14px] text-ink/70">Próximamente.</span></span>
+          </div>
+          <div class="mc-action is-soon" aria-disabled="true">
+            <span class="mc-action-icon"><i data-icon="car" class="h-6 w-6"></i></span>
+            <span><span class="block text-[19px] font-bold">Mis autos</span><span class="mt-1 block text-[14px] text-ink/70">Próximamente.</span></span>
+          </div>
+        </div>
+        <p class="mt-6 hidden rounded-2xl bg-[#FFF6E5] px-5 py-4 text-[15px] text-[#8A5A00]" data-mc-pending>Tu agencia está en revisión. Cuando la aprobemos vas a poder ver el ranking y publicar tu stock.</p>
+        <section id="buscados" class="mt-10 scroll-mt-28" aria-label="+Buscados" hidden></section>
+      </div>
+    </div>
+  </main>
+
+  <!--slot:footer-->
+  <!--slot:to-top-->
+</body>
+</html>
