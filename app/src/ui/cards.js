@@ -49,9 +49,13 @@ const saveFavs = (set) => {
 export function bindFavorites(root = document) {
   const favs = readFavs();
   $$('.fav-btn', root).forEach((btn) => {
-    const id = btn.closest('.car-card')?.querySelector('.car-link')?.getAttribute('href')?.replace('#auto-', '');
+    const id = btn.dataset.carFav || btn.closest('[data-car-id]')?.dataset.carId;
     if (!id) return;
-    const paint = () => btn.setAttribute('aria-pressed', String(favs.has(id)));
+    const label = btn.querySelector('[data-fav-label]');
+    const paint = () => {
+      btn.setAttribute('aria-pressed', String(favs.has(id)));
+      if (label) label.textContent = favs.has(id) ? 'Guardado' : 'Guardar';
+    };
     paint();
     if (btn.dataset.bound) return;
     btn.dataset.bound = '1';

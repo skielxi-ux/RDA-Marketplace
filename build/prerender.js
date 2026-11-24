@@ -9,6 +9,7 @@ import { renderForDealers, renderSellPrivate, renderStats, renderTestimonials, r
 import { renderSiteHeader, renderToTop } from '../app/src/render/layout.js';
 import { renderFilters, renderSortOptions } from '../app/src/render/listing.js';
 import { cars, featuredTabs } from '../app/src/data/catalog.js';
+import { renderFicha, renderFichaHead, renderFichaJsonLd } from '../app/src/render/ficha.js';
 
 // Content Security Policy: solo se permite lo nuestro + fotos de Unsplash.
 // (En GitHub Pages no se pueden mandar cabeceras, por eso va como <meta>.)
@@ -19,6 +20,7 @@ const CSP = [
   "img-src 'self' data: https://images.unsplash.com",
   "font-src 'self' data:",
   "connect-src 'self'",
+  'frame-src https://www.openstreetmap.org',
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -78,7 +80,11 @@ export function prerenderHome() {
       order: 'pre',
       handler(html, ctx) {
         const file = (ctx.filename || ctx.path || '').split(/[\\/]/).pop() || 'index.html';
-        const page = PAGES[file];
+        const carId = file.match(/^auto-(.+)\.html$/)?.[1];
+        const car = carId && cars.find((c) => c.id === carId);
+        const page = car
+          ? () => ({ head: renderFichaHead(car), jsonld: renderFichaJsonLd(car), ficha: renderFicha(car) })
+          : PAGES[file];
         if (!page) throw new Error(`Página sin slots definidos: ${file}`);
         const slots = { ...common(isBuild), ...page() };
         return html

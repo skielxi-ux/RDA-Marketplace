@@ -6,6 +6,7 @@ import {
   Sparkle, BadgeCheck, Building2, Check, Quote, Camera, ClipboardCheck, MessageCircle, Plus,
   Store, FileSpreadsheet, Images, Bot, ArrowRight,
   CircleCheck, Tag, Heart, MapPin, SlidersHorizontal, ArrowUpDown, RotateCcw,
+  Car, DoorOpen, Settings2, Palette, Share2,
 } from 'lucide';
 
 const NODES = {
@@ -19,6 +20,7 @@ const NODES = {
   images: Images, bot: Bot, 'arrow-right': ArrowRight,
   'circle-check': CircleCheck, tag: Tag, heart: Heart, 'map-pin': MapPin,
   'sliders-horizontal': SlidersHorizontal, 'arrow-up-down': ArrowUpDown, 'rotate-ccw': RotateCcw,
+  car: Car, 'door-open': DoorOpen, 'settings-2': Settings2, palette: Palette, 'share-2': Share2,
 };
 
 const attrs = (o) => Object.entries(o).map(([k, v]) => `${k}="${v}"`).join(' ');

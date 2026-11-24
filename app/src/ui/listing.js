@@ -16,8 +16,8 @@ function readState() {
   const q = new URLSearchParams(location.search);
   const list = (k) => q.getAll(k).flatMap((v) => v.split(',')).map((v) => v.trim()).filter(Boolean);
   const state = {
-    condicion: q.get('condicion') in CONDITIONS ? q.get('condicion') : 'todos',
-    marca: q.get('marca') && modelsByBrand[q.get('marca')] ? q.get('marca') : '',
+    condicion: Object.hasOwn(CONDITIONS, q.get('condicion') ?? '') ? q.get('condicion') : 'todos',
+    marca: Object.hasOwn(modelsByBrand, q.get('marca') ?? '') ? q.get('marca') : '',
     modelo: q.get('modelo') || '',
     anio: num(q.get('anio')),
     moneda: ['ARS', 'USD'].includes(q.get('moneda')) ? q.get('moneda') : '',
@@ -26,6 +26,7 @@ function readState() {
     carroceria: list('carroceria'),
     vendedor: list('vendedor'),
     orden: SORTS.has(q.get('orden')) ? q.get('orden') : 'recientes',
+    agencia: Object.hasOwn(sellers, q.get('agencia') ?? '') ? q.get('agencia') : '',
   };
   // Rango de precio que viene del buscador de la home (en dólares): ?precio=15000-30000
   const precio = q.get('precio');
@@ -45,6 +46,7 @@ function writeUrl(state) {
   if (state.carroceria.length) q.set('carroceria', state.carroceria.join(','));
   if (state.vendedor.length) q.set('vendedor', state.vendedor.join(','));
   if (state.orden !== 'recientes') q.set('orden', state.orden);
+  if (state.agencia) q.set('agencia', state.agencia);
   const qs = q.toString();
   history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
 }
@@ -60,7 +62,8 @@ function filterCars(s) {
     (!s.moneda || s.pmin == null || c.price >= s.pmin) &&
     (!s.moneda || s.pmax == null || c.price <= s.pmax) &&
     (!s.carroceria.length || s.carroceria.includes(c.body)) &&
-    (!s.vendedor.length || s.vendedor.includes(sellers[c.seller].type)),
+    (!s.vendedor.length || s.vendedor.includes(sellers[c.seller].type)) &&
+    (!s.agencia || c.seller === s.agencia),
   );
 }
 
@@ -76,7 +79,7 @@ const SORTERS = {
 
 const activeCount = (s) =>
   (s.condicion !== 'todos') + !!s.marca + !!s.modelo + (s.anio != null) + !!s.moneda +
-  (s.pmin != null) + (s.pmax != null) + s.carroceria.length + s.vendedor.length;
+  (s.pmin != null) + (s.pmax != null) + s.carroceria.length + s.vendedor.length + !!s.agencia;
 
 export function initListing() {
   const form = $('#filters');
@@ -111,7 +114,7 @@ export function initListing() {
     $$('[data-count], [data-count-short]').forEach((el) => { el.textContent = String(list.length); });
     priceRange.hidden = !state.moneda;
     priceHint.hidden = !!state.moneda;
-    const title = TITLES[state.condicion] + (state.marca ? ` ${state.marca}` : '');
+    const title = state.agencia ? `Autos de ${sellers[state.agencia].name}` : TITLES[state.condicion] + (state.marca ? ` ${state.marca}` : '');
     $('#listing-title').textContent = title;
     document.title = `${title} | Red de Autos`;
     const n = activeCount(state);
@@ -126,7 +129,7 @@ export function initListing() {
     const marca = fd.get('marca') || '';
     state = {
       ...state,
-      condicion: fd.get('condicion') in CONDITIONS ? fd.get('condicion') : 'todos',
+      condicion: Object.hasOwn(CONDITIONS, fd.get('condicion') ?? '') ? fd.get('condicion') : 'todos',
       marca,
       modelo: marca && marca === state.marca ? fd.get('modelo') || '' : '',
       anio: num(fd.get('anio')),
@@ -150,7 +153,7 @@ export function initListing() {
   });
   form.addEventListener('submit', (e) => e.preventDefault());
   const reset = () => {
-    state = { ...readState(), condicion: 'todos', marca: '', modelo: '', anio: null, moneda: '', pmin: null, pmax: null, carroceria: [], vendedor: [], orden: state.orden };
+    state = { ...readState(), condicion: 'todos', marca: '', modelo: '', anio: null, moneda: '', pmin: null, pmax: null, carroceria: [], vendedor: [], agencia: '', orden: state.orden };
     update();
   };
   form.addEventListener('reset', (e) => { e.preventDefault(); reset(); });

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'node:path';
+import { readdirSync } from 'node:fs';
 import tailwindcss from '@tailwindcss/vite';
 import { prerenderHome } from './build/prerender.js';
 
@@ -14,7 +15,12 @@ export default defineConfig({
     emptyOutDir: false,
     assetsDir: 'assets',
     rollupOptions: {
-      input: { index: resolve(import.meta.dirname, 'app/index.html'), autos: resolve(import.meta.dirname, 'app/autos.html') },
+      // home + listado + una ficha por auto (generadas por build/generate-pages.mjs)
+      input: Object.fromEntries(
+        readdirSync(resolve(import.meta.dirname, 'app'))
+          .filter((f) => f.endsWith('.html'))
+          .map((f) => [f.replace('.html', ''), resolve(import.meta.dirname, 'app', f)]),
+      ),
     },
   },
 });

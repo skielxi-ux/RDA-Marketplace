@@ -1,7 +1,7 @@
 // Tarjeta de auto (una sola para todo el sitio: destacados de la home y listado).
 import { esc, formatPrice, formatKm } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
-import { unsplash, srcset, sellers, SELLER_TYPES, carTitle } from '../data/catalog.js';
+import { unsplash, srcset, sellers, SELLER_TYPES, carTitle, carUrl } from '../data/catalog.js';
 
 export { carTitle };
 
@@ -38,10 +38,10 @@ export function renderCarCard(c, { lazy = true, slide = false } = {}) {
   const seller = sellers[c.seller];
   const badge = c.badge ? BADGES[c.badge] : null;
   const shots = c.gallery.map((g) => unsplash(g.id, 900, 675, g.crop));
-  const url = `#auto-${c.id}`;
+  const url = carUrl(c);
 
   const card = `
-  <article class="car-card group">
+  <article class="car-card group" data-car-id="${esc(c.id)}">
     <div class="car-media" data-gallery="${esc(JSON.stringify(shots))}">
       <img class="car-img h-full w-full object-cover"
         src="${esc(shots[0])}"
@@ -66,7 +66,8 @@ export function renderCarCard(c, { lazy = true, slide = false } = {}) {
         <span class="inline-flex items-center gap-1.5">${icon('fuel', 'h-4 w-4')}<span class="sr-only">Combustible: </span>${esc(c.fuel)}</span>
         <span class="inline-flex items-center gap-1.5">${icon('cog', 'h-4 w-4')}<span class="sr-only">Caja: </span>${esc(c.gear)}</span>
       </p>
-      <p class="mb-4 mt-2 flex items-center gap-1.5 text-[15px]">${icon('map-pin', 'h-4 w-4 shrink-0 text-ink/70')} ${esc(c.city)}, ${esc(c.province)}</p>
+      <p class="mt-2 flex items-center gap-1.5 text-[15px]">${icon('map-pin', 'h-4 w-4 shrink-0 text-ink/70')} ${esc(c.city)}, ${esc(c.province)}</p>
+      <a href="${esc(url)}" class="btn-outline relative z-[2] mb-5 mt-4 h-[46px] justify-center" aria-label="Ver más sobre ${esc(title)}">Ver más ${icon('arrow-right', 'h-4 w-4')}</a>
       ${renderSeller(seller)}
     </div>
   </article>`;

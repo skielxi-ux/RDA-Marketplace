@@ -9,7 +9,13 @@ export const srcset = (id, ratio, widths, extra = '') =>
   widths.map((w) => `${unsplash(id, w, Math.round(w / ratio), extra)} ${w}w`).join(', ');
 
 // Recortes de detalle para la galería hasta tener 3+ fotos reales por auto.
-const DETAIL_CROPS = ['', '&crop=focalpoint&fp-x=.3&fp-y=.55&fp-z=1.7', '&crop=focalpoint&fp-x=.72&fp-y=.5&fp-z=1.7'];
+const DETAIL_CROPS = [
+  '',
+  '&crop=focalpoint&fp-x=.3&fp-y=.55&fp-z=1.7',
+  '&crop=focalpoint&fp-x=.72&fp-y=.5&fp-z=1.7',
+  '&crop=focalpoint&fp-x=.5&fp-y=.62&fp-z=2.2',
+  '&crop=focalpoint&fp-x=.2&fp-y=.45&fp-z=1.4',
+];
 const gallery = (id) => DETAIL_CROPS.map((crop) => ({ id, crop }));
 
 export const heroSlides = [
@@ -35,13 +41,43 @@ export const reasons = [
 
 // ---------- Vendedores (ficticios, de ejemplo) ----------
 // type: 'oficial' (concesionario oficial) | 'multimarca' (agencia) | 'particular'
+// phone: número de WhatsApp en formato internacional sin "+" (ej. 5493815551234).
+// En los vendedores de ejemplo va vacío: el botón de WhatsApp abre WhatsApp para elegir contacto
+// y no se muestra "Llamar" (así nunca escribimos a un número real por error).
 export const sellers = {
-  'jardin-automotores': { name: 'Jardín Automotores', type: 'oficial' },
-  'sol-motors': { name: 'Sol Motors', type: 'oficial' },
-  'ruta9-autos': { name: 'Ruta 9 Autos', type: 'multimarca' },
-  'garage-38': { name: 'Garage 38', type: 'multimarca' },
-  'juan-pablo-m': { name: 'Juan Pablo M.', type: 'particular' },
-  'carolina-r': { name: 'Carolina R.', type: 'particular' },
+  'jardin-automotores': { name: 'Jardín Automotores', type: 'oficial', phone: '' },
+  'sol-motors': { name: 'Sol Motors', type: 'oficial', phone: '' },
+  'ruta9-autos': { name: 'Ruta 9 Autos', type: 'multimarca', phone: '' },
+  'garage-38': { name: 'Garage 38', type: 'multimarca', phone: '' },
+  'juan-pablo-m': { name: 'Juan Pablo M.', type: 'particular', phone: '' },
+  'carolina-r': { name: 'Carolina R.', type: 'particular', phone: '' },
+};
+
+// Centro aproximado de cada ciudad: el mapa muestra la ZONA, nunca la dirección exacta.
+export const CITY_COORDS = {
+  'San Miguel de Tucumán': [-26.8083, -65.2176],
+  'Yerba Buena': [-26.8167, -65.3167],
+  'Córdoba': [-31.4201, -64.1888],
+  'CABA': [-34.6037, -58.3816],
+  'Rosario': [-32.9442, -60.6505],
+  'Mendoza': [-32.8895, -68.8458],
+  'Salta': [-24.7821, -65.4232],
+};
+
+// Equipamiento de ejemplo por nivel (en la base real lo carga cada vendedor).
+const FEATURES = {
+  base: {
+    Confort: ['Aire acondicionado', 'Dirección asistida', 'Levantavidrios eléctricos', 'Cierre centralizado'],
+    Seguridad: ['ABS', 'Airbags frontales', 'Control de estabilidad', 'Anclajes ISOFIX'],
+    Multimedia: ['Bluetooth', 'Pantalla táctil', 'Apple CarPlay', 'Android Auto'],
+    Exterior: ['Llantas de aleación', 'Faros antiniebla'],
+  },
+  full: {
+    Confort: ['Climatizador bizona', 'Tapizado de cuero', 'Asientos eléctricos', 'Techo solar', 'Arranque sin llave'],
+    Seguridad: ['ABS', '6+ airbags', 'Control de estabilidad', 'Asistente de frenado', 'Cámara de retroceso', 'Sensores de estacionamiento'],
+    Multimedia: ['Bluetooth', 'Pantalla táctil', 'Apple CarPlay', 'Android Auto', 'Cargador inalámbrico'],
+    Exterior: ['Llantas de aleación', 'Faros LED', 'Sensor de lluvia', 'Espejos rebatibles eléctricos'],
+  },
 };
 
 export const SELLER_TYPES = {
@@ -53,7 +89,30 @@ export const SELLER_TYPES = {
 // ---------- Autos (ejemplo) ----------
 // condition: 'new' | 'used' · currency: 'ARS' | 'USD' (la que cargó el vendedor)
 // badge: 'nuevo' | 'pocos-km' | 'mejor-precio' | 'oferta' | null · body: slug de bodyTypeList
-const car = (o) => ({ ...o, gallery: gallery(o.photo) });
+const EXTRAS = {
+  'toyota-corolla-xei-2026': { engine: '2.0', doors: 4, color: 'Blanco perlado', drive: 'Delantera', features: 'full', dims: { Largo: '4.630 mm', Ancho: '1.780 mm', Alto: '1.435 mm', 'Distancia entre ejes': '2.700 mm', 'Baúl': '470 L', 'Tanque': '50 L', Asientos: '5' } },
+  'volkswagen-polo-track-2026': { engine: '1.6', doors: 5, color: 'Azul', drive: 'Delantera', features: 'base', dims: { Largo: '4.070 mm', Ancho: '1.750 mm', Alto: '1.470 mm', 'Distancia entre ejes': '2.570 mm', 'Baúl': '300 L', 'Tanque': '52 L', Asientos: '5' } },
+  'audi-a7-sportback-2026': { engine: '2.0 TFSI', doors: 5, color: 'Gris', drive: 'Integral (quattro)', features: 'full', dims: { Largo: '4.970 mm', Ancho: '1.910 mm', Alto: '1.420 mm', 'Distancia entre ejes': '2.930 mm', 'Baúl': '535 L', 'Tanque': '63 L', Asientos: '5' } },
+  'range-rover-sport-p400-2026': { engine: '3.0 híbrido', doors: 5, color: 'Negro', drive: 'Integral', features: 'full', dims: { Largo: '4.950 mm', Ancho: '2.050 mm', Alto: '1.820 mm', 'Distancia entre ejes': '3.000 mm', 'Baúl': '650 L', 'Tanque': '80 L', Asientos: '5' } },
+  'porsche-718-boxster-2026': { engine: '2.0 turbo', doors: 2, color: 'Amarillo', drive: 'Trasera', features: 'full' },
+  'mercedes-amg-gt-63-2026': { engine: '4.0 V8 biturbo', doors: 2, color: 'Amarillo', drive: 'Integral', features: 'full' },
+  'ford-mustang-gt-2019': { engine: '5.0 V8', doors: 2, color: 'Negro', drive: 'Trasera', features: 'full' },
+  'chevrolet-camaro-ss-2018': { engine: '6.2 V8', doors: 2, color: 'Azul', drive: 'Trasera', features: 'full' },
+  'fiat-500-lounge-2016': { engine: '1.4', doors: 3, color: 'Celeste', drive: 'Delantera', features: 'base' },
+  'bmw-m4-competition-2021': { engine: '3.0 turbo', doors: 2, color: 'Gris', drive: 'Trasera', features: 'full' },
+  'audi-a6-45-tfsi-2020': { engine: '2.0 TFSI', doors: 4, color: 'Negro', drive: 'Delantera', features: 'full' },
+  'ford-explorer-limited-2019': { engine: '3.5 V6', doors: 5, color: 'Blanco', drive: 'Integral 4x4', features: 'full' },
+  'bmw-320i-2019': { engine: '2.0 turbo', doors: 4, color: 'Blanco', drive: 'Trasera', features: 'base' },
+  'bmw-m240i-2018': { engine: '3.0 turbo', doors: 2, color: 'Azul', drive: 'Trasera', features: 'full' },
+};
+
+const car = (o) => {
+  const x = EXTRAS[o.id] ?? {};
+  return { reviews: [], dims: null, ...o, ...x, features: FEATURES[x.features ?? 'base'], gallery: gallery(o.photo), coords: CITY_COORDS[o.city] ?? null };
+};
+
+/** Nombre del archivo de la ficha de cada auto (todas en la raíz del sitio). */
+export const carUrl = (c) => `./auto-${c.id}.html`;
 
 export const cars = [
   car({ id: 'toyota-corolla-xei-2026', brand: 'Toyota', model: 'Corolla', version: 'XEi 2.0 CVT', year: 2026, km: 0, condition: 'new', fuel: 'Nafta', gear: 'Automática', body: 'sedan', price: 41500000, currency: 'ARS', desc: 'Entrega en 30 días. Versión híbrida disponible, garantía oficial de 3 años.', city: 'San Miguel de Tucumán', province: 'Tucumán', seller: 'jardin-automotores', badge: 'nuevo', published: 20, photo: 'photo-1619682817481-e994891cd1f5' }),
