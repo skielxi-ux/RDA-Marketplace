@@ -265,7 +265,7 @@ export function initAuth() {
       loginForm.reset();
       $('[data-listo-title]', modal).textContent = `¡Hola, ${cuenta.nombre.split(' ')[0]}!`;
       $('[data-listo-text]', modal).textContent = cuenta.estado === 'pendiente'
-        ? 'Ingresaste. Tu agencia todavía está en revisión: te avisamos por WhatsApp cuando esté aprobada.'
+        ? 'Ingresaste. Tu agencia todavía está en revisión: la habilitamos apenas verifiquemos los datos.'
         : 'Ingresaste a tu cuenta.';
       show('listo');
     } catch (err) {
@@ -310,7 +310,7 @@ export function initAuth() {
       regForm.reset();
       $('[data-listo-title]', modal).textContent = isAg ? '¡Recibimos tu agencia!' : `¡Bienvenido, ${cuenta.nombre.split(' ')[0]}!`;
       $('[data-listo-text]', modal).textContent = isAg
-        ? 'Tu cuenta quedó creada y en revisión. Te avisamos por WhatsApp cuando esté aprobada para publicar tu stock.'
+        ? 'Tu cuenta quedó creada. Revisamos los datos de la agencia antes de habilitar la publicación de tu stock.'
         : 'Tu cuenta quedó creada. Ya podés publicar tu auto o moto.';
       show('listo');
     } catch (err) {
