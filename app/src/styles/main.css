@@ -154,7 +154,7 @@
   .car-card:hover .gallery-dots { @apply opacity-100; }
   .gallery-dots span { @apply h-[3px] w-5 rounded-full bg-white/50 shadow-sm transition-colors duration-200; }
   .gallery-dots span.is-on { @apply bg-white; }
-  #featured { transition: opacity .25s ease; }
+  #featured { transition: opacity .25s ease; padding: 8px 2px 28px; margin: -8px -2px -28px; } /* espacio para la elevación y la sombra al pasar el mouse */
   #featured.is-switching { opacity: 0; }
 
   /* Listado: filtros */

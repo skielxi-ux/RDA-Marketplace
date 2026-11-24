@@ -9,15 +9,16 @@ Vite · Tailwind CSS 4 · Swiper · íconos Lucide (SVG en línea) · DM Sans (l
 ## Estructura
 ```
 app/                 código fuente (raíz de Vite)
-  index.html         plantilla con <!--slot:...--> e <i data-icon> (se completan en el build)
+  index.html         home (plantilla con <!--slot:...--> e <i data-icon>, se completan en el build)
+  autos.html         listado de autos con filtros (?condicion=0km&marca=Ford&carroceria=suv&vendedor=particular&moneda=USD&pmin=&pmax=&anio=&orden=)
   public/            favicon, manifest, robots.txt, sitemap.xml
   src/
     data/            site.js (datos del sitio y SEO) · catalog.js (catálogo de ejemplo)
     lib/             html.js (esc, formatos) · icons.js (SVG de Lucide)
-    render/          plantillas HTML puras: secciones, tarjeta de auto, SEO/JSON-LD
+    render/          plantillas HTML puras: layout (header/menú), secciones, tarjeta de auto, listado, SEO/JSON-LD
     ui/              comportamiento en el navegador (header, menú, hero, buscador, sliders)
     styles/main.css  tokens de diseño y componentes
-    main.js          punto de entrada
+    main.js          punto de entrada de la home · autos.js: del listado
 build/prerender.js   plugin de Vite: arma el HTML en el build, íconos y CSP
 ```
 El build escribe el sitio compilado en la raíz del repo (index.html + assets/), que es lo que publica GitHub Pages (main / root).
