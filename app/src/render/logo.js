@@ -7,8 +7,8 @@ export const LOGO_COLORS = { r: '#005FFB', text: '#2E3440' };
 
 /** SVG del logo completo. `cls` define el tamaño (por ejemplo h-9 w-auto). `text` cambia el color del texto (fondo oscuro → blanco). */
 export const logoSvg = (cls = 'h-9 w-auto', { text = LOGO_COLORS.text } = {}) =>
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 90 2105 520" class="${cls}" role="img" aria-label="Red de Autos"><path fill="${LOGO_COLORS.r}" d="${R_PATH}"/><path fill="${text}" d="${TEXT_PATH}"/></svg>`;
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 90 2105 520" class="${cls}" role="img" aria-label="Red de Autos"><path fill="${LOGO_COLORS.r}" fill-rule="evenodd" d="${R_PATH}"/><path fill="${text}" fill-rule="evenodd" d="${TEXT_PATH}"/></svg>`;
 
 /** Solo la R (favicon, avatar). */
 export const logoMarkSvg = () =>
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 85 700 525"><path fill="${LOGO_COLORS.r}" d="${R_PATH}"/></svg>`;
+  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="40 85 700 525"><path fill="${LOGO_COLORS.r}" fill-rule="evenodd" d="${R_PATH}"/></svg>`;
