@@ -185,9 +185,9 @@ const renderDims = (c) => !c.dims ? '' : `
 
 function renderMap(c) {
   if (!c.coords) return '';
-  const [lat, lng] = c.coords;
-  const bbox = [lng - 0.06, lat - 0.035, lng + 0.06, lat + 0.035].map((n) => n.toFixed(4)).join(',');
-  const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat},${lng}`;
+  const [lat, lng, zona = 1] = c.coords; // zona > 1: no conocemos la ciudad, se muestra la provincia
+  const bbox = [lng - 0.06 * zona, lat - 0.035 * zona, lng + 0.06 * zona, lat + 0.035 * zona].map((n) => n.toFixed(4)).join(',');
+  const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik${zona > 1 ? '' : `&marker=${lat},${lng}`}`;
   const dir = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
   return `
   <section aria-labelledby="map-title" class="ficha-section">

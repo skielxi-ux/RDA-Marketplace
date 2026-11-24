@@ -104,10 +104,12 @@ export function initFicha() {
 
   // Mapa: no captura la rueda del mouse hasta que se lo toca (así no frena el scroll de la página)
   const map = $('[data-map]');
-  $('[data-map-unlock]', map)?.addEventListener('click', (e) => {
-    $('iframe', map).classList.remove('pointer-events-none');
-    e.currentTarget.remove();
-  });
+  if (map) {
+    $('[data-map-unlock]', map)?.addEventListener('click', (e) => {
+      $('iframe', map).classList.remove('pointer-events-none');
+      e.currentTarget.remove();
+    });
+  }
   initShare(data.title);
   bindFavorites(document);
 

@@ -1,7 +1,7 @@
 // Autos cargados por las agencias (Supabase). Se leen con funciones públicas de solo lectura
 // y se convierten al mismo formato que los autos de ejemplo, así usan las mismas tarjetas y fichas.
 import { SITE } from './site.js';
-import { CITY_COORDS } from './catalog.js';
+import { coordsFor } from './ubicaciones.js';
 import { fotoUrl } from '../lib/fotos.js';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -30,7 +30,7 @@ export function fromDb(r) {
     badge: r.condicion === '0km' ? 'nuevo' : null,
     published: new Date(r.publicado_at).getTime() || 0,
     features: null, dims: null, reviews: [],
-    coords: CITY_COORDS[r.ciudad] ?? null,
+    coords: coordsFor(r.ciudad, r.provincia),
   };
 }
 
