@@ -3,169 +3,172 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Red de Autos · 0km y usados de agencias y concesionarios oficiales</title>
-  <meta name="description" content="Marketplace de autos 0km y usados de agencias multimarca y concesionarios oficiales de todo el país." />
+  <!--slot:csp-->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <!--slot:head-->
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="./site.webmanifest" />
   <link rel="preconnect" href="https://images.unsplash.com" />
+  <!--slot:jsonld-->
   <script type="module" src="/src/main.js"></script>
 </head>
 <body>
+  <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
 
-  <!-- ===== HEADER ===== -->
-  <div id="header-spacer" class="h-[86px]"></div>
+  <!-- ================= HEADER ================= -->
+  <div class="h-[72px] sm:h-[86px]" aria-hidden="true"></div>
   <header id="site-header" class="site-header absolute inset-x-0 top-0 z-40 border-b border-line bg-white">
-    <div class="container-x flex h-[86px] items-center justify-between">
+    <div class="container-x flex h-[72px] items-center justify-between gap-3 sm:h-[86px]">
       <div class="flex flex-1 items-center gap-8">
-        <button id="menu-open" class="group flex items-center gap-2.5 font-medium transition-colors duration-300 hover:text-brand" aria-label="Abrir menú">
-          <span class="flex flex-col gap-[5px]">
+        <button id="menu-open" type="button" class="group flex items-center gap-2.5 font-medium transition-colors duration-300 hover:text-brand"
+          aria-label="Abrir menú" aria-controls="drawer" aria-expanded="false">
+          <span class="flex flex-col gap-[5px]" aria-hidden="true">
             <span class="block h-[1.5px] w-5 bg-current"></span>
             <span class="block h-[1.5px] w-3.5 bg-current transition-all duration-300 group-hover:w-5"></span>
           </span>
           <span class="hidden sm:inline">Menú</span>
         </button>
         <a href="tel:+543810000000" class="hidden items-center gap-2 font-medium transition-colors duration-300 hover:text-brand md:flex">
-          <i data-lucide="phone" class="h-4 w-4"></i> 381 000-0000
+          <i data-icon="phone" class="h-4 w-4"></i> 381 000-0000
         </a>
       </div>
 
-      <a href="#" class="flex items-center gap-2" aria-label="Red de Autos, inicio">
-        <span class="grid h-8 w-8 place-items-center rounded-lg bg-[#E11D2E] text-[19px] font-black italic leading-none text-white sm:h-9 sm:w-9 sm:text-[22px]">R</span>
+      <a href="./" class="flex shrink-0 items-center gap-2" aria-label="Red de Autos, ir al inicio">
+        <span class="grid h-8 w-8 place-items-center rounded-lg bg-[#E11D2E] text-[19px] font-black italic leading-none text-white sm:h-9 sm:w-9 sm:text-[22px]" aria-hidden="true">R</span>
         <span class="whitespace-nowrap text-[16px] font-black italic tracking-tight sm:text-[21px]">RED DE AUTOS</span>
       </a>
 
       <div class="flex flex-1 items-center justify-end gap-3 sm:gap-6">
-        <a href="#" class="hidden items-center gap-2 font-medium transition-colors duration-300 hover:text-brand sm:flex">
-          <i data-lucide="user" class="h-4 w-4"></i> Ingresar
+        <a href="#ingresar" class="hidden items-center gap-2 font-medium transition-colors duration-300 hover:text-brand sm:flex">
+          <i data-icon="user" class="h-4 w-4"></i> Ingresar
         </a>
-        <a href="#" class="btn-outline max-sm:px-3.5 max-sm:py-[7px] max-sm:text-[14px]">
-          <span class="hidden sm:inline">Publicar auto</span><span class="sm:hidden">Publicar</span>
+        <a href="#publicar" class="btn-outline max-sm:px-3.5 max-sm:py-[7px] max-sm:text-[14px]">
+          Publicar<span class="hidden sm:inline">&nbsp;auto</span>
         </a>
       </div>
     </div>
   </header>
 
-  <!-- ===== MENÚ LATERAL ===== -->
-  <div id="drawer-backdrop" class="drawer-backdrop invisible fixed inset-0 z-50 bg-ink/50 opacity-0"></div>
-  <aside id="drawer" class="drawer fixed inset-y-0 left-0 z-50 flex w-[380px] max-w-[88vw] -translate-x-full flex-col bg-white p-8" aria-hidden="true">
+  <!-- ================= MENÚ LATERAL ================= -->
+  <div id="drawer-backdrop" class="drawer-backdrop fixed inset-0 z-50 bg-ink/50"></div>
+  <aside id="drawer" class="drawer fixed inset-y-0 left-0 z-50 flex w-[380px] max-w-[88vw] flex-col overflow-y-auto bg-white p-6 sm:p-8" aria-label="Menú principal">
     <div class="mb-8 flex items-center justify-between">
-      <span class="text-[20px] font-medium">Menú principal</span>
-      <button id="menu-close" class="round-nav" aria-label="Cerrar menú"><i data-lucide="x" class="h-4 w-4"></i></button>
+      <p class="text-[20px] font-medium">Menú principal</p>
+      <button id="menu-close" type="button" class="round-nav" aria-label="Cerrar menú"><i data-icon="x" class="h-4 w-4"></i></button>
     </div>
-    <nav class="flex flex-col">
-      <a href="#" class="menu-link">Inicio</a>
-      <a href="#destacados" class="menu-link">Autos 0km <i data-lucide="chevron-right" class="h-4 w-4"></i></a>
-      <a href="#destacados" class="menu-link">Autos usados <i data-lucide="chevron-right" class="h-4 w-4"></i></a>
-      <a href="#" class="menu-link">Concesionarios oficiales</a>
-      <a href="#" class="menu-link">Agencias multimarca</a>
-      <a href="#" class="menu-link">Vendé tu auto</a>
-      <a href="#" class="menu-link">Contacto</a>
+    <nav aria-label="Principal" class="flex flex-col">
+      <a href="./" class="menu-link">Inicio</a>
+      <a href="#destacados" class="menu-link">Autos 0km <i data-icon="chevron-right" class="h-4 w-4"></i></a>
+      <a href="#destacados" class="menu-link">Autos usados <i data-icon="chevron-right" class="h-4 w-4"></i></a>
+      <a href="#concesionarios" class="menu-link">Concesionarios oficiales</a>
+      <a href="#agencias" class="menu-link">Agencias multimarca</a>
+      <a href="#vender" class="menu-link">Vendé tu auto</a>
+      <a href="#contacto" class="menu-link">Contacto</a>
     </nav>
     <div class="mt-auto space-y-3 pt-8">
-      <a href="#" class="btn-primary h-[55px] w-full">Sumá tu agencia</a>
-      <a href="#" class="btn-outline h-[55px] w-full justify-center">Ingresar</a>
+      <a href="#sumate" class="btn-primary h-[55px] w-full">Sumá tu agencia</a>
+      <a href="#ingresar" class="btn-outline h-[55px] w-full justify-center">Ingresar</a>
     </div>
   </aside>
 
-  <main>
-    <!-- ===== HERO + BUSCADOR ===== -->
-    <section class="relative pt-[30px]">
-      <div class="container-x">
-        <div class="relative overflow-hidden rounded-2xl">
-          <div id="hero" class="swiper h-[480px] md:h-[560px]">
-            <div class="swiper-wrapper" id="hero-wrapper"></div>
-          </div>
-          <button class="hero-nav hero-prev left-[30px] max-md:!hidden" aria-label="Anterior"><i data-lucide="chevron-left" class="h-4 w-4"></i></button>
-          <button class="hero-nav hero-next right-[30px] max-md:!hidden" aria-label="Siguiente"><i data-lucide="chevron-right" class="h-4 w-4"></i></button>
+  <main id="contenido">
+    <!-- ================= HERO (todo el ancho) + BUSCADOR ================= -->
+    <section aria-labelledby="hero-title" class="relative">
+      <div class="relative">
+        <div id="hero" class="swiper h-[460px] sm:h-[520px] md:h-[620px]" aria-roledescription="carrusel" aria-label="Fotos destacadas">
+          <div class="swiper-wrapper"><!--slot:hero--></div>
         </div>
+        <div class="pointer-events-none absolute inset-x-0 top-[84px] z-10 px-6 text-center md:top-[140px]">
+          <h1 id="hero-title" class="text-[14px] text-white sm:text-[15px]">Autos 0km y usados de agencias y concesionarios oficiales</h1>
+        </div>
+        <button type="button" class="hero-nav hero-prev left-4 lg:left-[30px]" aria-label="Foto anterior"><i data-icon="chevron-left" class="h-4 w-4"></i></button>
+        <button type="button" class="hero-nav hero-next right-4 lg:right-[30px]" aria-label="Foto siguiente"><i data-icon="chevron-right" class="h-4 w-4"></i></button>
+      </div>
 
-        <!-- Buscador -->
+      <div class="container-x">
         <div class="relative z-20 mx-auto -mt-[74px] max-w-[1160px]">
-          <div class="flex gap-7 rounded-t-2xl bg-white/20 px-6 pt-4 text-white backdrop-blur-md md:px-[42px]" role="tablist" id="search-tabs">
-            <button class="tab-btn is-active" data-cond="todos">Todos</button>
-            <button class="tab-btn opacity-80 hover:opacity-100" data-cond="0km">0km</button>
-            <button class="tab-btn opacity-80 hover:opacity-100" data-cond="usados">Usados</button>
+          <div id="search-tabs" class="tabs-light flex gap-7 rounded-t-2xl bg-white/20 px-6 pt-4 backdrop-blur-md md:px-[42px]" role="tablist" aria-label="Condición del auto">
+            <button type="button" role="tab" id="tab-cond-todos" class="tab-btn is-active" aria-selected="true" data-cond="todos">Todos</button>
+            <button type="button" role="tab" id="tab-cond-0km" class="tab-btn" aria-selected="false" tabindex="-1" data-cond="0km">0km</button>
+            <button type="button" role="tab" id="tab-cond-usados" class="tab-btn" aria-selected="false" tabindex="-1" data-cond="usados">Usados</button>
           </div>
-          <form id="search-form" class="grid grid-cols-2 items-center gap-x-6 gap-y-5 rounded-b-2xl bg-white px-6 py-6 shadow-[0_10px_40px_rgba(5,11,32,0.07)] md:px-[42px] lg:grid-cols-[1fr_1fr_1fr_1fr_216px] lg:py-[22px]">
-            <label class="relative block">
-              <span class="mb-1 block text-[15px] font-medium">Marca</span>
-              <select id="sel-make" class="field-select"><option value="">Todas las marcas</option></select>
-              <i data-lucide="chevron-down" class="pointer-events-none absolute bottom-0.5 right-0 h-4 w-4"></i>
-            </label>
-            <label class="relative block lg:border-l lg:border-line lg:pl-6">
-              <span class="mb-1 block text-[15px] font-medium">Modelo</span>
-              <select id="sel-model" class="field-select"><option value="">Todos los modelos</option></select>
-              <i data-lucide="chevron-down" class="pointer-events-none absolute bottom-0.5 right-0 h-4 w-4"></i>
-            </label>
-            <label class="relative block lg:border-l lg:border-line lg:pl-6">
-              <span class="mb-1 block text-[15px] font-medium">Año</span>
-              <select class="field-select">
-                <option>Cualquier año</option><option>2026 (0km)</option><option>2022 o más nuevo</option><option>2018 o más nuevo</option><option>2014 o más nuevo</option>
+          <form id="search-form" role="search" action="#destacados" class="grid grid-cols-2 items-center gap-x-6 gap-y-5 rounded-b-2xl bg-white px-6 py-6 shadow-[0_10px_40px_rgba(5,11,32,0.07)] md:px-[42px] lg:grid-cols-[1fr_1fr_1fr_1fr_216px] lg:py-[22px]">
+            <input type="hidden" name="condicion" id="search-condition" value="todos" />
+            <div class="relative">
+              <label for="sel-make" class="field-label">Marca</label>
+              <select id="sel-make" name="marca" class="field-select"><option value="">Todas las marcas</option><!--slot:makes--></select>
+              <i data-icon="chevron-down" class="pointer-events-none absolute bottom-0.5 right-0 h-4 w-4"></i>
+            </div>
+            <div class="relative lg:border-l lg:border-line lg:pl-6">
+              <label for="sel-model" class="field-label">Modelo</label>
+              <select id="sel-model" name="modelo" class="field-select" disabled><option value="">Todos los modelos</option></select>
+              <i data-icon="chevron-down" class="pointer-events-none absolute bottom-0.5 right-0 h-4 w-4"></i>
+            </div>
+            <div class="relative lg:border-l lg:border-line lg:pl-6">
+              <label for="sel-year" class="field-label">Año</label>
+              <select id="sel-year" name="anio" class="field-select">
+                <option value="">Cualquier año</option><option value="2026">2026 (0km)</option><option value="2022">2022 o más nuevo</option><option value="2018">2018 o más nuevo</option><option value="2014">2014 o más nuevo</option>
               </select>
-              <i data-lucide="chevron-down" class="pointer-events-none absolute bottom-0.5 right-0 h-4 w-4"></i>
-            </label>
-            <label class="relative block lg:border-l lg:border-line lg:pl-6">
-              <span class="mb-1 block text-[15px] font-medium">Precio</span>
-              <select class="field-select">
-                <option>Todos los precios</option><option>Hasta US$ 15.000</option><option>US$ 15.000 – 30.000</option><option>US$ 30.000 – 60.000</option><option>Más de US$ 60.000</option>
+              <i data-icon="chevron-down" class="pointer-events-none absolute bottom-0.5 right-0 h-4 w-4"></i>
+            </div>
+            <div class="relative lg:border-l lg:border-line lg:pl-6">
+              <label for="sel-price" class="field-label">Precio</label>
+              <select id="sel-price" name="precio" class="field-select">
+                <option value="">Todos los precios</option><option value="0-15000">Hasta US$ 15.000</option><option value="15000-30000">US$ 15.000 – 30.000</option><option value="30000-60000">US$ 30.000 – 60.000</option><option value="60000-">Más de US$ 60.000</option>
               </select>
-              <i data-lucide="chevron-down" class="pointer-events-none absolute bottom-0.5 right-0 h-4 w-4"></i>
-            </label>
+              <i data-icon="chevron-down" class="pointer-events-none absolute bottom-0.5 right-0 h-4 w-4"></i>
+            </div>
             <button type="submit" class="btn-primary col-span-2 h-[55px] lg:col-span-1">
-              <i data-lucide="search" class="h-4 w-4"></i> Buscar
+              <i data-icon="search" class="h-4 w-4"></i> Buscar
             </button>
           </form>
         </div>
       </div>
     </section>
 
-    <!-- ===== CARROCERÍAS ===== -->
-    <section class="pt-[90px]">
+    <!-- ================= CARROCERÍAS ================= -->
+    <section aria-labelledby="types-title" class="pt-16 md:pt-[90px]">
       <div class="container-x">
-        <div class="reveal mb-10 flex items-end justify-between gap-4">
-          <h2 class="text-[30px] font-bold leading-none md:text-[40px]">Buscá por carrocería</h2>
-          <a href="#" class="link-view shrink-0">Ver todas <i data-lucide="arrow-up-right" class="h-4 w-4"></i></a>
+        <div class="reveal mb-8 flex items-end justify-between gap-4 md:mb-10">
+          <h2 id="types-title" class="section-title">Buscá por carrocería</h2>
+          <a href="#carrocerias" class="link-view">Ver todas <i data-icon="arrow-up-right" class="h-4 w-4"></i></a>
         </div>
-        <div id="types" class="swiper reveal"><div class="swiper-wrapper"></div></div>
+        <div id="types" class="swiper reveal"><div class="swiper-wrapper"><!--slot:types--></div></div>
       </div>
     </section>
 
-    <!-- ===== POR QUÉ ELEGIRNOS ===== -->
-    <section class="pt-[110px]">
+    <!-- ================= POR QUÉ ELEGIRNOS ================= -->
+    <section aria-labelledby="why-title" class="pt-20 md:pt-[110px]">
       <div class="container-x">
         <div class="relative">
-          <div class="absolute inset-y-0 left-1/2 w-full max-w-[1160px] -translate-x-1/2 rounded-2xl bg-soft"></div>
-          <div class="relative pb-[60px] pt-[60px] md:pb-[110px]">
-            <h2 class="reveal mb-[46px] text-center text-[30px] font-bold leading-none md:text-[40px]">¿Por qué Red de Autos?</h2>
-            <div id="reasons" class="grid gap-5 sm:grid-cols-2 xl:grid-cols-4 xl:gap-[30px]"></div>
+          <div class="absolute inset-y-0 left-1/2 w-full max-w-[1160px] -translate-x-1/2 rounded-2xl bg-soft" aria-hidden="true"></div>
+          <div class="relative py-12 md:py-[60px] md:pb-[110px]">
+            <h2 id="why-title" class="section-title reveal mb-10 text-center md:mb-[46px]">¿Por qué Red de Autos?</h2>
+            <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-4 xl:gap-[30px]"><!--slot:reasons--></div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ===== DESTACADOS ===== -->
-    <section id="destacados" class="pb-[120px] pt-[110px]">
+    <!-- ================= DESTACADOS ================= -->
+    <section id="destacados" aria-labelledby="featured-title" class="pb-20 pt-20 md:pb-[120px] md:pt-[110px]">
       <div class="container-x">
-        <div class="reveal mb-[30px] flex items-end justify-between gap-4">
-          <h2 class="text-[30px] font-bold leading-none md:text-[40px]">Autos destacados</h2>
-          <a href="#" class="link-view shrink-0">Ver todos <i data-lucide="arrow-up-right" class="h-4 w-4"></i></a>
+        <div class="reveal mb-6 flex items-end justify-between gap-4 md:mb-[30px]">
+          <h2 id="featured-title" class="section-title">Autos destacados</h2>
+          <a href="#autos" class="link-view">Ver todos <i data-icon="arrow-up-right" class="h-4 w-4"></i></a>
         </div>
-        <div class="reveal mb-[50px] flex gap-7 border-b border-line" id="featured-tabs">
-          <button class="tab-btn is-active text-ink after:!bg-brand" data-tab="nuevos">0km</button>
-          <button class="tab-btn text-ink after:!bg-brand" data-tab="usados">Usados</button>
-          <button class="tab-btn text-ink after:!bg-brand" data-tab="inmediata">Entrega inmediata</button>
-        </div>
-        <div id="featured" class="swiper reveal"><div class="swiper-wrapper"></div></div>
+        <div id="featured-tabs" class="tabs-brand reveal mb-10 flex gap-7 overflow-x-auto border-b border-line md:mb-[50px]" role="tablist" aria-label="Tipo de auto"><!--slot:featured-tabs--></div>
+        <div id="featured" class="swiper reveal" role="tabpanel" aria-labelledby="tab-nuevos"><div class="swiper-wrapper"><!--slot:featured--></div></div>
         <div class="mt-10 flex gap-4">
-          <button class="round-nav featured-prev" aria-label="Anterior"><i data-lucide="chevron-left" class="h-4 w-4"></i></button>
-          <button class="round-nav featured-next" aria-label="Siguiente"><i data-lucide="chevron-right" class="h-4 w-4"></i></button>
+          <button type="button" class="round-nav featured-prev" aria-label="Autos anteriores"><i data-icon="chevron-left" class="h-4 w-4"></i></button>
+          <button type="button" class="round-nav featured-next" aria-label="Autos siguientes"><i data-icon="chevron-right" class="h-4 w-4"></i></button>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Volver arriba -->
-  <button id="to-top" class="fixed bottom-[30px] right-[30px] z-30 grid h-[46px] w-[46px] translate-y-4 place-items-center rounded-full bg-brand text-white opacity-0 shadow-lg transition-all duration-300 hover:bg-ink" aria-label="Volver arriba">
-    <i data-lucide="arrow-up" class="h-4 w-4"></i>
+  <button id="to-top" type="button" class="to-top fixed bottom-5 right-5 z-30 grid h-[46px] w-[46px] place-items-center rounded-full bg-brand text-white shadow-lg transition-all duration-300 hover:bg-ink sm:bottom-[30px] sm:right-[30px]" aria-label="Volver arriba">
+    <i data-icon="arrow-up" class="h-4 w-4"></i>
   </button>
 </body>
 </html>

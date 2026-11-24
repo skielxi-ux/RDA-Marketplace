@@ -1,0 +1,110 @@
+@import "tailwindcss";
+@import "@fontsource-variable/dm-sans";
+
+/* ---------- Tokens de diseño ---------- */
+@theme {
+  --font-sans: "DM Sans Variable", "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-brand: #405FF2;
+  --color-brand-hover: #4E6CFB;
+  --color-ink: #050B20;
+  --color-line: #E9E9E9;
+  --color-soft: #F9FBFC;
+  --color-ok: #3D923A;
+  --ease-boxcar: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+  body { @apply bg-white font-sans text-[15px] text-ink antialiased; overflow-x: clip; }
+  ::selection { background: var(--color-brand); color: #fff; }
+  :focus-visible { outline: 2px solid var(--color-brand); outline-offset: 3px; border-radius: 6px; }
+  select:disabled { @apply cursor-not-allowed opacity-50; }
+}
+
+/* ---------- Componentes ---------- */
+@layer components {
+  .container-x { @apply mx-auto w-full max-w-[1440px] px-4 sm:px-6 xl:px-[15px]; }
+  .section-title { @apply text-[28px] font-bold leading-[1.1] sm:text-[34px] md:text-[40px]; }
+
+  /* Botones y links */
+  .btn-outline {
+    @apply inline-flex items-center gap-2 rounded-2xl border border-ink px-[25px] py-[9px] text-[15px] font-medium text-ink
+           transition-all duration-300 ease-in-out hover:border-brand hover:bg-brand hover:text-white;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl bg-brand px-6 text-[15px] font-medium text-white
+           transition-all duration-300 ease-in-out hover:bg-brand-hover;
+  }
+  .link-view { @apply inline-flex shrink-0 items-center gap-1.5 text-[15px] font-medium text-ink underline-offset-4 hover:underline; }
+  .round-nav {
+    @apply grid h-10 w-10 place-items-center rounded-full border border-ink/15 text-ink transition-all duration-300
+           hover:border-brand hover:bg-brand hover:text-white;
+  }
+  .round-nav.swiper-button-disabled { @apply pointer-events-none opacity-40; }
+
+  /* Header: se esconde al bajar y vuelve al subir */
+  .site-header { @apply transition-transform duration-300 ease-in-out; }
+  .site-header.is-sticky { @apply fixed inset-x-0 top-0 z-40 shadow-[0_2px_6px_rgba(0,0,0,0.05)]; }
+  .site-header.is-hidden { transform: translateY(-110%); }
+
+  /* Menú lateral */
+  .drawer { @apply -translate-x-full; transition: transform .45s var(--ease-boxcar); }
+  .drawer.is-open { @apply translate-x-0; }
+  .drawer-backdrop { @apply invisible opacity-0; transition: opacity .35s ease, visibility .35s; }
+  .drawer-backdrop.is-open { @apply visible opacity-100; }
+  .menu-link { @apply flex items-center justify-between border-b border-line py-4 text-[17px] font-medium transition-colors duration-300 hover:text-brand; }
+
+  /* Hero */
+  .hero-slide .hero-bg { transform: scale(1.12); transition: transform 7s ease-out; }
+  .hero-slide.swiper-slide-active .hero-bg { transform: scale(1); }
+  .hero-anim { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s ease; }
+  .hero-slide.swiper-slide-active .hero-anim { opacity: 1; transform: none; transition-delay: .35s; }
+  .hero-nav {
+    @apply absolute top-1/2 z-10 hidden h-10 w-[60px] -translate-y-1/2 place-items-center rounded-[30px] bg-white/25 text-white backdrop-blur-md
+           transition-all duration-300 hover:bg-white hover:text-ink md:grid;
+  }
+
+  /* Pestañas con subrayado animado */
+  .tab-btn { @apply relative pb-2.5 text-[15px] font-medium transition-[color,opacity] duration-300; }
+  .tab-btn::after {
+    content: ""; @apply absolute bottom-0 left-0 h-[2px] w-full origin-left scale-x-0 transition-transform duration-300;
+    background: var(--tab-line, currentColor);
+  }
+  .tab-btn.is-active::after { @apply scale-x-100; }
+  .tabs-light .tab-btn { @apply text-white/80 hover:text-white; }
+  .tabs-light .tab-btn.is-active { @apply text-white; }
+  .tabs-brand .tab-btn { --tab-line: var(--color-brand); }
+
+  /* Buscador */
+  .field-label { @apply mb-1 block text-[15px] font-medium; }
+  .field-select { @apply w-full cursor-pointer appearance-none truncate bg-transparent pr-6 text-[14px] text-ink/80 outline-none; }
+
+  /* Carrocerías */
+  .type-card img { transition: transform .6s var(--ease-boxcar); }
+  .type-card:hover img { transform: scale(1.08); }
+
+  /* Tarjeta de auto */
+  .gallery-dots { @apply pointer-events-none absolute inset-x-0 bottom-3 flex justify-center gap-1.5 opacity-0 transition-opacity duration-300; }
+  .car-card:hover .gallery-dots { @apply opacity-100; }
+  .gallery-dots span { @apply h-[3px] w-5 rounded-full bg-white/50 transition-colors duration-200; }
+  .gallery-dots span.is-on { @apply bg-white; }
+  .car-card:hover .car-title a { @apply underline underline-offset-4; }
+  #featured { transition: opacity .25s ease; }
+  #featured.is-switching { opacity: 0; }
+
+  /* Volver arriba */
+  .to-top { @apply pointer-events-none translate-y-4 opacity-0; }
+  .to-top.is-visible { @apply pointer-events-auto translate-y-0 opacity-100; }
+
+  /* Aparición al hacer scroll (solo si hay JS: sin JS todo se ve) */
+  .js .reveal { opacity: 0; transform: translateY(30px); transition: opacity .8s ease, transform .8s ease; }
+  .js .reveal.is-in { opacity: 1; transform: none; }
+}
+
+/* ---------- Movimiento reducido ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  .hero-slide .hero-bg { transform: none; }
+}

@@ -1,0 +1,4 @@
+# Mientras el catálogo sea de ejemplo no queremos que Google lo indexe.
+# Al salir con dominio propio: cambiar a "Allow: /" y apuntar el Sitemap al dominio.
+User-agent: *
+Disallow: /
