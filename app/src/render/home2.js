@@ -8,12 +8,12 @@ import { logoSvg } from './logo.js';
 export const renderSellPrivate = () => `
   <section id="vender" aria-labelledby="sell-title" class="pt-20 md:pt-[110px]">
     <div class="container-x">
-      <div class="reveal grid items-center gap-10 rounded-[28px] border border-line bg-soft px-5 py-10 sm:px-10 md:py-14 lg:grid-cols-[1.05fr_1fr] lg:gap-14 lg:px-[80px] lg:py-[80px]">
+      <div class="reveal grid items-center gap-10 rounded-[28px] border border-line bg-soft px-5 py-10 sm:px-10 md:px-14 md:py-14 xl:grid-cols-[1.05fr_1fr] xl:gap-14 xl:px-[80px] xl:py-[80px]">
         <div>
           <p class="flex items-center gap-2.5 text-[13px] font-bold uppercase tracking-[0.12em] text-ink/80">
             ${icon('user', 'h-4 w-4 text-brand')} ${esc(sellPrivate.eyebrow)}
           </p>
-          <h2 id="sell-title" class="mt-5 text-[32px] font-bold leading-[1.08] tracking-tight sm:text-[42px] lg:text-[52px]">${esc(sellPrivate.title)}</h2>
+          <h2 id="sell-title" class="mt-5 max-w-[640px] text-[32px] font-bold leading-[1.08] tracking-tight text-balance sm:text-[42px] xl:text-[52px]">${esc(sellPrivate.title)}</h2>
           <p class="mt-6 max-w-[560px] text-[16px] leading-[1.7] text-ink/80 sm:text-[18px]">${esc(sellPrivate.text)}</p>
           <div class="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">
             <a href="${esc(sellPrivate.primary.href)}" class="btn-cta group">
