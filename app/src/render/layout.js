@@ -1,6 +1,7 @@
 // Partes comunes a todas las páginas: header, menú lateral y botón "volver arriba".
 import { logoSvg } from './logo.js';
 import { renderAuthModal } from './auth.js';
+import { renderSocial } from './social.js';
 
 export const renderSiteHeader = () => `
   <!-- ================= HEADER ================= -->
@@ -27,9 +28,7 @@ export const renderSiteHeader = () => `
         <button type="button" data-auth-open aria-haspopup="dialog" aria-expanded="false" class="flex items-center gap-2 font-medium transition-colors duration-300 hover:text-brand max-sm:h-10 max-sm:w-10 max-sm:justify-center max-sm:rounded-full max-sm:border max-sm:border-line" >
           <i data-icon="user" class="h-4 w-4"></i> <span data-auth-label class="max-w-[140px] truncate max-sm:sr-only">Ingresar</span>
         </button>
-        <a href="./#vender" data-publicar-link class="btn-outline max-sm:px-3.5 max-sm:py-[7px] max-sm:text-[14px]">
-          <i data-icon="plus" class="hidden h-4 w-4 sm:block"></i>Publicar<span class="hidden sm:inline">&nbsp;auto</span>
-        </a>
+        <div class="hidden items-center gap-1.5 md:flex" role="group" aria-label="Nuestras redes">${renderSocial()}</div>
       </div>
     </div>
   </header>
@@ -51,6 +50,7 @@ export const renderSiteHeader = () => `
       <a href="./#vender" class="menu-link">Vendé tu auto</a>
       <a href="#contacto" class="menu-link">Contacto</a>
     </nav>
+    <div class="mt-8 flex items-center gap-2" role="group" aria-label="Nuestras redes">${renderSocial('!h-11 !w-11 border border-line')}</div>
     <div class="mt-auto space-y-3 pt-8">
       <a href="./#agencias" class="btn-primary h-[55px] w-full">Sumá tu agencia <i data-icon="arrow-right" class="h-4 w-4"></i></a>
       <button type="button" data-auth-open class="btn-outline h-[55px] w-full justify-center"><i data-icon="user" class="h-4 w-4"></i> <span data-auth-label>Ingresar</span></button>

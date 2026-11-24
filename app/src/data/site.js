@@ -16,4 +16,12 @@ export const SITE = {
   },
   // Mientras el catálogo sea de ejemplo, el sitio no se indexa en Google.
   indexable: false,
+  // Redes (en este orden en el header y el menú). Pegá la URL completa de cada perfil (https://...).
+  // Mientras esté vacía, el ícono se ve pero no es un link.
+  social: {
+    instagram: '',
+    facebook: '',
+    spotify: '',
+    linkedin: '',
+  },
 };
