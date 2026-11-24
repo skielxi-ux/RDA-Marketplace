@@ -45,3 +45,12 @@ El build escribe el sitio compilado en la raíz del repo (index.html + assets/),
 - El buscador de la home registra cada búsqueda (marca obligatoria) con la RPC pública `mkt_registrar_busqueda` (valida marca y modelo, límite por visitante, sin guardar la IP).
 - `mkt_ranking_buscados()` devuelve el top 10 del mes y del año por marca + modelo, solo para el admin o cuentas activas / aprobadas.
 - Se muestra en `admin.html` (pestaña +Buscados) y en `mi-cuenta.html` (botón +Buscados, abre directo con `#buscados`). `mi-cuenta.html` tiene noindex y no va al sitemap.
+
+## Carga masiva de autos (agencias aprobadas)
+
+- `publicar.html`: la agencia descarga `plantilla-autos.xlsx` (se genera con `python3 build/plantilla.py`), sube el Excel y arrastra la carpeta de fotos. Cada foto se une con su auto por el **Código**: carpeta `A001/` o nombre `A001-1.jpg`. Máximo 7 fotos por auto (las que sobran quedan "sin asignar"). Pantalla de revisión con errores por fila, mover/reordenar fotos y elegir portada.
+- Lectura y validación: `app/src/lib/carga.js` (puro). Las fotos se achican en el navegador (1600 px, WebP o JPEG) y se suben a Storage (`mkt-fotos`) con URLs firmadas.
+- Edge function `mkt-autos` (solo agencias aprobadas): `mios`, `urls_fotos`, `publicar` (crea o actualiza por código; valida todo otra vez y que las fotos existan y sean de la cuenta), `estado` (pausar / volver a publicar).
+- Tabla `mkt_autos` (RLS sin políticas). Lectura pública: `mkt_autos_publicos()` (sin cuentas de prueba) y `mkt_auto(id)`.
+- Los autos reales se suman a los de ejemplo en el listado, los destacados de la home y "Autos similares". Su ficha es `auto.html?id=<uuid>` (se arma en el navegador).
+- Admin → pestaña **Autos**: buscar y pausar / volver a publicar (si lo pausa el admin, la agencia no puede reactivarlo).
