@@ -15,7 +15,7 @@ export const renderHeroSlides = () =>
         sizes="100vw" width="1600" height="900" alt="${esc(s.alt)}"
         ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" />
       <div class="absolute inset-0 bg-gradient-to-b from-ink/45 via-ink/15 to-ink/45"></div>
-      <div class="relative flex h-full justify-center px-6 pt-[130px] text-center md:pt-[185px]">
+      <div class="relative flex h-full justify-center px-6 pt-[128px] text-center sm:pt-[140px] md:pt-[185px]">
         <p class="hero-anim d1 max-w-[780px] text-[36px] font-bold leading-[1.15] text-white sm:text-[48px] md:text-[70px]">${esc(s.title)}</p>
       </div>
     </div>`)
