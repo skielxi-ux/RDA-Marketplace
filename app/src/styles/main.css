@@ -171,6 +171,12 @@
     @apply fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-4 border-t border-line bg-white/95 px-4 py-3 backdrop-blur-md
            shadow-[0_-8px_24px_-12px_rgba(5,11,32,0.2)];
   }
+  .map-unlock { @apply absolute inset-0 grid cursor-pointer place-items-center bg-transparent transition-colors duration-300 hover:bg-ink/10; }
+  .map-unlock-label {
+    @apply inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[14px] font-medium opacity-0 shadow-lg transition-all duration-300;
+  }
+  .map-unlock:hover .map-unlock-label, .map-unlock:focus-visible .map-unlock-label { @apply opacity-100; }
+  @media (hover: none) { .map-unlock-label { @apply opacity-100; } }
   .lightbox { @apply fixed inset-0 z-[70] grid place-items-center bg-ink/90 opacity-0 transition-opacity duration-300; }
   .lightbox.is-open { @apply opacity-100; }
   .lightbox-btn {

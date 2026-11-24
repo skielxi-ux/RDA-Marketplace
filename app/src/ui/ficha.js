@@ -101,6 +101,13 @@ export function initFicha() {
   if (!data) return;
 
   initLightbox(data.photos);
+
+  // Mapa: no captura la rueda del mouse hasta que se lo toca (así no frena el scroll de la página)
+  const map = $('[data-map]');
+  $('[data-map-unlock]', map)?.addEventListener('click', (e) => {
+    $('iframe', map).classList.remove('pointer-events-none');
+    e.currentTarget.remove();
+  });
   initShare(data.title);
   bindFavorites(document);
 

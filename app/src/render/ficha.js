@@ -198,8 +198,9 @@ function renderMap(c) {
       </div>
       <a href="${esc(dir)}" target="_blank" rel="noopener noreferrer" class="btn-outline h-[44px]">${icon('map-pin', 'h-4 w-4')} Cómo llegar</a>
     </div>
-    <div class="overflow-hidden rounded-2xl border border-line">
-      <iframe title="Mapa de ${esc(c.city)}" src="${esc(src)}" loading="lazy" referrerpolicy="no-referrer" class="block h-[320px] w-full md:h-[380px]"></iframe>
+    <div class="map-box relative overflow-hidden rounded-2xl border border-line" data-map>
+      <iframe title="Mapa de ${esc(c.city)}" src="${esc(src)}" loading="lazy" referrerpolicy="no-referrer" class="pointer-events-none block h-[320px] w-full md:h-[380px]"></iframe>
+      <button type="button" class="map-unlock" data-map-unlock><span class="map-unlock-label">${icon('map-pin', 'h-4 w-4')} Tocá para mover el mapa</span></button>
     </div>
   </section>`;
 }
