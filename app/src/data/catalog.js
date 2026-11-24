@@ -18,11 +18,15 @@ const DETAIL_CROPS = [
 ];
 const gallery = (id) => DETAIL_CROPS.map((crop) => ({ id, crop }));
 
+// Fotos propias del hero (en app/public/img/hero, en WebP 16:9 a 640/1024/1600/2400 px), sin texto encima.
+// pos: punto de la foto que queda a la vista cuando se recorta (celular).
 export const heroSlides = [
-  { photo: 'photo-1568605117036-5fe5e7bab0b7', title: 'Un auto para cada estilo de vida', alt: 'Auto deportivo blanco en una ruta al atardecer' },
-  { photo: 'photo-1494905998402-395d579af36f', title: 'Encontrá tu 0km o usado ideal', alt: 'Auto deportivo gris entre árboles' },
-  { photo: 'photo-1555215695-3004980ad54e', title: 'Comprar el auto correcto, simple', alt: 'Sedán blanco estacionado junto a palmeras' },
+  { file: 'byd-dolphin-mini', pos: '62% 55%', alt: 'BYD Dolphin Mini amarillo en una calle de edificios de colores' },
+  { file: 'mg3', pos: '45% 55%', alt: 'MG3 azul frente a una estructura naranja con el cielo de fondo' },
+  { file: 'concesionario', pos: '48% 50%', alt: 'Pareja sonriente revisando el baúl de un auto en un concesionario' },
 ];
+export const HERO_WIDTHS = [640, 1024, 1600, 2400];
+export const heroSrc = (file, w) => `./img/hero/${file}-${w}.webp`;
 
 export const bodyTypeList = [
   { slug: 'suv', name: 'SUV', photo: 'photo-1563720223185-11003d516935' },

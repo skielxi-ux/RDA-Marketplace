@@ -25,9 +25,7 @@
         <div id="hero" class="swiper h-[460px] sm:h-[520px] md:h-[620px]" aria-roledescription="carrusel" aria-label="Fotos destacadas">
           <div class="swiper-wrapper"><!--slot:hero--></div>
         </div>
-        <div class="pointer-events-none absolute inset-x-0 top-[52px] z-10 px-6 text-center sm:top-[84px] md:top-[140px]">
-          <h1 id="hero-title" class="text-[14px] text-white sm:text-[15px]">Autos 0km y usados de agencias y concesionarios oficiales</h1>
-        </div>
+        <h1 id="hero-title" class="sr-only">Autos 0km y usados de agencias y concesionarios oficiales</h1>
         <button type="button" class="hero-nav hero-prev left-4 lg:left-[30px]" aria-label="Foto anterior"><i data-icon="chevron-left" class="h-4 w-4"></i></button>
         <button type="button" class="hero-nav hero-next right-4 lg:right-[30px]" aria-label="Foto siguiente"><i data-icon="chevron-right" class="h-4 w-4"></i></button>
       </div>
@@ -110,6 +108,9 @@
       </div>
     </section>
 
+    <!-- ================= MARCAS ================= -->
+    <!--slot:brands-->
+
     <!-- ================= POR QUÉ ELEGIRNOS ================= -->
     <section aria-labelledby="why-title" class="pt-20 md:pt-[110px]">
       <div class="container-x">
@@ -140,7 +141,7 @@
     </section>
 
     <!-- ================= SEGUNDA MITAD ================= -->
-    <!--slot:dealers--><!--slot:sell--><!--slot:stats--><!--slot:testimonials--><!--slot:brands-->
+    <!--slot:dealers--><!--slot:sell--><!--slot:stats--><!--slot:testimonials-->
   </main>
 
   <!--slot:footer-->

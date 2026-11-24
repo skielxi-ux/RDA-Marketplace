@@ -3,22 +3,19 @@
 // (por ejemplo, al cambiar de pestaña). Todo dato pasa por esc().
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
-import { unsplash, srcset, heroSlides, bodyTypes, reasons } from '../data/catalog.js';
+import { unsplash, srcset, heroSlides, HERO_WIDTHS, heroSrc, bodyTypes, reasons } from '../data/catalog.js';
 import { SEARCH_MAKES, searchBrands } from '../data/modelos.js';
 
 export const renderHeroSlides = () =>
   heroSlides
     .map((s, i) => `
     <div class="swiper-slide hero-slide relative overflow-hidden" role="group" aria-roledescription="diapositiva" aria-label="${i + 1} de ${heroSlides.length}">
-      <img class="hero-bg absolute inset-0 h-full w-full object-cover"
-        src="${esc(unsplash(s.photo, 1600, 900))}"
-        srcset="${esc(srcset(s.photo, 16 / 9, [640, 1024, 1600, 2400]))}"
+      <img class="hero-bg absolute inset-0 h-full w-full object-cover" data-pos="${esc(s.pos)}"
+        src="${esc(heroSrc(s.file, 1600))}"
+        srcset="${esc(HERO_WIDTHS.map((w) => `${heroSrc(s.file, w)} ${w}w`).join(', '))}"
         sizes="100vw" width="1600" height="900" alt="${esc(s.alt)}"
         ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} decoding="async" />
-      <div class="absolute inset-0 bg-gradient-to-b from-ink/45 via-ink/15 to-ink/45"></div>
-      <div class="relative flex h-full justify-center px-6 pt-[128px] text-center sm:pt-[140px] md:pt-[185px]">
-        <p class="hero-anim d1 max-w-[780px] text-[36px] font-bold leading-[1.15] text-white sm:text-[48px] md:text-[70px]">${esc(s.title)}</p>
-      </div>
+      <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/35 to-transparent" aria-hidden="true"></div>
     </div>`)
     .join('');
 

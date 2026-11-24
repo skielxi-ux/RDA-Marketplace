@@ -95,8 +95,6 @@
   /* Hero */
   .hero-slide .hero-bg { transform: scale(1.12); transition: transform 7s ease-out; }
   .hero-slide.swiper-slide-active .hero-bg { transform: scale(1); }
-  .hero-anim { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .8s ease; }
-  .hero-slide.swiper-slide-active .hero-anim { opacity: 1; transform: none; transition-delay: .35s; }
   .hero-nav {
     @apply absolute top-1/2 z-10 hidden h-10 w-[60px] -translate-y-1/2 place-items-center rounded-[30px] bg-white/25 text-white backdrop-blur-md
            transition-all duration-300 ease-out hover:scale-105 hover:bg-white hover:text-ink active:scale-95 md:grid;

@@ -3,6 +3,10 @@ import { Navigation, Autoplay, EffectFade, A11y } from 'swiper/modules';
 import { prefersReducedMotion } from './dom.js';
 
 export function initHero() {
+  // Punto de foco de cada foto al recortarse (por CSSOM: la CSP no permite style en línea).
+  document.querySelectorAll('#hero .hero-bg[data-pos]').forEach((img) => {
+    if (/^\d{1,3}% \d{1,3}%$/.test(img.dataset.pos)) img.style.objectPosition = img.dataset.pos;
+  });
   new Swiper('#hero', {
     modules: [Navigation, Autoplay, EffectFade, A11y],
     effect: 'fade',
