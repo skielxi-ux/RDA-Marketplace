@@ -121,7 +121,7 @@ function renderGallery(c) {
       <p class="pointer-events-none absolute bottom-3 right-3 z-10 rounded-full bg-ink/70 px-3 py-1 text-[13px] text-white"><span data-slide-index>1</span> / ${n}</p>
     </div>
     <!-- Escritorio: foto grande + 4 chicas -->
-    <div class="hidden gap-4 md:grid md:h-[460px] ${n > 1 ? 'md:grid-cols-[1.35fr_1fr]' : ''} lg:h-[540px]">
+    <div class="hidden gap-4 md:grid md:h-[460px] md:grid-rows-1 ${n > 1 ? 'md:grid-cols-[1.35fr_1fr]' : ''} lg:h-[540px]">
       <button type="button" class="gallery-thumb group" data-open-photo="0" aria-label="Ampliar foto 1 de ${n}">
         <img src="${esc(shot(c, 0, 1200, 900))}" width="1200" height="900" alt="${esc(alt(0))}" fetchpriority="high" decoding="async" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" />
       </button>

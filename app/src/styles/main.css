@@ -170,7 +170,8 @@
   #featured.is-switching { opacity: 0; }
 
   /* Ficha del auto */
-  .gallery-thumb { @apply relative block h-full w-full overflow-hidden rounded-2xl bg-soft; }
+  .gallery-thumb { @apply relative block h-full min-h-0 w-full overflow-hidden rounded-2xl bg-soft; }
+  .gallery-thumb > img { @apply absolute inset-0; }
   .ficha-section { @apply border-b border-line pb-10 pt-2 [&+&]:pt-10 last:border-b-0; }
   .ficha-h2 { @apply mb-6 text-[24px] font-bold leading-tight md:text-[28px]; }
   .seller-card { @apply rounded-2xl border border-line bg-white p-6 shadow-[0_10px_40px_-20px_rgba(5,11,32,0.25)] sm:p-7; }
