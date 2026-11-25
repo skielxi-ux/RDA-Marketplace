@@ -4,6 +4,7 @@ import { initCards } from './cards.js';
 import { cars, sellers, sellerOf } from '../data/catalog.js';
 import { cargarAutosReales, esIdReal } from '../data/autosReales.js';
 import { isSearchBrand, isSearchModel } from '../data/modelos.js';
+import { registrarBusqueda } from '../lib/busquedas.js';
 import { renderCarGrid } from '../render/carCard.js';
 import { renderModelOptions } from '../render/sections.js';
 import { SORT_OPTIONS } from '../render/listing.js';
@@ -89,6 +90,7 @@ const activeCount = (s) =>
   (s.pmin != null) + (s.pmax != null) + s.carroceria.length + s.vendedor.length + !!s.agencia;
 
 export function initListing() {
+  const llegoPorMarca = new URLSearchParams(location.search).get('o') === 'marca';
   const form = $('#filters');
   const grid = $('#car-grid');
   const sort = $('#f-orden');
@@ -151,7 +153,15 @@ export function initListing() {
 
   const update = () => { writeUrl(state); paintForm(); render(); };
 
-  form.addEventListener('change', () => { readForm(); update(); });
+  // +Buscados: cuenta cuando se elige una marca (y modelo) en los filtros
+  let contado = `${state.marca}|${state.modelo}`;
+  const contar = (origen) => {
+    const k = `${state.marca}|${state.modelo}`;
+    if (!state.marca || k === contado && origen === 'filtro') return;
+    contado = k;
+    registrarBusqueda({ marca: state.marca, modelo: state.modelo, condicion: state.condicion, origen });
+  };
+  form.addEventListener('change', () => { readForm(); update(); contar('filtro'); });
   // Precio: actualiza mientras se escribe, con una pequeña espera
   let t;
   form.addEventListener('input', (e) => {
@@ -185,6 +195,8 @@ export function initListing() {
 
   paintForm();
   render();
+  // Llegó con una marca en la URL (clic en una marca, o el buscador de la home: el servidor no la cuenta dos veces)
+  if (state.marca) { contado = ''; contar(llegoPorMarca ? 'marca' : 'filtro'); }
 
   // Sumar los autos de las agencias y actualizar los contadores de los filtros
   cargarAutosReales().then((reales) => {

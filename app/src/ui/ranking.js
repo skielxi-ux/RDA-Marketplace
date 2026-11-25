@@ -56,7 +56,7 @@ export async function renderRanking(box, sb) {
       <div>
         <p class="inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.12em] text-brand">${icon('search', 'h-4 w-4')} +Buscados</p>
         <h2 class="mt-2 text-[24px] font-bold leading-tight sm:text-[28px]">Los 10 vehículos más buscados</h2>
-        <p class="mt-1 text-[14px] text-ink/60">Según lo que la gente busca en el buscador de Red de Autos.</p>
+        <p class="mt-1 text-[14px] text-ink/60">Según lo que la gente busca, filtra y mira en Red de Autos.</p>
       </div>
       <div class="tabs-brand flex gap-6 border-b border-line" role="tablist" aria-label="Período del ranking" data-rk-tabs>
         <button type="button" role="tab" class="tab-btn is-active capitalize" aria-selected="true" data-rk="mes">Este mes</button>

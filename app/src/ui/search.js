@@ -1,6 +1,6 @@
+import { registrarBusqueda } from '../lib/busquedas.js';
 import { $, initTabs } from './dom.js';
 import { renderModelOptions } from '../render/sections.js';
-import { SITE } from '../data/site.js';
 
 export function initSearch() {
   const make = $('#sel-make');
@@ -20,14 +20,7 @@ export function initSearch() {
   form.addEventListener('submit', (e) => {
     if (!make.value) return; // sin marca no se cuenta
     e.preventDefault();
-    try {
-      fetch(`${SITE.supabase.url}/rest/v1/rpc/mkt_registrar_busqueda`, {
-        method: 'POST',
-        keepalive: true,
-        headers: { apikey: SITE.supabase.publishableKey, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ p_marca: make.value, p_modelo: model.value || null, p_condicion: condition.value }),
-      }).catch(() => {});
-    } catch { /* si falla, la búsqueda sigue igual */ }
+    registrarBusqueda({ marca: make.value, modelo: model.value, condicion: condition.value, origen: 'buscador' });
     form.submit();
   });
 }

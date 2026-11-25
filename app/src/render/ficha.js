@@ -360,5 +360,5 @@ export function renderFicha(c, pool = cars) {
     <button type="button" class="lightbox-btn right-4 top-1/2 -translate-y-1/2" data-lb-next aria-label="Foto siguiente">${icon('chevron-right', 'h-5 w-5')}</button>
     <p class="absolute bottom-5 left-1/2 -translate-x-1/2 text-[14px] text-white/80"><span data-lb-index>1</span> / ${photoCount(c)}</p>
   </div>
-  <script type="application/json" id="ficha-data">${jsonForScript({ id: c.id, title, photos: fotosIdx(c).map((i) => shot(c, i, 1600, 1200)) })}</script>`;
+  <script type="application/json" id="ficha-data">${jsonForScript({ id: c.id, title, marca: c.brand, modelo: c.model, condicion: c.condition === 'new' ? '0km' : 'usados', photos: fotosIdx(c).map((i) => shot(c, i, 1600, 1200)) })}</script>`;
 }

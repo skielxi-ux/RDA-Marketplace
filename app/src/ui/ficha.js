@@ -3,6 +3,7 @@ import Swiper from 'swiper';
 import { Navigation, A11y } from 'swiper/modules';
 import { $, $$ } from './dom.js';
 import { initCards, bindFavorites } from './cards.js';
+import { registrarBusqueda } from '../lib/busquedas.js';
 
 function readData() {
   try { return JSON.parse($('#ficha-data').textContent); } catch { return null; }
@@ -101,6 +102,8 @@ export function initFicha() {
   if (!data) return;
 
   initLightbox(data.photos);
+  // +Buscados: la visita a la ficha cuenta como interés en esa marca y modelo
+  registrarBusqueda({ marca: data.marca, modelo: data.modelo, condicion: data.condicion, origen: 'ficha' });
 
   // Mapa: no captura la rueda del mouse hasta que se lo toca (así no frena el scroll de la página)
   const map = $('[data-map]');

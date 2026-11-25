@@ -16,7 +16,7 @@ const logo = (nombre) => {
 
 export const renderMarcas = () => searchBrands.map((m) => `
       <li>
-        <a href="./autos.html?marca=${encodeURIComponent(m)}" class="group flex flex-col items-center gap-3 text-center">
+        <a href="./autos.html?marca=${encodeURIComponent(m)}&amp;o=marca" class="group flex flex-col items-center gap-3 text-center">
           <span class="grid aspect-square w-full place-items-center rounded-2xl border border-line bg-white text-ink transition-all duration-300 group-hover:-translate-y-1 group-hover:border-brand group-hover:text-brand group-hover:shadow-[0_10px_30px_rgba(5,11,32,0.07)] group-active:translate-y-0 group-active:scale-[0.98]">${logo(m)}</span>
           <span class="text-[16px] font-medium transition-colors group-hover:text-brand">${esc(m)}</span>
         </a>
