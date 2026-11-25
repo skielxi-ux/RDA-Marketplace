@@ -2,13 +2,15 @@
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { logoSvg } from './logo.js';
+import { searchBrands } from '../data/modelos.js';
 
 export const PROVINCIAS = [
   'Buenos Aires', 'CABA', 'Catamarca', 'Chaco', 'Chubut', 'Córdoba', 'Corrientes', 'Entre Ríos', 'Formosa', 'Jujuy',
   'La Pampa', 'La Rioja', 'Mendoza', 'Misiones', 'Neuquén', 'Río Negro', 'Salta', 'San Juan', 'San Luis', 'Santa Cruz',
   'Santa Fe', 'Santiago del Estero', 'Tierra del Fuego', 'Tucumán',
 ];
-const MARCAS = ['Audi', 'BMW', 'BYD', 'Chery', 'Chevrolet', 'Citroën', 'Fiat', 'Ford', 'Honda', 'Hyundai', 'Jeep', 'Kia', 'Mercedes-Benz', 'Nissan', 'Peugeot', 'RAM', 'Renault', 'Toyota', 'Volkswagen', 'Otra'];
+// Marcas para "Concesionario oficial": las mismas del buscador, más "Otra".
+const MARCAS = [...searchBrands, 'Otra'];
 
 const options = (list, placeholder) => `<option value="">${esc(placeholder)}</option>${list.map((v) => `<option value="${esc(v)}">${esc(v)}</option>`).join('')}`;
 
