@@ -29,11 +29,12 @@ export const HERO_WIDTHS = [640, 1024, 1600, 2400];
 export const heroSrc = (file, w) => `./img/hero/${file}-${w}.webp`;
 
 export const bodyTypeList = [
-  { slug: 'suv', name: 'SUV', photo: 'photo-1563720223185-11003d516935' },
-  { slug: 'sedan', name: 'Sedán', photo: 'photo-1616422285623-13ff0162193c' },
-  { slug: 'hatchback', name: 'Hatchback', photo: 'photo-1541899481282-d53bffe3c35d' },
-  { slug: 'electrico', name: 'Eléctrico', photo: 'photo-1606016159991-dfe4f2746ad5' },
-  { slug: 'deportivo', name: 'Deportivo', photo: 'photo-1632245889029-e406faaa34cd' },
+  // Fotos propias en app/public/img/carrocerias/{slug}-{300|450|600}.webp (6:7, oscurecidas con el mismo estilo)
+  { slug: 'suv', name: 'SUV', alt: 'Toyota Corolla Cross' },
+  { slug: 'sedan', name: 'Sedán', alt: 'Honda Civic' },
+  { slug: 'hatchback', name: 'Hatchback', alt: 'Peugeot 208' },
+  { slug: 'electrico', name: 'Eléctrico', alt: 'BYD Dolphin Mini' },
+  { slug: 'deportivo', name: 'Deportivo', alt: 'Volkswagen Vento GLI' },
 ];
 
 export const reasons = [

@@ -3,7 +3,7 @@
 // (por ejemplo, al cambiar de pestaña). Todo dato pasa por esc().
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
-import { unsplash, srcset, heroSlides, HERO_WIDTHS, heroSrc, bodyTypes, reasons } from '../data/catalog.js';
+import { heroSlides, HERO_WIDTHS, heroSrc, bodyTypes, reasons } from '../data/catalog.js';
 import { SEARCH_MAKES, searchBrands } from '../data/modelos.js';
 
 export const renderHeroSlides = () =>
@@ -32,10 +32,10 @@ export const renderBodyTypes = () =>
     <div class="swiper-slide">
       <a href="./autos.html?carroceria=${esc(t.slug)}" class="type-card group relative block h-[260px] overflow-hidden rounded-2xl sm:h-[290px]">
         <img class="absolute inset-0 h-full w-full object-cover"
-          src="${esc(unsplash(t.photo, 600, 700))}"
-          srcset="${esc(srcset(t.photo, 6 / 7, [300, 450, 600]))}"
+          src="./img/carrocerias/${esc(t.slug)}-600.webp"
+          srcset="${[300, 450, 600].map((w) => `./img/carrocerias/${esc(t.slug)}-${w}.webp ${w}w`).join(', ')}"
           sizes="(min-width:1200px) 20vw, (min-width:640px) 40vw, 75vw"
-          width="600" height="700" alt="" loading="lazy" decoding="async" />
+          width="600" height="700" alt="${esc(t.alt ?? '')}" loading="lazy" decoding="async" />
         <div class="absolute inset-0 bg-gradient-to-b from-ink/75 via-ink/10 to-transparent"></div>
         <div class="relative p-[30px] text-white">
           <p class="text-[15px]">${esc(t.count)} ${t.count === 1 ? 'auto' : 'autos'}</p>
