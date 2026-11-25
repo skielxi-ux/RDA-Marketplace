@@ -18,6 +18,7 @@ export const FAQ = [
     preguntas: [
       ['¿Necesito una cuenta para buscar o consultar?', 'No. Podés buscar, ver fichas, guardar favoritos y escribirle al vendedor sin crear una cuenta.'],
       ['¿Cómo contacto al vendedor?', 'En la ficha de cada auto tocá el botón de WhatsApp: se abre una conversación con el vendedor con el auto ya mencionado en el mensaje.'],
+      ['¿Me pueden avisar cuando entre el auto que busco?', 'Sí. Filtrá en el listado la marca (y si querés modelo, año y precio) y tocá "Avisame cuando entre". Necesitás tu cuenta y permitir las notificaciones del navegador. Funciona en compu y Android; en iPhone, primero agregá el sitio a la pantalla de inicio. Tus alertas las ves y borrás en Mi cuenta → Mis alertas.'],
       ['¿Dónde quedan mis favoritos?', 'En "Mis favoritos", desde el menú. Se guardan en el navegador que usaste, así que si cambiás de celular o de compu no los vas a ver ahí.'],
       ['¿Cómo sé si el vendedor es confiable?', 'Cada ficha indica si el auto lo vende un concesionario oficial, una agencia multimarca o un particular. Las agencias pasan por una verificación antes de publicar y las publicaciones de particulares las revisamos antes de que salgan online.'],
       ['¿Qué tengo que tener en cuenta para comprar seguro?', 'Mirá el auto en persona antes de pagar cualquier seña, pedí el título y el informe de dominio, hacé revisar el auto por un mecánico de confianza y desconfiá de precios muy por debajo del mercado o de quien te apure para pagar.'],
@@ -48,6 +49,7 @@ export const FAQ = [
       ['¿Cómo actualizo precios o datos?', 'Volvé a subir la plantilla con los mismos códigos: los autos que ya existen se actualizan y no se duplican. También podés cambiar precios, pausar o marcar vendidos desde el bot de Telegram.'],
       ['¿Qué es la Red de colegas?', 'Es el espacio B2B entre agencias. Si un cliente busca un auto que no tenés, publicás el pedido y les llega a todas las agencias de la red. La que lo tiene toca "Lo tengo" y se contactan directo por WhatsApp.'],
       ['¿Para qué conecto Telegram?', 'Para recibir al instante los pedidos de colegas y los avisos de tu cuenta, y para manejar tus autos desde el chat: cambiar precios, marcarlos como vendidos, pausarlos y pedir autos a la red.'],
+      ['¿Puedo ver cuánta gente mira mis autos?', 'Sí. En Mi cuenta → Mis autos ves las estadísticas de los últimos 30 días: vistas de cada ficha, clics en WhatsApp y llamadas, con un gráfico por día. Cada persona cuenta una vez por auto y por día.'],
       ['¿Qué es +Buscados?', 'Un ranking con los 10 autos más buscados del mes y del año en Red de Autos, para que sepas qué stock conviene tener.'],
       ['¿Puedo tener una página de mi agencia?', 'Sí. Al completar tu perfil y subir tu logo, tu agencia tiene su propia página con todo tu stock publicado, para compartir donde quieras.'],
     ],

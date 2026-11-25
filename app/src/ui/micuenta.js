@@ -117,7 +117,7 @@ export function initMiCuenta() {
                 </p>
                 <p class="mt-1 truncate text-[16px] font-bold">${esc(titulo)}</p>
                 <p class="text-[15px]">${esc(formatPrice(Number(a.precio), a.moneda))}</p>
-                ${(() => { const x = porAuto.get(a.id); return x ? `<p class="mt-1 flex flex-wrap gap-x-3 text-[13px] text-ink/60" title="Últimos 30 días (total histórico: ${esc(x.vistas_total)} vistas, ${esc(x.whatsapp_total + x.llamadas_total)} contactos)"><span class="inline-flex items-center gap-1">${icon('eye', 'h-3.5 w-3.5')} ${esc(x.vistas_30)} vistas</span><span class="inline-flex items-center gap-1">${icon('message-circle', 'h-3.5 w-3.5')} ${esc(x.whatsapp_30)} WhatsApp</span>${x.llamadas_30 ? `<span class="inline-flex items-center gap-1">${icon('phone', 'h-3.5 w-3.5')} ${esc(x.llamadas_30)} llamadas</span>` : ''}</p>` : ''; })()}
+                ${(() => { const x = porAuto.get(a.id); return x ? `<p class="mt-1 flex flex-wrap gap-x-3 text-[13px] text-ink/60" title="Últimos 30 días (total histórico: ${esc(x.vistas_total)} vistas, ${esc(x.whatsapp_total + x.llamadas_total)} contactos)"><span class="inline-flex items-center gap-1">${icon('eye', 'h-3.5 w-3.5')} ${esc(x.vistas_30)} ${x.vistas_30 === 1 ? 'vista' : 'vistas'}</span><span class="inline-flex items-center gap-1">${icon('message-circle', 'h-3.5 w-3.5')} ${esc(x.whatsapp_30)} WhatsApp</span>${x.llamadas_30 ? `<span class="inline-flex items-center gap-1">${icon('phone', 'h-3.5 w-3.5')} ${esc(x.llamadas_30)} ${x.llamadas_30 === 1 ? 'llamada' : 'llamadas'}</span>` : ''}</p>` : ''; })()}
               </div>
             </div>
             <div class="flex shrink-0 flex-wrap gap-2">

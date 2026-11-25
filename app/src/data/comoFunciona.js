@@ -11,6 +11,7 @@ export const GUIAS = [
       { icon: 'heart', titulo: 'Guardá los que te gustan', texto: 'Tocá el corazón y encontralos después en Mis favoritos, sin necesidad de crear una cuenta.' },
       { icon: 'images', titulo: 'Mirá la ficha completa', texto: 'Fotos, ficha técnica, ubicación y quién lo vende: concesionario oficial, agencia verificada o particular.' },
       { icon: 'message-circle', titulo: 'Escribí por WhatsApp', texto: 'Con un toque le escribís directo al vendedor, con el auto ya mencionado en el mensaje. Sin intermediarios.' },
+      { icon: 'bell', titulo: '¿No está? Te avisamos', texto: 'Filtrá el auto que buscás y tocá "Avisame cuando entre": te llega una notificación apenas lo publiquen.' },
       { icon: 'circle-check', titulo: 'Coordiná y cerrá', texto: 'Arreglá la visita, la prueba y la forma de pago directamente con el vendedor.' },
     ],
     consejo: { titulo: 'Comprá seguro', texto: 'Mirá el auto en persona antes de pagar cualquier seña, pedí el título y el informe de dominio, y desconfiá de precios muy por debajo del mercado. Red de Autos no cobra ni intermedia en los pagos.' },
@@ -41,7 +42,7 @@ export const GUIAS = [
     pasos: [
       { icon: 'badge-check', titulo: 'Alta y verificación', texto: 'Registrate con tu celular, el CUIT y el tipo de agencia. Revisamos los datos y te aprobamos. Sumá tu logo y tu perfil, y tenés tu propia página de agencia con todo tu stock.' },
       { icon: 'file-spreadsheet', titulo: 'Carga masiva de stock', texto: 'Completá la plantilla de Excel, arrastrá la carpeta de fotos (hasta 7 por auto), revisá y publicá todo de una vez. Para actualizar precios o datos, volvé a subir la plantilla: cada auto se reconoce por su código.' },
-      { icon: 'car', titulo: 'Gestioná tus autos', texto: 'Desde Mi cuenta pausás, volvés a publicar o marcás como vendido. Y en +Buscados ves los 10 autos más buscados del mes y del año para saber qué stock conviene tener.' },
+      { icon: 'car', titulo: 'Gestioná tus autos', texto: 'Desde Mi cuenta editás, pausás o eliminás tus autos y ves sus estadísticas: vistas de cada ficha y clics en WhatsApp y llamadas. Y en +Buscados ves los 10 autos más buscados del mes y del año.' },
       { icon: 'handshake', titulo: 'Red de colegas (B2B)', texto: '¿Un cliente busca un auto que no tenés? Publicá el pedido con modelo, año, km, color, caja y combustible. Les llega a todas las agencias de la red y, si alguna lo tiene, toca "Lo tengo" y se contactan directo por WhatsApp.' },
       { icon: 'bot', titulo: 'Todo desde Telegram', texto: 'Conectá nuestro bot y recibí al instante los pedidos de colegas. Desde el chat cambiás precios, marcás autos vendidos, los pausás, pedís autos a la red y recibís los avisos de tu cuenta.' },
       { icon: 'sparkle', titulo: 'Ferias online', texto: 'Organizamos ferias con fecha y hora para mover stock. Te avisamos con tiempo y el descuento lo elegís vos.' },

@@ -303,7 +303,7 @@ import{n as e,r as t}from"./site-EYidmjpY.js";import{i as n,n as r,o as i,r as a
                 </p>
                 <p class="mt-1 truncate text-[16px] font-bold">${c(a)}</p>
                 <p class="text-[15px]">${c(f(Number(e.precio),e.moneda))}</p>
-                ${(()=>{let n=t.get(e.id);return n?`<p class="mt-1 flex flex-wrap gap-x-3 text-[13px] text-ink/60" title="Últimos 30 días (total histórico: ${c(n.vistas_total)} vistas, ${c(n.whatsapp_total+n.llamadas_total)} contactos)"><span class="inline-flex items-center gap-1">${l(`eye`,`h-3.5 w-3.5`)} ${c(n.vistas_30)} vistas</span><span class="inline-flex items-center gap-1">${l(`message-circle`,`h-3.5 w-3.5`)} ${c(n.whatsapp_30)} WhatsApp</span>${n.llamadas_30?`<span class="inline-flex items-center gap-1">${l(`phone`,`h-3.5 w-3.5`)} ${c(n.llamadas_30)} llamadas</span>`:``}</p>`:``})()}
+                ${(()=>{let n=t.get(e.id);return n?`<p class="mt-1 flex flex-wrap gap-x-3 text-[13px] text-ink/60" title="Últimos 30 días (total histórico: ${c(n.vistas_total)} vistas, ${c(n.whatsapp_total+n.llamadas_total)} contactos)"><span class="inline-flex items-center gap-1">${l(`eye`,`h-3.5 w-3.5`)} ${c(n.vistas_30)} ${n.vistas_30===1?`vista`:`vistas`}</span><span class="inline-flex items-center gap-1">${l(`message-circle`,`h-3.5 w-3.5`)} ${c(n.whatsapp_30)} WhatsApp</span>${n.llamadas_30?`<span class="inline-flex items-center gap-1">${l(`phone`,`h-3.5 w-3.5`)} ${c(n.llamadas_30)} ${n.llamadas_30===1?`llamada`:`llamadas`}</span>`:``}</p>`:``})()}
               </div>
             </div>
             <div class="flex shrink-0 flex-wrap gap-2">
