@@ -1,0 +1,1 @@
+import{a as e}from"./fotos-7Gn7EBFX.js";import"./catalog-Bvstg05i.js";import{t}from"./modelos-2oEumO6S.js";var n=(n,r=``)=>`<option value="">Todos los modelos</option>`+(Object.hasOwn(t,n??``)?t[n]:[]).map(t=>`<option value="${e(t)}"${t===r?` selected`:``}>${e(t)}</option>`).join(``);export{n as t};

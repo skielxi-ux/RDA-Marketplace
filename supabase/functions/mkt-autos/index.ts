@@ -196,9 +196,9 @@ Deno.serve(async (req) => {
       return json({ ok: true });
     }
 
-    // ---- Borrar un auto propio (solo particulares; las agencias lo pausan o lo marcan vendido) ----
+    // ---- Borrar un auto propio (con sus fotos) ----
     if (b.accion === "borrar") {
-      if (!esParticular || typeof b.id !== "string") return err("Datos inválidos");
+      if (typeof b.id !== "string") return err("Datos inválidos");
       const { data: a } = await db.from("mkt_autos").select("id, fotos").eq("id", b.id).eq("cuenta_id", cuenta.id).maybeSingle();
       if (!a) return err("No encontramos ese auto.", 404);
       const { error } = await db.from("mkt_autos").delete().eq("id", a.id);

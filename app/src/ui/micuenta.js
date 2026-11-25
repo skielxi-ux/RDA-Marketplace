@@ -8,6 +8,7 @@ import { autosApi, colegasApi, fotoUrl } from './autosApi.js';
 import { carUrl } from '../data/catalog.js';
 import { initPerfil } from './perfil.js';
 import { initColegas } from './colegas.js';
+import { editarAuto } from './editarAuto.js';
 
 export function initMiCuenta() {
   const guest = $('[data-mc-guest]');
@@ -50,7 +51,9 @@ export function initMiCuenta() {
   };
 
   // ---------- Mis autos ----------
+  let misAutos = [];
   const pintarMisAutos = (autos) => {
+    misAutos = autos;
     if (!autos.length) {
       listaMis.innerHTML = `
         <div class="rounded-[20px] border border-dashed border-line p-8 text-center">
@@ -84,9 +87,11 @@ export function initMiCuenta() {
                 <p class="text-[15px]">${esc(formatPrice(Number(a.precio), a.moneda))}</p>
               </div>
             </div>
-            <div class="flex shrink-0 gap-2">
+            <div class="flex shrink-0 flex-wrap gap-2">
               ${pausado ? '' : `<a href="${esc(carUrl({ real: true, id: a.id }))}" class="btn-outline h-[42px] !px-4 text-[14px]">${icon('eye', 'h-4 w-4')} Ver</a>`}
-              ${a.pausado_por_admin ? '' : `<button type="button" class="btn-outline h-[42px] !px-4 text-[14px]" data-estado="${pausado ? 'publicado' : 'pausado'}" data-id="${esc(a.id)}">${pausado ? 'Volver a publicar' : 'Pausar'}</button>`}
+              ${a.pausado_por_admin || vendido ? '' : `<button type="button" class="btn-outline h-[42px] !px-4 text-[14px]" data-estado="${pausado ? 'publicado' : 'pausado'}" data-id="${esc(a.id)}">${pausado ? 'Volver a publicar' : 'Pausar'}</button>`}
+              ${vendido ? '' : `<button type="button" class="btn-outline h-[42px] !px-4 text-[14px]" data-editar="${esc(a.id)}">Editar</button>`}
+              <button type="button" class="btn-outline h-[42px] !px-4 text-[14px] hover:!border-[#D92D20] hover:!bg-[#D92D20]" data-eliminar="${esc(a.id)}" aria-label="Eliminar ${esc(titulo)}">${icon('x', 'h-4 w-4')} Eliminar</button>
             </div>
           </li>`;
         }).join('')}
@@ -153,11 +158,19 @@ export function initMiCuenta() {
   };
 
   listaMis.addEventListener('click', async (e) => {
-    const b = e.target.closest('[data-estado]');
+    const ed = e.target.closest('[data-editar]');
+    if (ed) { const a = misAutos.find((x) => x.id === ed.dataset.editar); if (a) editarAuto(a, cargarMisAutos); return; }
+    const del = e.target.closest('[data-eliminar]');
+    const b = del || e.target.closest('[data-estado]');
     if (!b) return;
+    if (del) {
+      const a = misAutos.find((x) => x.id === del.dataset.eliminar);
+      if (!window.confirm(`¿Eliminar ${a ? `${a.marca} ${a.modelo} ${a.anio} (${a.codigo})` : 'este auto'}? Se borra con sus fotos y no se puede deshacer.`)) return;
+    }
     b.disabled = true;
     try {
-      await autosApi('estado', { id: b.dataset.id, estado: b.dataset.estado });
+      if (del) await autosApi('borrar', { id: del.dataset.eliminar });
+      else await autosApi('estado', { id: b.dataset.id, estado: b.dataset.estado });
       await cargarMisAutos();
     } catch (err) {
       b.disabled = false;
