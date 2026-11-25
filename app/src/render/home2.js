@@ -87,12 +87,14 @@ export const renderForIndependents = () => {
           <p class="flex items-center gap-2.5 text-[13px] font-bold uppercase tracking-[0.12em] text-ink/80">${icon('handshake', 'h-4 w-4 text-brand')} ${esc(d.eyebrow)}</p>
           <h2 id="indep-title" class="mt-5 text-[32px] font-bold leading-[1.08] tracking-tight text-balance sm:text-[42px] xl:text-[48px]">${esc(d.title)}</h2>
           <p class="mt-5 max-w-[600px] text-[16px] leading-[1.7] text-ink/80 sm:text-[18px]">${esc(d.text)}</p>
-          <ul class="mt-8 grid gap-4 sm:grid-cols-3">
+          <ul class="mt-8 grid gap-3">
             ${d.benefits.map((b) => `
-            <li class="rounded-2xl border border-line bg-white p-5 transition-shadow duration-300 hover:shadow-[0_14px_40px_rgba(5,11,32,0.08)]">
-              <span class="grid h-12 w-12 place-items-center rounded-xl bg-[#EEF1FB] text-brand">${icon(b.icon, 'h-6 w-6')}</span>
-              <h3 class="mt-4 text-[18px] font-bold leading-snug">${esc(b.title)}</h3>
-              <p class="mt-2 text-[15px] leading-[1.6] text-ink/75">${esc(b.text)}</p>
+            <li class="flex items-start gap-4 rounded-2xl border border-line bg-white p-5 transition-shadow duration-300 hover:shadow-[0_14px_40px_rgba(5,11,32,0.08)]">
+              <span class="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-[#EEF1FB] text-brand">${icon(b.icon, 'h-6 w-6')}</span>
+              <div class="min-w-0">
+                <h3 class="text-[18px] font-bold leading-snug">${esc(b.title)}</h3>
+                <p class="mt-1 text-[15px] leading-[1.6] text-ink/75">${esc(b.text)}</p>
+              </div>
             </li>`).join('')}
           </ul>
           <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
