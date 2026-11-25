@@ -15,6 +15,7 @@ const ICONOS = {
   feria_nueva: ['zap', 'bg-[#FDECEC] text-[#E5484D]'],
   auto_publicado: ['car', 'bg-[#E8F5E9] text-[#1E6B34]'],
   auto_pausado: ['car', 'bg-[#FFF6E5] text-[#8A5A00]'],
+  resumen_semanal: ['eye', 'bg-[#EEF1FB] text-brand'],
 };
 
 /** "Hace 5 min", "Hace 3 horas", "Hace 1 día"… */
