@@ -62,5 +62,5 @@ export const footer = {
     { title: 'Marcas', links: [['Toyota', './autos.html?marca=Toyota'], ['Volkswagen', './autos.html?marca=Volkswagen'], ['Ford', './autos.html?marca=Ford'], ['Chevrolet', './autos.html?marca=Chevrolet'], ['Fiat', './autos.html?marca=Fiat'], ['Peugeot', './autos.html?marca=Peugeot']] },
     { title: 'Carrocerías', links: [['SUV', './autos.html?carroceria=suv'], ['Sedán', './autos.html?carroceria=sedan'], ['Hatchback', './autos.html?carroceria=hatchback'], ['Eléctrico', './autos.html?carroceria=electrico'], ['Deportivo', './autos.html?carroceria=deportivo']] },
   ],
-  legal: [['Términos y condiciones', '#terminos'], ['Privacidad', '#privacidad']],
+  legal: [['Términos y condiciones', './terminos.html'], ['Privacidad', './privacidad.html']],
 };

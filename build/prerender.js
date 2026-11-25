@@ -13,6 +13,8 @@ const SITE_SEG = SITE_DATA.seguros.nombre;
 import { renderGuias } from '../app/src/render/comoFunciona.js';
 import { renderSeguros } from '../app/src/render/seguros.js';
 import { renderMarcas } from '../app/src/render/marcas.js';
+import { renderLegal, renderIndiceLegal } from '../app/src/render/legal.js';
+import { TERMINOS, PRIVACIDAD, VIGENCIA } from '../app/src/data/legales.js';
 import { renderFaq, renderFaqIndice, renderFaqJsonLd } from '../app/src/render/faq.js';
 
 const renderEquipo = () => EQUIPO.map((p) => `
@@ -84,6 +86,18 @@ const PAGES = {
     jsonld: renderFaqJsonLd(),
     indice: renderFaqIndice(),
     faq: renderFaq(),
+  }),
+  'terminos.html': () => ({
+    head: renderHeadTags({ title: 'Términos y condiciones | Red de Autos', description: 'Términos y condiciones de uso de Red de Autos: publicaciones, cuentas, agencias, vendedores independientes y responsabilidades.', path: 'terminos.html' }),
+    vigencia: `Vigentes desde el ${VIGENCIA}.`,
+    indice: renderIndiceLegal(TERMINOS),
+    legal: renderLegal(TERMINOS),
+  }),
+  'privacidad.html': () => ({
+    head: renderHeadTags({ title: 'Política de privacidad | Red de Autos', description: 'Cómo Red de Autos recoge, usa y protege tus datos personales, y cómo ejercer tus derechos según la Ley 25.326.', path: 'privacidad.html' }),
+    vigencia: `Vigente desde el ${VIGENCIA}.`,
+    indice: renderIndiceLegal(PRIVACIDAD),
+    legal: renderLegal(PRIVACIDAD),
   }),
   'agencias.html': () => ({
     head: renderHeadTags({

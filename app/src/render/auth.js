@@ -146,7 +146,7 @@ export const renderAuthModal = () => `
 
         <label class="flex cursor-pointer items-start gap-3 text-[14px] leading-[1.5]">
           <input type="checkbox" name="acepto" class="mt-0.5 h-[18px] w-[18px] shrink-0 cursor-pointer accent-brand" required />
-          <span>Acepto los <a href="./#terminos" class="font-medium text-brand underline-offset-4 hover:underline">términos y condiciones</a> y la <a href="./#privacidad" class="font-medium text-brand underline-offset-4 hover:underline">política de privacidad</a>.</span>
+          <span>Acepto los <a href="./terminos.html" target="_blank" rel="noopener" class="font-medium text-brand underline-offset-4 hover:underline">términos y condiciones</a> y la <a href="./privacidad.html" target="_blank" rel="noopener" class="font-medium text-brand underline-offset-4 hover:underline">política de privacidad</a>.</span>
         </label>
 
         ${errorBox()}
