@@ -8,8 +8,10 @@ import { renderHeadTags, renderJsonLd } from '../app/src/render/seo.js';
 import { renderForDealers, renderSellPrivate, renderStats, renderTestimonials, renderBrands, renderFooter } from '../app/src/render/home2.js';
 import { renderSiteHeader, renderToTop } from '../app/src/render/layout.js';
 import { logoSvg } from '../app/src/render/logo.js';
-import { EQUIPO } from '../app/src/data/site.js';
+import { EQUIPO, SITE as SITE_DATA } from '../app/src/data/site.js';
+const SITE_SEG = SITE_DATA.seguros.nombre;
 import { renderGuias } from '../app/src/render/comoFunciona.js';
+import { renderSeguros } from '../app/src/render/seguros.js';
 import { renderFaq, renderFaqIndice, renderFaqJsonLd } from '../app/src/render/faq.js';
 
 const renderEquipo = () => EQUIPO.map((p) => `
@@ -81,6 +83,14 @@ const PAGES = {
     jsonld: renderFaqJsonLd(),
     indice: renderFaqIndice(),
     faq: renderFaq(),
+  }),
+  'seguros.html': () => ({
+    head: renderHeadTags({
+      title: 'Seguros para tu auto | Red de Autos',
+      description: `Asegurá tu vehículo con ${SITE_SEG}, partner de Red de Autos. Te asesoran y cotizan por WhatsApp.`,
+      path: 'seguros.html',
+    }),
+    seguros: renderSeguros(),
   }),
   'vender.html': () => ({
     head: renderHeadTags({

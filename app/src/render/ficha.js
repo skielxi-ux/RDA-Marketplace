@@ -247,6 +247,32 @@ function renderSellerCard(c) {
     </div>
     ${isPrivate ? '' : `<a href="${c.real ? `./agencia.html?id=${encodeURIComponent(s.id)}` : `./autos.html?agencia=${encodeURIComponent(c.seller)}`}" class="link-view mt-5 w-full justify-center">Ver todo su stock ${icon('arrow-up-right', 'h-4 w-4')}</a>`}
     <p class="mt-5 rounded-xl bg-soft px-4 py-3 text-[13px] leading-[1.6] text-ink/70">Nunca hagas pagos por adelantado sin ver el auto y la documentación.</p>
+  </aside>
+  ${renderSeguroCard(c)}`;
+}
+
+/** WhatsApp del partner de seguros con el auto ya escrito en el mensaje. */
+export const seguroUrl = (c) => {
+  const tel = SITE.seguros.whatsapp.replace(/\D/g, '');
+  if (!tel) return '';
+  const text = c
+    ? `Hola, vengo de Red de Autos. Quiero cotizar el seguro de un ${fullTitle(c)}${c.condition === 'new' ? ' 0km' : ''}.`
+    : 'Hola, vengo de Red de Autos. Quiero cotizar el seguro de mi auto.';
+  return `https://wa.me/${tel}?text=${encodeURIComponent(text)}`;
+};
+
+function renderSeguroCard(c) {
+  const url = seguroUrl(c);
+  if (!url) return '';
+  const { nombre, logo } = SITE.seguros;
+  return `
+  <aside class="mt-5 rounded-[20px] border border-line bg-white p-5" aria-label="Seguro del auto">
+    <div class="flex items-center gap-3">
+      ${logo ? `<img src="${esc(logo)}" alt="${esc(nombre)}" width="78" height="40" class="h-10 w-auto shrink-0 object-contain" loading="lazy" />` : `<span class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-[#EEF1FB] text-brand">${icon('shield-check', 'h-5 w-5')}</span>`}
+      <p class="text-[16px] font-bold leading-tight">¿Lo comprás? Cotizá el seguro</p>
+    </div>
+    <p class="mt-2 text-[14px] leading-[1.6] text-ink/70">Con ${esc(nombre)}, nuestro partner en seguros. Te asesoran por WhatsApp.</p>
+    <a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="btn-outline mt-4 h-[48px] w-full justify-center" data-seguro>${icon('message-circle', 'h-4 w-4')} Cotizar por WhatsApp</a>
   </aside>`;
 }
 

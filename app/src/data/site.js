@@ -7,6 +7,8 @@ export const SITE = {
   locale: 'es_AR',
   phone: { display: '381 633-5234', tel: '+543816335234' },
   email: 'reddeautostuc@gmail.com',
+  // Partner de seguros (página Seguros y recuadro en la ficha de cada auto). Sin número, no se muestra el botón.
+  seguros: { nombre: 'GAMAN BROKERS', whatsapp: '5493815744335', logo: './img/partners/gaman.webp' },
   address: ['San Miguel de Tucumán', 'Tucumán, Argentina'],
   ogImage:
     'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1200&h=630&fit=crop&auto=format&q=75',
