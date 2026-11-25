@@ -88,6 +88,8 @@
   /* Menú lateral */
   .drawer { @apply -translate-x-full; transition: transform .45s var(--ease-boxcar); }
   .drawer.is-open { @apply translate-x-0; }
+  .notif-panel { @apply translate-x-full; transition: transform .45s var(--ease-boxcar); }
+  .notif-panel.is-open { @apply translate-x-0; }
   .drawer-backdrop { @apply invisible opacity-0; transition: opacity .35s ease, visibility .35s; }
   .drawer-backdrop.is-open { @apply visible opacity-100; }
   .menu-link { @apply flex items-center justify-between border-b border-line py-4 text-[17px] font-medium transition-colors duration-300 hover:text-brand; }

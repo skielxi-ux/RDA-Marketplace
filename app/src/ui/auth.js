@@ -32,26 +32,35 @@ function cuitOk(c) {
 const pinWeak = (p) => /^(\d)\1{5}$/.test(p) || ['123456', '654321', '012345', '123123', '121212', '112233'].includes(p);
 
 let supabasePromise = null;
-// ---------- Campanita: pedidos nuevos de la Red de colegas (solo agencias aprobadas) ----------
+// ---------- Campanita: notificaciones de la cuenta (cualquier cuenta con sesión) ----------
 let ultimaConsulta = 0;
+/** Pinta el número de notificaciones sin leer en la campanita. */
+export function pintarSinLeer(n) {
+  $$('[data-campanita]').forEach((a) => {
+    const badge = $('[data-campanita-n]', a);
+    badge.textContent = n > 99 ? '99+' : String(n);
+    badge.hidden = !n;
+    a.classList.toggle('tiene-nuevos', n > 0);
+    a.setAttribute('aria-label', n ? `Notificaciones: ${n} ${n === 1 ? 'nueva' : 'nuevas'}` : 'Notificaciones');
+  });
+}
 async function pintarCampanita(cuenta) {
   const links = $$('[data-campanita]');
-  const ok = cuenta?.tipo === 'agencia' && cuenta.estado === 'aprobada';
-  links.forEach((a) => { a.hidden = !ok; });
-  if (!ok || !links.length || Date.now() - ultimaConsulta < 5000) return;
+  links.forEach((a) => { a.hidden = !cuenta; });
+  if (!cuenta || !links.length || Date.now() - ultimaConsulta < 5000) return;
   ultimaConsulta = Date.now();
   try {
-    const { colegasApi } = await import('./autosApi.js');
-    const { sin_leer: n } = await colegasApi('notifs');
-    links.forEach((a) => {
-      const badge = $('[data-campanita-n]', a);
-      badge.textContent = n > 99 ? '99+' : String(n);
-      badge.hidden = !n;
-      a.classList.toggle('tiene-nuevos', n > 0);
-      a.setAttribute('aria-label', n ? `Red de colegas: ${n} ${n === 1 ? 'pedido nuevo' : 'pedidos nuevos'}` : 'Red de colegas');
-    });
+    const { notifsApi } = await import('./autosApi.js');
+    pintarSinLeer((await notifsApi('contar')).sin_leer);
   } catch { /* sin aviso si falla */ }
 }
+// Al tocar la campanita se abre el panel de notificaciones
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('[data-campanita]');
+  if (!b) return;
+  e.preventDefault();
+  import('./notifs.js').then((m) => m.abrirNotificaciones(b));
+});
 /** Vuelve a consultar la campanita (por ejemplo, después de leer los pedidos). */
 export const refrescarCampanita = () => { ultimaConsulta = 0; pintarCampanita(cuentaGuardada()); };
 

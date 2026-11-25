@@ -323,11 +323,13 @@ export function initMiCuenta() {
   btnAlertas.addEventListener('click', abrirAlertas);
   btnFeria.addEventListener('click', abrirFeria);
   btnClientes.addEventListener('click', abrirClientes);
-  // La campanita lleva a #colegas: si ya estamos en Mi cuenta, abrir la sección
+  // Los avisos de la campanita llevan a una sección (#colegas, #feria…): si ya estamos en Mi cuenta, abrirla
   window.addEventListener('hashchange', () => {
     if (location.hash === '#colegas' && esAgencia) abrirColegas();
     if (location.hash === '#alertas') abrirAlertas();
     if (location.hash === '#feria' && esAgencia) abrirFeria();
+    if (location.hash === '#perfil' && !btnPerfil.hidden) abrirPerfil();
+    if (location.hash === '#mis-autos' && esAgencia) abrirMisAutos();
   });
   btnPublicar.addEventListener('click', (e) => { if (!esAgencia && !esParticular) e.preventDefault(); });
   window.addEventListener('rda:cuenta', (e) => pintar(e.detail));

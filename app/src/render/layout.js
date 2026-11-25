@@ -30,9 +30,9 @@ export const renderSiteHeader = () => `
         <button type="button" data-auth-open aria-haspopup="dialog" aria-expanded="false" class="flex items-center gap-2 font-medium transition-colors duration-300 hover:text-brand max-sm:h-10 max-sm:w-10 max-sm:justify-center max-sm:rounded-full max-sm:border max-sm:border-line" >
           <i data-icon="user" class="h-4 w-4"></i> <span data-auth-label class="max-w-[140px] truncate max-sm:sr-only">Ingresar</span>
         </button>
-        <a href="./mi-cuenta.html#colegas" class="campanita" data-campanita hidden aria-label="Red de colegas: pedidos nuevos">
+        <button type="button" class="campanita" data-campanita hidden aria-label="Notificaciones" aria-haspopup="dialog" aria-controls="notif-panel" aria-expanded="false">
           <i data-icon="bell" class="h-[18px] w-[18px]"></i><span class="campanita-badge" data-campanita-n hidden></span>
-        </a>
+        </button>
         <div class="hidden items-center gap-1.5 md:flex" role="group" aria-label="Nuestras redes">${renderSocial()}</div>
       </div>
     </div>

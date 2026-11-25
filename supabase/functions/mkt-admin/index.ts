@@ -5,6 +5,7 @@
 //           (aprobar / rechazar también vale para vendedores independientes)
 //           autos, auto_estado (aprobar autos de particulares en revisión, pausar / volver a publicar).
 // Avisos por Telegram a las agencias: aprobación, cambios de perfil aprobados/rechazados y ferias nuevas.
+// Avisos en la campanita (mkt_notificaciones): cuenta aprobada/rechazada, cambios de perfil, feria nueva, auto publicado/pausado.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const env = (k: string, d = "") => Deno.env.get(k) ?? d;
@@ -62,6 +63,12 @@ async function avisarTg(telefono: string, texto: string) {
     });
     return r.ok;
   } catch { return false; }
+}
+/** Aviso en la campanita de una o varias cuentas. Nunca corta la acción si falla. */
+async function notificar(cuentas: string[], tipo: string, texto: string, link: string) {
+  if (!cuentas.length) return;
+  const { error } = await db.from("mkt_notificaciones").insert(cuentas.map((cuenta_id) => ({ cuenta_id, tipo, texto, link })));
+  if (error) console.error("notificar", tipo, error);
 }
 const h = (s: unknown) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
@@ -213,6 +220,11 @@ async function cuenta(b: A) {
   if (b.op === "aprobar" && c.tipo === "agencia") await avisarTg(c.telefono, `✅ <b>¡Aprobamos ${h(c.nombre)}!</b>\nYa podés publicar tu stock, usar la Red de colegas y manejar tus autos desde acá.`);
   if (b.op === "aprobar_cambios") await avisarTg(c.telefono, `✅ Aprobamos los cambios de tu perfil en Red de Autos. Ya se ven en el sitio.`);
   if (b.op === "rechazar_cambios") await avisarTg(c.telefono, `ℹ️ No pudimos aprobar los cambios de nombre, CUIT o tipo de tu perfil. Escribinos si necesitás ayuda.`);
+  // Campanita
+  if (b.op === "aprobar") await notificar([c.id], "cuenta_aprobada", c.tipo === "vendedor" ? "¡Cuenta verificada! Ya podés ver las comisiones de las agencias y compartir autos con tu link." : "¡Agencia verificada! Ya podés publicar tu stock y usar la Red de colegas.", "mi-cuenta.html");
+  if (b.op === "rechazar") await notificar([c.id], "cuenta_rechazada", "No pudimos verificar tu cuenta. Escribinos y lo vemos juntos.", "mi-cuenta.html");
+  if (b.op === "aprobar_cambios") await notificar([c.id], "cambios_aprobados", "Aprobamos los cambios de tu perfil. Ya se ven en el sitio.", "mi-cuenta.html#perfil");
+  if (b.op === "rechazar_cambios") await notificar([c.id], "cambios_rechazados", "No pudimos aprobar los cambios de nombre, CUIT o tipo de tu perfil. Escribinos si necesitás ayuda.", "mi-cuenta.html#perfil");
   // (Una cuenta suspendida o rechazada no puede ingresar, y su sesión abierta se corta en la próxima visita: ver "perfil" en mkt-cuenta.)
   const { data: nueva } = await db.from("mkt_cuentas").select(CAMPOS).eq("id", c.id).single();
   return { ok: true, cuenta: { ...nueva, user_id: undefined }, pin_temporal: pin };
@@ -274,7 +286,8 @@ async function crearFeria(b: A) {
   const { data, error } = await db.from("mkt_ferias").insert({ nombre, descripcion, empieza: empieza.toISOString(), termina: termina.toISOString() }).select("*").single();
   if (error) throw error;
   // Aviso por Telegram a las agencias aprobadas que lo conectaron
-  const { data: ags } = await db.from("mkt_cuentas").select("telefono").eq("tipo", "agencia").eq("estado", "aprobada").eq("es_prueba", false);
+  const { data: ags } = await db.from("mkt_cuentas").select("id, telefono").eq("tipo", "agencia").eq("estado", "aprobada").eq("es_prueba", false);
+  await notificar((ags ?? []).map((a: A) => a.id), "feria_nueva", `Nueva feria: ${nombre}, del ${fechaAr(data.empieza)} al ${fechaAr(data.termina)} h. Sumá tus autos con precio relámpago.`, "mi-cuenta.html#feria");
   for (const a of ags ?? []) {
     await avisarTg(a.telefono, `🎉 <b>Nueva feria: ${h(nombre)}</b>\nDel ${fechaAr(data.empieza)} al ${fechaAr(data.termina)} h.${descripcion ? `\n${h(descripcion)}` : ""}\nElegí qué autos entran y ponele a cada uno su precio relámpago desde Mi cuenta → Feria: ${SITIO}mi-cuenta.html#feria`);
   }
@@ -324,9 +337,16 @@ async function autos(b: A) {
 async function autoEstado(b: A) {
   const estado = b.estado === "pausado" ? "pausado" : b.estado === "publicado" ? "publicado" : "";
   if (!estado || typeof b.id !== "string") throw new Error("Datos inválidos");
+  const { data: prev } = await db.from("mkt_autos").select("estado, marca, modelo, anio, cuenta_id, cuenta:mkt_cuentas(tipo)").eq("id", b.id).maybeSingle();
   const { error } = await db.from("mkt_autos")
     .update({ estado, pausado_por_admin: estado === "pausado", updated_at: new Date().toISOString() }).eq("id", b.id);
   if (error) throw error;
+  if (prev) {
+    const auto = `${prev.marca} ${prev.modelo} ${prev.anio}`;
+    const link = (prev.cuenta as A)?.tipo === "particular" ? "vender.html" : "mi-cuenta.html#mis-autos";
+    if (estado === "publicado" && prev.estado !== "publicado") await notificar([prev.cuenta_id], "auto_publicado", `Tu ${auto} ya está publicado.`, link);
+    if (estado === "pausado" && prev.estado !== "pausado") await notificar([prev.cuenta_id], "auto_pausado", `Red de Autos pausó tu ${auto}. Escribinos para revisarlo.`, link);
+  }
   // Al publicar (por ejemplo, aprobar el auto de un particular) se avisa a las alertas; las ya avisadas no se repiten
   if (estado === "publicado") {
     const p = fetch(`${env("SUPABASE_URL")}/functions/v1/mkt-alertas`, {
