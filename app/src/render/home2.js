@@ -81,7 +81,7 @@ export const renderForIndependents = () => {
       <div class="reveal grid items-stretch gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 xl:gap-16">
         <div class="relative min-h-[300px] overflow-hidden rounded-[28px] sm:min-h-[420px]">
           ${foto}
-          <p class="absolute bottom-5 left-5 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[14px] font-bold shadow-sm">${icon('handshake', 'h-4 w-4 text-brand')} Comisión de 1 % a 4 %</p>
+          <p class="absolute bottom-5 left-5 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[14px] font-bold shadow-sm">${icon('handshake', 'h-4 w-4 text-brand')} Comisión de 1 % a 4 %</p>
         </div>
         <div class="flex flex-col justify-center">
           <p class="flex items-center gap-2.5 text-[13px] font-bold uppercase tracking-[0.12em] text-ink/80">${icon('handshake', 'h-4 w-4 text-brand')} ${esc(d.eyebrow)}</p>

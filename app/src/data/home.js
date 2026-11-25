@@ -36,7 +36,7 @@ export const forIndependents = {
   foto: null,
   fotoAlt: 'Vendedor independiente asesorando a un cliente',
   benefits: [
-    { icon: 'dollar-sign', title: 'Ingresos por comisión', text: 'Ganá una comisión de entre 1 % y 4 % del precio final por cada venta que se cierre. Sin límites: cuantos más clientes traigas, más ganás.' },
+    { icon: 'dollar-sign', title: 'Ingresos por comisión', text: 'Ganá una comisión de entre 1 % y 4 % del precio final por cada venta que se cierre. Sin límites: cuantos más clientes traigas, más ganás.' },
     { icon: 'clock', title: 'Horarios flexibles', text: 'Trabajá en tus tiempos y desde donde quieras. Vos manejás tu agenda según tu disponibilidad.' },
     { icon: 'users', title: 'Red de contactos', text: 'Aprovechá tu red personal y tus redes sociales: compartí los autos con tu link propio y seguí a tus clientes desde Mi cuenta.' },
   ],
