@@ -83,7 +83,7 @@ export const renderAuthModal = () => `
             <span class="auth-type-icon">${icon('user', 'h-6 w-6')}</span>
             <span class="flex-1 text-left">
               <span class="block text-[18px] font-bold">Soy particular</span>
-              <span class="mt-1 block text-[14px] text-ink/70">Quiero vender mi auto o moto.</span>
+              <span class="mt-1 block text-[14px] text-ink/70">Quiero comprar o vender mi auto.</span>
             </span>
             ${icon('chevron-right', 'h-5 w-5 text-ink/40')}
           </button>

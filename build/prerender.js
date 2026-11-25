@@ -9,6 +9,7 @@ import { renderForDealers, renderSellPrivate, renderStats, renderTestimonials, r
 import { renderSiteHeader, renderToTop } from '../app/src/render/layout.js';
 import { logoSvg } from '../app/src/render/logo.js';
 import { EQUIPO } from '../app/src/data/site.js';
+import { renderGuias } from '../app/src/render/comoFunciona.js';
 
 const renderEquipo = () => EQUIPO.map((p) => `
         <li class="reveal">
@@ -62,6 +63,21 @@ const PAGES = {
   'auto.html': () => ({}),
   'agencia.html': () => ({}),
   'favoritos.html': () => ({}),
+  'como-funciona.html': () => ({
+    head: renderHeadTags({
+      title: 'Cómo funciona | Red de Autos',
+      description: 'Cómo comprar, cómo vender tu auto gratis como particular y cómo trabajan las agencias y concesionarios en Red de Autos: stock, Red de colegas y bot de Telegram.',
+      path: 'como-funciona.html',
+    }),
+    guias: renderGuias(),
+  }),
+  'vender.html': () => ({
+    head: renderHeadTags({
+      title: 'Vendé tu auto gratis | Red de Autos',
+      description: 'Publicá tu auto gratis como particular: cargá los datos y hasta 7 fotos, lo revisamos y recibís consultas directo por WhatsApp.',
+      path: 'vender.html',
+    }),
+  }),
   'quienes-somos.html': () => ({
     head: renderHeadTags({
       title: 'Quiénes somos | Red de Autos',

@@ -2,7 +2,7 @@
 // Sesión: la misma del admin de la web actual (login en la función "admin" con celular + contraseña).
 // Acciones: resumen, cuentas, cuenta (aprobar, rechazar, suspender, reactivar, reset_pin, prueba, aprobar_cambios, rechazar_cambios), borrar_pruebas,
 //           ferias, crear_feria, cancelar_feria, invitar_feria (WhatsApp a las agencias aprobadas),
-//           autos, auto_estado (pausar / volver a publicar autos cargados por las agencias).
+//           autos, auto_estado (aprobar autos de particulares en revisión, pausar / volver a publicar).
 // Avisos por Telegram a las agencias: aprobación, cambios de perfil aprobados/rechazados y ferias nuevas.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -139,6 +139,7 @@ async function resumen() {
     rechazadas: n((r) => r.estado === "rechazada"),
     pruebas: rows.length - reales.length,
     cambios: rows.filter((r) => r.cambios_pendientes && r.estado !== "pendiente").length,
+    autos_revision: (await db.from("mkt_autos").select("id", { count: "exact", head: true }).eq("estado", "revision")).count ?? 0,
     dias,
   };
 }
@@ -295,10 +296,12 @@ async function invitarFeria(b: A) {
 async function autos(b: A) {
   const q = txt(b.q, 60).toLowerCase();
   const { data, error } = await db.from("mkt_autos")
-    .select("id, codigo, marca, modelo, version, anio, condicion, precio, moneda, fotos, estado, pausado_por_admin, created_at, cuenta:mkt_cuentas(id, nombre, es_prueba)")
+    .select("id, codigo, marca, modelo, version, anio, condicion, km, precio, moneda, combustible, transmision, ciudad, provincia, descripcion, fotos, estado, pausado_por_admin, created_at, updated_at, cuenta:mkt_cuentas(id, nombre, tipo, telefono, es_prueba)")
     .order("created_at", { ascending: false }).limit(500);
   if (error) throw error;
   const lista = (data ?? []).filter((a: A) => !q || `${a.marca} ${a.modelo} ${a.version} ${a.codigo} ${(a.cuenta as A)?.nombre}`.toLowerCase().includes(q));
+  // Los que esperan revisión (particulares), primero
+  lista.sort((x: A, y: A) => Number(y.estado === "revision") - Number(x.estado === "revision"));
   return { autos: lista };
 }
 

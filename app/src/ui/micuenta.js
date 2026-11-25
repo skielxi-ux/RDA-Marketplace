@@ -24,6 +24,7 @@ export function initMiCuenta() {
   const boxPerfil = $('#perfil');
   let rankingCargado = false;
   let esAgencia = false;
+  let esParticular = false;
 
   // Un solo botón activo a la vez: al abrir una sección se cierran las demás
   const activar = (btn, box) => {
@@ -197,7 +198,10 @@ export function initMiCuenta() {
     btnBuscados.classList.toggle('is-soon', pendiente);
 
     esAgencia = cuenta.tipo === 'agencia' && cuenta.estado === 'aprobada';
-    habilitar(btnPublicar, esAgencia, esAgencia ? 'Cargá tu stock con la plantilla de Excel y tus fotos.' : pendiente ? 'Disponible cuando aprobemos tu agencia.' : 'Próximamente.');
+    esParticular = cuenta.tipo === 'particular' && cuenta.estado === 'activa';
+    btnPublicar.setAttribute('href', esParticular ? './vender.html' : './publicar.html');
+    habilitar(btnPublicar, esAgencia || esParticular, esAgencia ? 'Cargá tu stock con la plantilla de Excel y tus fotos.' : esParticular ? 'Publicá hasta 2 autos gratis y seguí su estado.' : pendiente ? 'Disponible cuando aprobemos tu agencia.' : 'Próximamente.');
+    btnMis.hidden = esParticular; // los particulares ven sus autos en "Vendé tu auto"
     habilitar(btnMis, esAgencia, esAgencia ? 'Mirá, pausá o volvé a publicar tus autos.' : pendiente ? 'Disponible cuando aprobemos tu agencia.' : 'Próximamente.');
 
     // Perfil: cualquier agencia (aprobada o en revisión)
@@ -220,7 +224,7 @@ export function initMiCuenta() {
   btnColegas.addEventListener('click', abrirColegas);
   // La campanita lleva a #colegas: si ya estamos en Mi cuenta, abrir la sección
   window.addEventListener('hashchange', () => { if (location.hash === '#colegas' && esAgencia) abrirColegas(); });
-  btnPublicar.addEventListener('click', (e) => { if (!esAgencia) e.preventDefault(); });
+  btnPublicar.addEventListener('click', (e) => { if (!esAgencia && !esParticular) e.preventDefault(); });
   window.addEventListener('rda:cuenta', (e) => pintar(e.detail));
   pintar(cuentaGuardada());
 }

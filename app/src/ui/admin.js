@@ -158,6 +158,7 @@ function renderResumen(r) {
         <p class="mt-1.5 text-[14px] text-ink/70">${esc(k)}</p>
       </div>`).join('')}
     </div>
+    ${r.autos_revision ? `<button type="button" class="mt-6 flex w-full items-center justify-between gap-4 rounded-2xl bg-[#FFF4E0] px-5 py-4 text-left text-[#8A5A00] transition-colors hover:bg-[#FDEBC8]" data-go="autos"><span><b>${esc(r.autos_revision)}</b> ${r.autos_revision === 1 ? 'auto de particular espera' : 'autos de particulares esperan'} tu revisión</span>${icon('arrow-right', 'h-5 w-5')}</button>` : ''}
     ${r.cambios ? `<button type="button" class="mt-6 flex w-full items-center justify-between gap-4 rounded-2xl bg-[#EEF1FB] px-5 py-4 text-left text-brand transition-colors hover:bg-[#E2E7FA]" data-go="concesionarios"><span><b>${esc(r.cambios)}</b> ${r.cambios === 1 ? 'agencia pidió' : 'agencias pidieron'} cambiar datos de su perfil</span>${icon('arrow-right', 'h-5 w-5')}</button>` : ''}
     ${r.pendientes ? `<button type="button" class="mt-6 flex w-full items-center justify-between gap-4 rounded-2xl bg-[#FFF6E5] px-5 py-4 text-left text-[#8A5A00] transition-colors hover:bg-[#FFEFD1]" data-go="concesionarios"><span><b>${esc(r.pendientes)}</b> ${r.pendientes === 1 ? 'agencia espera' : 'agencias esperan'} revisión</span>${icon('arrow-right', 'h-5 w-5')}</button>` : ''}
     <section class="mt-8 rounded-2xl border border-line bg-white p-5 sm:p-6" aria-labelledby="reg-title">
@@ -382,7 +383,7 @@ async function loadAutos() {
     box.dataset.listo = '1';
     box.innerHTML = `
       <div class="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p class="text-[15px] text-ink/70">Autos cargados por las agencias. Si pausás uno, la agencia no puede volver a publicarlo.</p>
+        <p class="text-[15px] text-ink/70">Autos de agencias y particulares. Los de particulares salen recién cuando los aprobás. Si pausás uno, el vendedor no puede volver a publicarlo.</p>
         <label class="relative block sm:w-[320px]"><span class="sr-only">Buscar autos</span>
           <input type="search" data-autos-q placeholder="Buscar marca, modelo, código o agencia" class="auth-input !pl-10" />
           ${icon('search', 'pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/50')}
@@ -400,8 +401,9 @@ async function loadAutos() {
   }
   const list = $('[data-autos-list]', box);
   const { autos } = await admin('autos', { q: autosQ });
-  if (!autos.length) { list.innerHTML = `<p class="rounded-2xl bg-soft px-5 py-8 text-center text-ink/60">${autosQ ? 'No hay autos con esa búsqueda.' : 'Todavía no hay autos cargados por agencias.'}</p>`; return; }
+  if (!autos.length) { list.innerHTML = `<p class="rounded-2xl bg-soft px-5 py-8 text-center text-ink/60">${autosQ ? 'No hay autos con esa búsqueda.' : 'Todavía no hay autos cargados.'}</p>`; return; }
   list.innerHTML = `<p class="mb-3 text-[14px] text-ink/60">${autos.length} ${autos.length === 1 ? 'auto' : 'autos'}</p><ul class="grid gap-3">${autos.map((a) => {
+    if (a.estado === 'revision') return autoRevision(a);
     const foto = fotoUrl(a.fotos?.[0] ?? '');
     const pausado = a.estado !== 'publicado';
     return `
@@ -411,15 +413,34 @@ async function loadAutos() {
         <div class="min-w-0">
           <p class="truncate font-bold">${esc(`${a.marca} ${a.modelo} ${a.version} ${a.anio}`)}</p>
           <p class="text-[14px] text-ink/70">${esc(formatPrice(Number(a.precio), a.moneda))} · ${esc(a.cuenta?.nombre ?? '')} · ${esc(a.codigo)}${a.cuenta?.es_prueba ? ' · <b>prueba</b>' : ''}</p>
-          <p class="text-[13px] ${pausado ? 'text-[#8A5A00]' : 'text-ok'}">${a.estado === 'vendido' ? 'Vendido' : pausado ? (a.pausado_por_admin ? 'Pausado por vos' : 'Pausado por la agencia') : 'Publicado'} · ${esc(fmtFecha(a.created_at))}</p>
+          <p class="text-[13px] ${pausado ? 'text-[#8A5A00]' : 'text-ok'}">${a.estado === 'vendido' ? 'Vendido' : pausado ? (a.pausado_por_admin ? 'Pausado por vos' : `Pausado por ${a.cuenta?.tipo === 'particular' ? 'el particular' : 'la agencia'}`) : 'Publicado'}${a.cuenta?.tipo === 'particular' ? ' · Particular' : ''} · ${esc(fmtFecha(a.created_at))}</p>
         </div>
       </div>
       <div class="flex shrink-0 gap-2">
         ${pausado ? '' : `<a href="./auto.html?id=${encodeURIComponent(a.id)}" target="_blank" rel="noopener noreferrer" class="btn-outline h-[40px] !px-4 text-[14px]">${icon('eye', 'h-4 w-4')} Ver</a>`}
-        <button type="button" class="btn-outline h-[40px] !px-4 text-[14px]" data-auto-estado="${pausado ? 'publicado' : 'pausado'}" data-id="${esc(a.id)}">${pausado ? 'Volver a publicar' : 'Pausar'}</button>
+        ${a.estado === 'vendido' ? '' : `<button type="button" class="btn-outline h-[40px] !px-4 text-[14px]" data-auto-estado="${pausado ? 'publicado' : 'pausado'}" data-id="${esc(a.id)}">${pausado ? 'Volver a publicar' : 'Pausar'}</button>`}
       </div>
     </li>`;
   }).join('')}</ul>`;
+}
+
+/** Auto de un particular esperando revisión: se ve todo (fotos y datos) para aprobarlo o rechazarlo. */
+function autoRevision(a) {
+  const fotos = (a.fotos ?? []).map((f) => fotoUrl(f)).filter(Boolean);
+  const tel = String(a.cuenta?.telefono ?? '').replace(/\D/g, '');
+  return `
+    <li class="rounded-2xl border-2 border-[#F5C26B] bg-[#FFFBF2] p-4 sm:p-5">
+      <p class="text-[13px] font-bold uppercase tracking-[0.08em] text-[#8A5A00]">En revisión · Particular · ${esc(fmtFecha(a.updated_at ?? a.created_at))}</p>
+      <p class="mt-1 text-[18px] font-bold">${esc(`${a.marca} ${a.modelo} ${a.version} ${a.anio}`)}</p>
+      <p class="text-[14px] text-ink/75">${esc(formatPrice(Number(a.precio), a.moneda))} · ${esc(Number(a.km).toLocaleString('es-AR'))} km · ${esc(a.combustible)} · ${esc(a.transmision)} · ${esc(`${a.ciudad}, ${a.provincia}`)}</p>
+      <p class="text-[14px] text-ink/75">${esc(a.cuenta?.nombre ?? '')}${tel ? ` · <a class="text-brand underline" href="https://wa.me/${esc(tel)}" target="_blank" rel="noopener noreferrer">WhatsApp ${esc(tel)}</a>` : ''}</p>
+      ${a.descripcion ? `<p class="mt-2 whitespace-pre-line text-[14px]">${esc(a.descripcion)}</p>` : ''}
+      ${fotos.length ? `<div class="mt-3 flex gap-2 overflow-x-auto pb-1">${fotos.map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer" class="shrink-0"><img src="${esc(u)}" alt="" width="160" height="120" loading="lazy" class="h-[90px] w-[120px] rounded-lg object-cover sm:h-[120px] sm:w-[160px]" /></a>`).join('')}</div>` : ''}
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button type="button" class="btn-primary h-[44px] !px-5 text-[14px]" data-auto-estado="publicado" data-id="${esc(a.id)}">${icon('circle-check', 'h-4 w-4')} Aprobar y publicar</button>
+        <button type="button" class="btn-outline h-[44px] !px-5 text-[14px]" data-auto-estado="pausado" data-id="${esc(a.id)}">${icon('x', 'h-4 w-4')} Rechazar</button>
+      </div>
+    </li>`;
 }
 
 const LOADERS = {

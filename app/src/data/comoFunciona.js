@@ -1,0 +1,52 @@
+// Contenido de la página "Cómo funciona": una guía por tipo de usuario (se ve una pestaña por vez).
+export const GUIAS = [
+  {
+    id: 'comprar',
+    tab: 'Quiero comprar',
+    icon: 'search',
+    titulo: 'Encontrá tu próximo auto y hablá directo con quien lo vende',
+    intro: 'Autos 0km y usados de concesionarios oficiales, agencias multimarca y particulares, todo en un solo lugar. Buscar y consultar es gratis.',
+    pasos: [
+      { icon: 'search', titulo: 'Buscá y filtrá', texto: 'Filtrá por marca, modelo, año, precio, carrocería, 0km o usados y tipo de vendedor, y ordená por precio o kilómetros.' },
+      { icon: 'heart', titulo: 'Guardá los que te gustan', texto: 'Tocá el corazón y encontralos después en Mis favoritos, sin necesidad de crear una cuenta.' },
+      { icon: 'images', titulo: 'Mirá la ficha completa', texto: 'Fotos, ficha técnica, ubicación y quién lo vende: concesionario oficial, agencia verificada o particular.' },
+      { icon: 'message-circle', titulo: 'Escribí por WhatsApp', texto: 'Con un toque le escribís directo al vendedor, con el auto ya mencionado en el mensaje. Sin intermediarios.' },
+      { icon: 'circle-check', titulo: 'Coordiná y cerrá', texto: 'Arreglá la visita, la prueba y la forma de pago directamente con el vendedor.' },
+    ],
+    consejo: { titulo: 'Comprá seguro', texto: 'Mirá el auto en persona antes de pagar cualquier seña, pedí el título y el informe de dominio, y desconfiá de precios muy por debajo del mercado. Red de Autos no cobra ni intermedia en los pagos.' },
+    cta: { label: 'Ver autos en venta', href: './autos.html', icon: 'arrow-right' },
+  },
+  {
+    id: 'vender',
+    tab: 'Quiero vender mi auto',
+    icon: 'user',
+    titulo: 'Publicá tu auto gratis y recibí consultas por WhatsApp',
+    intro: 'Pensado para particulares: cargás tu auto en pocos minutos, lo revisamos y sale junto al stock de agencias y concesionarios.',
+    pasos: [
+      { icon: 'user', titulo: 'Creá tu cuenta', texto: 'Con tu número de celular, en un minuto. Elegí "Soy particular" y listo.' },
+      { icon: 'camera', titulo: 'Cargá datos y fotos', texto: 'Marca, modelo, versión, año, kilómetros, precio y hasta 7 fotos. Elegís cuál va de portada.' },
+      { icon: 'clipboard-check', titulo: 'Lo revisamos', texto: 'Antes de que salga online chequeamos los datos y las fotos. Seguís el estado desde la misma página.' },
+      { icon: 'message-circle', titulo: 'Te escriben por WhatsApp', texto: 'Los interesados te contactan directo a tu celular. Vos decidís con quién y cómo avanzar.' },
+      { icon: 'circle-check', titulo: 'Marcalo como vendido', texto: 'Cuando lo vendas, tocá "Lo vendí" y sale del listado. También podés pausarlo o editarlo cuando quieras.' },
+    ],
+    consejo: { titulo: 'Bueno saber', texto: 'Podés tener hasta 2 autos publicados a la vez. Si cambiás datos o fotos, la publicación vuelve a revisión por unos minutos. Publicar no tiene costo.' },
+    cta: { label: 'Publicar mi auto', href: './vender.html', icon: 'plus' },
+  },
+  {
+    id: 'agencias',
+    tab: 'Soy agencia o concesionario',
+    icon: 'store',
+    titulo: 'Tu stock online, tus colegas cerca y todo desde el celular',
+    intro: 'Para agencias multimarca y concesionarios oficiales: vendé a compradores de todo el país y hacé negocios con otras agencias de la red. Sin costo.',
+    pasos: [
+      { icon: 'badge-check', titulo: 'Alta y verificación', texto: 'Registrate con tu celular, el CUIT y el tipo de agencia. Revisamos los datos y te aprobamos. Sumá tu logo y tu perfil, y tenés tu propia página de agencia con todo tu stock.' },
+      { icon: 'file-spreadsheet', titulo: 'Carga masiva de stock', texto: 'Completá la plantilla de Excel, arrastrá la carpeta de fotos (hasta 7 por auto), revisá y publicá todo de una vez. Para actualizar precios o datos, volvé a subir la plantilla: cada auto se reconoce por su código.' },
+      { icon: 'car', titulo: 'Gestioná tus autos', texto: 'Desde Mi cuenta pausás, volvés a publicar o marcás como vendido. Y en +Buscados ves los 10 autos más buscados del mes y del año para saber qué stock conviene tener.' },
+      { icon: 'handshake', titulo: 'Red de colegas (B2B)', texto: '¿Un cliente busca un auto que no tenés? Publicá el pedido con modelo, año, km, color, caja y combustible. Les llega a todas las agencias de la red y, si alguna lo tiene, toca "Lo tengo" y se contactan directo por WhatsApp.' },
+      { icon: 'bot', titulo: 'Todo desde Telegram', texto: 'Conectá nuestro bot y recibí al instante los pedidos de colegas. Desde el chat cambiás precios, marcás autos vendidos, los pausás, pedís autos a la red y recibís los avisos de tu cuenta.' },
+      { icon: 'sparkle', titulo: 'Ferias online', texto: 'Organizamos ferias con fecha y hora para mover stock. Te avisamos con tiempo y el descuento lo elegís vos.' },
+    ],
+    consejo: { titulo: 'Sin costo', texto: 'Publicar, usar la Red de colegas y el bot de Telegram es gratis para todas las agencias aprobadas.' },
+    cta: { label: 'Sumá tu agencia', href: './#agencias', icon: 'arrow-right' },
+  },
+];

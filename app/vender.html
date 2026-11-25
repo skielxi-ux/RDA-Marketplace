@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--slot:csp-->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <!--slot:head-->
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <script type="module" src="/src/vender.js"></script>
+</head>
+<body>
+  <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
+  <!--slot:site-header-->
+
+  <main id="contenido" class="min-h-[60vh]">
+    <section class="border-b border-line bg-soft">
+      <div class="container-x py-8 md:py-12">
+        <nav aria-label="Migas de pan" class="text-[14px] text-ink/60">
+          <ol class="flex flex-wrap items-center gap-2"><li><a href="./" class="transition-colors hover:text-brand">Inicio</a></li><li aria-hidden="true">/</li><li aria-current="page" class="text-ink">Vendé tu auto</li></ol>
+        </nav>
+        <h1 class="mt-3 text-[30px] font-bold leading-[1.1] sm:text-[38px] md:text-[44px]">Vendé tu auto</h1>
+        <p class="mt-2 max-w-[640px] text-[16px] text-ink/70">Publicalo gratis: completá los datos, subí hasta 7 fotos y lo revisamos antes de que salga online. Los interesados te escriben directo por WhatsApp.</p>
+      </div>
+    </section>
+
+    <div class="container-x py-8 md:py-12">
+      <!-- Sin sesión / no es particular -->
+      <div data-vd-guard hidden class="mx-auto max-w-[560px] rounded-[24px] border border-line bg-white p-8 text-center">
+        <span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-[#EEF1FB] text-brand"><i data-icon="user" class="h-6 w-6"></i></span>
+        <p class="mt-5 text-[22px] font-bold" data-vd-guard-title>Ingresá para publicar</p>
+        <p class="mt-2 text-[15px] text-ink/70" data-vd-guard-text>Creá tu cuenta gratis con tu celular en un minuto. Así los compradores te pueden escribir por WhatsApp.</p>
+        <button type="button" class="btn-primary mx-auto mt-6 h-[54px] !px-8" data-auth-open data-vd-login><i data-icon="user" class="h-4 w-4"></i> Ingresar o crear cuenta</button>
+        <a href="./publicar.html" class="btn-primary mx-auto mt-6 h-[54px] w-fit !px-8" data-vd-agencia hidden><i data-icon="file-spreadsheet" class="h-4 w-4"></i> Ir a la carga de agencias</a>
+      </div>
+
+      <div data-vd-app hidden>
+        <!-- Mis publicaciones -->
+        <section aria-labelledby="vd-mios-title" data-vd-mios-box hidden class="mb-12">
+          <h2 id="vd-mios-title" class="section-title">Mis publicaciones</h2>
+          <p class="mt-2 text-[15px] text-ink/70" data-vd-mios-sub></p>
+          <ul class="mt-6 grid gap-4 lg:grid-cols-2" data-vd-mios aria-live="polite"></ul>
+        </section>
+
+        <p class="rounded-2xl bg-[#EEF1FB] px-5 py-4 text-[15px] text-brand" data-vd-limite hidden>Ya tenés 2 autos publicados, que es el máximo para particulares. Cuando vendas uno, marcalo como vendido o borralo y podés cargar otro.</p>
+
+        <!-- Formulario -->
+        <form class="grid gap-10 lg:grid-cols-[1fr_380px] lg:gap-14" data-vd-form novalidate>
+          <div>
+            <h2 class="section-title" data-vd-form-title>Publicá tu auto</h2>
+            <p class="mt-2 text-[15px] text-ink/70">Los campos con <span class="text-brand">*</span> son obligatorios.</p>
+
+            <fieldset class="mt-8">
+              <legend class="text-[19px] font-bold">El auto</legend>
+              <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                <label class="block"><span class="vd-label">Marca <span class="text-brand">*</span></span><input class="auth-input" name="marca" required maxlength="40" autocomplete="off" placeholder="Ej.: Volkswagen" /></label>
+                <label class="block"><span class="vd-label">Modelo <span class="text-brand">*</span></span><input class="auth-input" name="modelo" required maxlength="60" autocomplete="off" placeholder="Ej.: Gol Trend" /></label>
+                <label class="block sm:col-span-2"><span class="vd-label">Versión <span class="text-brand">*</span></span><input class="auth-input" name="version" required maxlength="80" autocomplete="off" placeholder="Ej.: 1.6 Highline" /></label>
+                <label class="block"><span class="vd-label">Año <span class="text-brand">*</span></span><input class="auth-input" name="anio" required inputmode="numeric" maxlength="4" placeholder="Ej.: 2018" /></label>
+                <label class="block"><span class="vd-label">Kilómetros <span class="text-brand">*</span></span><input class="auth-input" name="km" required inputmode="numeric" maxlength="9" placeholder="Ej.: 85.000" /></label>
+                <label class="block"><span class="vd-label">Combustible <span class="text-brand">*</span></span>
+                  <select class="auth-input" name="combustible" required><option value="">Elegí</option><option>Nafta</option><option>Diésel</option><option>GNC</option><option>Híbrido</option><option>Eléctrico</option></select></label>
+                <label class="block"><span class="vd-label">Caja <span class="text-brand">*</span></span>
+                  <select class="auth-input" name="transmision" required><option value="">Elegí</option><option>Manual</option><option>Automática</option></select></label>
+                <label class="block"><span class="vd-label">Carrocería <span class="text-brand">*</span></span>
+                  <select class="auth-input" name="carroceria" required><option value="">Elegí</option><option value="hatchback">Hatchback</option><option value="sedan">Sedán</option><option value="suv">SUV</option><option value="pickup">Pick-up</option><option value="utilitario">Utilitario</option><option value="deportivo">Deportivo</option></select></label>
+                <label class="block"><span class="vd-label">Puertas</span>
+                  <select class="auth-input" name="puertas"><option value="">—</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+                <label class="block"><span class="vd-label">Color</span><input class="auth-input" name="color" maxlength="30" autocomplete="off" placeholder="Ej.: Gris plata" /></label>
+                <label class="block"><span class="vd-label">Motor</span><input class="auth-input" name="motor" maxlength="40" autocomplete="off" placeholder="Ej.: 1.6" /></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="mt-10">
+              <legend class="text-[19px] font-bold">Precio y ubicación</legend>
+              <div class="mt-4 grid gap-4 sm:grid-cols-[1fr_140px]">
+                <label class="block"><span class="vd-label">Precio <span class="text-brand">*</span></span><input class="auth-input" name="precio" required inputmode="numeric" maxlength="15" placeholder="Ej.: 14.500.000" /></label>
+                <label class="block"><span class="vd-label">Moneda</span>
+                  <select class="auth-input" name="moneda"><option value="ARS">$ Pesos</option><option value="USD">USD</option></select></label>
+              </div>
+              <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                <label class="block"><span class="vd-label">Ciudad <span class="text-brand">*</span></span><input class="auth-input" name="ciudad" required maxlength="60" autocomplete="address-level2" placeholder="Ej.: Yerba Buena" /></label>
+                <label class="block"><span class="vd-label">Provincia <span class="text-brand">*</span></span><select class="auth-input" name="provincia" required data-vd-provincias><option value="">Elegí</option></select></label>
+              </div>
+              <label class="mt-4 block"><span class="vd-label">Descripción</span><textarea class="auth-input !h-auto min-h-[130px] py-3" name="descripcion" maxlength="1000" rows="5" placeholder="Estado, service al día, único dueño, detalles a tener en cuenta…"></textarea></label>
+            </fieldset>
+          </div>
+
+          <div>
+            <fieldset class="lg:sticky lg:top-28">
+              <legend class="text-[19px] font-bold">Fotos <span class="text-brand">*</span></legend>
+              <p class="mt-1 text-[14px] text-ink/70">Hasta 7. La primera es la de portada: tocá ★ en otra para cambiarla.</p>
+              <label class="pub-drop mt-4" data-vd-drop>
+                <input type="file" accept="image/jpeg,image/png,image/webp" multiple class="sr-only" data-vd-input />
+                <i data-icon="camera" class="h-6 w-6 text-brand"></i>
+                <span class="font-medium" data-vd-drop-label>Arrastrá tus fotos o tocá para elegirlas</span>
+              </label>
+              <ul class="mt-4 grid grid-cols-3 gap-2" data-vd-fotos></ul>
+              <p class="mt-6 hidden rounded-2xl bg-[#FDECEC] px-5 py-4 text-[15px] text-[#B42318]" role="alert" data-vd-error></p>
+              <button type="submit" class="btn-primary mt-6 h-[56px] w-full justify-center" data-vd-submit><i data-icon="check" class="h-4 w-4"></i> <span data-vd-submit-label>Enviar a revisión</span></button>
+              <button type="button" class="btn-outline mt-3 h-[48px] w-full justify-center" data-vd-cancelar hidden>Cancelar edición</button>
+              <p class="mt-3 text-[13px] text-ink/60">Revisamos cada publicación antes de que salga online. Te mostramos el estado acá arriba.</p>
+            </fieldset>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <!--slot:footer-->
+  <!--slot:to-top-->
+</body>
+</html>

@@ -233,6 +233,15 @@
   /* Publicar vehículos (carga masiva) */
   .pub-step { @apply relative flex flex-col rounded-[20px] border border-line bg-white p-6 pt-8; }
   .pub-num { @apply absolute -top-4 left-6 grid h-8 w-8 place-items-center rounded-full bg-brand text-[15px] font-bold text-white; }
+  /* Cómo funciona: pestañas tipo "píldora" */
+  .cf-tabs { @apply flex gap-2 overflow-x-auto rounded-full border border-line bg-white p-1.5 max-md:-mx-1 md:inline-flex; scrollbar-width: none; }
+  .cf-tab {
+    @apply inline-flex h-[48px] shrink-0 items-center gap-2 whitespace-nowrap rounded-full px-5 text-[15px] font-medium text-ink/75
+           transition-all duration-300 ease-out hover:-translate-y-0.5 hover:text-brand active:translate-y-0 active:scale-[0.98];
+  }
+  .cf-tab.is-active { @apply bg-brand text-white shadow-[0_8px_24px_-10px_rgba(64,95,242,0.6)] hover:text-white; }
+  .js .cf-panel[data-cf-oculto] { display: none; }
+  .vd-label { @apply mb-1.5 block text-[14px] font-medium; }
   .pub-drop {
     @apply flex min-h-[150px] cursor-pointer flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-line bg-soft p-5 text-center text-[15px] transition-all duration-300
            hover:border-brand hover:bg-[#F4F6FF];

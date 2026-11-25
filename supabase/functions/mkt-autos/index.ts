@@ -1,6 +1,7 @@
 // RDA Marketplace · Edge Function: mkt-autos
-// Carga masiva de autos de agencias aprobadas (plantilla Excel + carpeta de fotos).
-// Con sesión de agencia aprobada: mios · urls_fotos · publicar · estado
+// Carga masiva de autos de agencias aprobadas (plantilla Excel + carpeta de fotos)
+// y carga de a uno para particulares (hasta 2 autos activos; cada carga o cambio queda "en revisión" hasta que la aprueba el admin).
+// Con sesión de agencia aprobada o particular activo: mios · urls_fotos · publicar · estado
 // Las fotos se suben directo a Storage (bucket mkt-fotos) con URLs firmadas que da esta función,
 // siempre dentro de la carpeta de la cuenta. Datos en public.mkt_autos (sin acceso público directo).
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -11,6 +12,7 @@ const DOMINIO = "mkt.reddeautos.app";
 const BUCKET = "mkt-fotos";
 const MAX_FOTOS = 7;
 const MAX_AUTOS = 200;
+const MAX_PARTICULAR = 2;
 
 const ORIGENES = new Set(["https://skielxi-ux.github.io", "http://localhost:5173", "http://localhost:4173"]);
 const cors = (origin: string | null) => ({
@@ -79,13 +81,14 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return err("Método no permitido", 405);
   if (origin && !ORIGENES.has(origin)) return err("Origen no permitido", 403);
 
-  // Sesión: solo agencias aprobadas
+  // Sesión: agencias aprobadas o particulares activos
   const token = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
   const { data: u } = await db.auth.getUser(token);
   if (!u?.user?.email?.endsWith("@" + DOMINIO)) return err("Tu sesión venció. Volvé a ingresar.", 401);
   const { data: cuenta } = await db.from("mkt_cuentas").select("id, tipo, estado").eq("user_id", u.user.id).maybeSingle();
   if (!cuenta) return err("Tu sesión venció. Volvé a ingresar.", 401);
-  if (cuenta.tipo !== "agencia" || cuenta.estado !== "aprobada") return err("La carga de autos está disponible para agencias aprobadas.", 403);
+  const esParticular = cuenta.tipo === "particular";
+  if (esParticular ? cuenta.estado !== "activa" : cuenta.estado !== "aprobada") return err(esParticular ? "Tu cuenta no está activa." : "La carga de autos está disponible para agencias aprobadas.", 403);
 
   let b: A;
   try { b = await req.json(); } catch { return err("Datos inválidos"); }
@@ -102,7 +105,7 @@ Deno.serve(async (req) => {
     // ---- URLs firmadas para subir fotos (WebP ya comprimidas en el navegador) ----
     if (b.accion === "urls_fotos") {
       const n = Number(b.cantidad);
-      if (!Number.isInteger(n) || n < 1 || n > MAX_AUTOS * MAX_FOTOS) return err("Cantidad de fotos inválida.");
+      if (!Number.isInteger(n) || n < 1 || n > (esParticular ? MAX_FOTOS : MAX_AUTOS * MAX_FOTOS)) return err("Cantidad de fotos inválida.");
       const ext = b.formato === "jpg" ? "jpg" : "webp";
       const urls = [];
       for (let i = 0; i < n; i++) {
@@ -119,12 +122,14 @@ Deno.serve(async (req) => {
       const lista = Array.isArray(b.autos) ? b.autos as A[] : [];
       if (!lista.length) return err("No hay autos para publicar.");
       if (lista.length > MAX_AUTOS) return err(`Podés publicar hasta ${MAX_AUTOS} autos por carga.`);
+      if (esParticular && lista.length !== 1) return err("Cargá un auto por vez.");
       const anioMax = new Date().getFullYear() + 1;
       const codigos = new Set<string>();
       const limpios: { auto: A; fotos: string[] }[] = [];
       for (const [i, x] of lista.entries()) {
         const v = validarAuto(x, anioMax);
-        if ("error" in v) return err(`Fila ${i + 1}: ${v.error}`);
+        if ("error" in v) return err(esParticular ? v.error : `Fila ${i + 1}: ${v.error}`);
+        if (esParticular) v.ok.condicion = "usado"; // los particulares publican usados
         const cod = String(v.ok.codigo).toUpperCase();
         if (codigos.has(cod)) return err(`El código ${v.ok.codigo} está repetido.`);
         codigos.add(cod);
@@ -147,7 +152,11 @@ Deno.serve(async (req) => {
       const { data: previos } = await db.from("mkt_autos").select("id, codigo, fotos").eq("cuenta_id", cuenta.id).in("codigo", [...new Set(limpios.map((l) => String(l.auto.codigo)))]);
       const prev = new Map((previos ?? []).map((p: A) => [String(p.codigo), p]));
       const sinFotos = limpios.find((l) => !l.fotos.length && !prev.has(String(l.auto.codigo)));
-      if (sinFotos) return err(`${sinFotos.auto.codigo}: un auto nuevo necesita al menos una foto.`);
+      if (sinFotos) return err(esParticular ? "Subí al menos una foto." : `${sinFotos.auto.codigo}: un auto nuevo necesita al menos una foto.`);
+      if (esParticular && !prev.size) {
+        const { count } = await db.from("mkt_autos").select("id", { count: "exact", head: true }).eq("cuenta_id", cuenta.id).neq("estado", "vendido");
+        if ((count ?? 0) >= MAX_PARTICULAR) return err(`Podés tener hasta ${MAX_PARTICULAR} autos publicados. Marcá uno como vendido o borralo para cargar otro.`);
+      }
 
       const viejas: string[] = [];
       let nuevos = 0, actualizados = 0;
@@ -155,6 +164,7 @@ Deno.serve(async (req) => {
         const p = prev.get(String(auto.codigo)) as A | undefined;
         if (p) {
           const cambios: A = { ...auto, updated_at: new Date().toISOString() };
+          if (esParticular) cambios.estado = "revision"; // cada cambio de un particular se vuelve a revisar
           if (fotos.length) {
             cambios.fotos = fotos;
             viejas.push(...((p.fotos as string[]) ?? []).filter((f) => !fotos.includes(f)));
@@ -163,24 +173,37 @@ Deno.serve(async (req) => {
           if (error) throw error;
           actualizados++;
         } else {
-          const { error } = await db.from("mkt_autos").insert({ ...auto, fotos, cuenta_id: cuenta.id });
+          const { error } = await db.from("mkt_autos").insert({ ...auto, fotos, cuenta_id: cuenta.id, ...(esParticular ? { estado: "revision", condicion: "usado" } : {}) });
           if (error) throw error;
           nuevos++;
         }
       }
       if (viejas.length) await db.storage.from(BUCKET).remove(viejas);
-      return json({ ok: true, nuevos, actualizados });
+      return json({ ok: true, nuevos, actualizados, revision: esParticular });
     }
 
     // ---- Pausar / volver a publicar un auto propio ----
     if (b.accion === "estado") {
-      const estado = b.estado === "pausado" ? "pausado" : b.estado === "publicado" ? "publicado" : "";
+      const estado = ["pausado", "publicado", "vendido"].includes(String(b.estado)) ? String(b.estado) : "";
       if (!estado || typeof b.id !== "string") return err("Datos inválidos");
-      const { data: a } = await db.from("mkt_autos").select("id, pausado_por_admin").eq("id", b.id).eq("cuenta_id", cuenta.id).maybeSingle();
+      const { data: a } = await db.from("mkt_autos").select("id, estado, pausado_por_admin").eq("id", b.id).eq("cuenta_id", cuenta.id).maybeSingle();
       if (!a) return err("No encontramos ese auto.", 404);
+      if (a.estado === "revision" && estado !== "vendido") return err("Lo estamos revisando. Te avisamos cuando esté publicado.", 403);
+      if (a.estado === "vendido") return err("Ese auto ya está marcado como vendido.", 403);
       if (estado === "publicado" && a.pausado_por_admin) return err("Este auto lo pausó Red de Autos. Escribinos para revisarlo.", 403);
-      const { error } = await db.from("mkt_autos").update({ estado, updated_at: new Date().toISOString() }).eq("id", a.id);
+      const { error } = await db.from("mkt_autos").update({ estado, vendido_at: estado === "vendido" ? new Date().toISOString() : null, updated_at: new Date().toISOString() }).eq("id", a.id);
       if (error) throw error;
+      return json({ ok: true });
+    }
+
+    // ---- Borrar un auto propio (solo particulares; las agencias lo pausan o lo marcan vendido) ----
+    if (b.accion === "borrar") {
+      if (!esParticular || typeof b.id !== "string") return err("Datos inválidos");
+      const { data: a } = await db.from("mkt_autos").select("id, fotos").eq("id", b.id).eq("cuenta_id", cuenta.id).maybeSingle();
+      if (!a) return err("No encontramos ese auto.", 404);
+      const { error } = await db.from("mkt_autos").delete().eq("id", a.id);
+      if (error) throw error;
+      if ((a.fotos as string[])?.length) await db.storage.from(BUCKET).remove(a.fotos as string[]);
       return json({ ok: true });
     }
 
