@@ -2,7 +2,7 @@
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { SITE } from '../data/site.js';
-import { forDealers, sellPrivate, stats, testimonials, brands, footer } from '../data/home.js';
+import { forDealers, forIndependents, sellPrivate, stats, testimonials, brands, footer } from '../data/home.js';
 import { logoSvg } from './logo.js';
 import { brandLogoSvg } from './brandLogos.js';
 import { countBy } from '../data/catalog.js';
@@ -69,6 +69,45 @@ export const renderSellPrivate = () => `
       </div>
     </div>
   </section>`;
+
+export const renderForIndependents = () => {
+  const d = forIndependents;
+  const foto = d.foto
+    ? `<img src="${esc(d.foto)}" alt="${esc(d.fotoAlt)}" width="900" height="1100" loading="lazy" decoding="async" class="h-full w-full object-cover" />`
+    : `<div class="grid h-full w-full place-items-center bg-[linear-gradient(135deg,#405FF2_0%,#050B20_100%)] text-white/80">${icon('handshake', 'h-16 w-16')}</div>`;
+  return `
+  <section id="independientes" aria-labelledby="indep-title" class="pt-20 md:pt-[110px]">
+    <div class="container-x">
+      <div class="reveal grid items-stretch gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-12 xl:gap-16">
+        <div class="relative min-h-[300px] overflow-hidden rounded-[28px] sm:min-h-[420px]">
+          ${foto}
+          <p class="absolute bottom-5 left-5 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[14px] font-bold shadow-sm">${icon('handshake', 'h-4 w-4 text-brand')} Comisión de 1 % a 4 %</p>
+        </div>
+        <div class="flex flex-col justify-center">
+          <p class="flex items-center gap-2.5 text-[13px] font-bold uppercase tracking-[0.12em] text-ink/80">${icon('handshake', 'h-4 w-4 text-brand')} ${esc(d.eyebrow)}</p>
+          <h2 id="indep-title" class="mt-5 text-[32px] font-bold leading-[1.08] tracking-tight text-balance sm:text-[42px] xl:text-[48px]">${esc(d.title)}</h2>
+          <p class="mt-5 max-w-[600px] text-[16px] leading-[1.7] text-ink/80 sm:text-[18px]">${esc(d.text)}</p>
+          <ul class="mt-8 grid gap-4 sm:grid-cols-3">
+            ${d.benefits.map((b) => `
+            <li class="rounded-2xl border border-line bg-white p-5 transition-shadow duration-300 hover:shadow-[0_14px_40px_rgba(5,11,32,0.08)]">
+              <span class="grid h-12 w-12 place-items-center rounded-xl bg-[#EEF1FB] text-brand">${icon(b.icon, 'h-6 w-6')}</span>
+              <h3 class="mt-4 text-[18px] font-bold leading-snug">${esc(b.title)}</h3>
+              <p class="mt-2 text-[15px] leading-[1.6] text-ink/75">${esc(b.text)}</p>
+            </li>`).join('')}
+          </ul>
+          <div class="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
+            <button type="button" class="btn-cta group" data-registro-tipo="vendedor">
+              <span class="btn-cta-icon">${icon('arrow-right', 'h-4 w-4')}</span>
+              Quiero ser vendedor independiente
+            </button>
+            <a href="./agencias.html?filtro=independientes#listado" class="btn-arrow group">Ver agencias que aceptan ${icon('chevron-right', 'h-4 w-4')}</a>
+          </div>
+          <p class="mt-5 text-[13px] text-ink/60">${esc(d.nota)}</p>
+        </div>
+      </div>
+    </div>
+  </section>`;
+};
 
 export const renderStats = () => `
   <section aria-label="La red en números" class="pt-16 md:pt-[90px]">

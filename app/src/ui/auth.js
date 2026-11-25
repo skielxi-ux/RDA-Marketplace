@@ -151,6 +151,15 @@ export function initAuth() {
 
   // Otras pantallas pueden pedir que se abra el ingreso (ej.: crear una alerta sin estar logueado)
   window.addEventListener('rda:abrir-ingreso', () => { if (!cuenta) open('login'); });
+  // Botones que abren el registro con el tipo de cuenta ya elegido (ej.: data-registro-tipo="vendedor")
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-registro-tipo]');
+    if (!b) return;
+    e.preventDefault();
+    if (cuenta) { location.href = './mi-cuenta.html'; return; }
+    open('tipo');
+    $(`[data-pick-type="${b.dataset.registroTipo}"]`, modal)?.click();
+  });
 
   $$('[data-auth-open]').forEach((b) => b.addEventListener('click', (e) => {
     e.preventDefault();
