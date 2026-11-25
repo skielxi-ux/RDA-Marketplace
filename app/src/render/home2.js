@@ -73,7 +73,7 @@ export const renderSellPrivate = () => `
 export const renderForIndependents = () => {
   const d = forIndependents;
   const foto = d.foto
-    ? `<img src="${esc(d.foto)}" alt="${esc(d.fotoAlt)}" width="900" height="1100" loading="lazy" decoding="async" class="h-full w-full object-cover" />`
+    ? `<img src="${esc(d.foto)}" srcset="${esc(d.fotoChica)} 480w, ${esc(d.foto)} 900w" sizes="(min-width:1024px) 42vw, 92vw" alt="${esc(d.fotoAlt)}" width="900" height="1322" loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover object-[center_30%]" />`
     : `<div class="grid h-full w-full place-items-center bg-[linear-gradient(135deg,#405FF2_0%,#050B20_100%)] text-white/80">${icon('handshake', 'h-16 w-16')}</div>`;
   return `
   <section id="independientes" aria-labelledby="indep-title" class="pt-20 md:pt-[110px]">

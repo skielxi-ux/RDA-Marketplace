@@ -52,12 +52,13 @@ Deno.serve(async (req) => {
       const filas = (data ?? []) as A[];
       const pedidos = [...new Set(filas.map((n) => n.pedido_id).filter(Boolean))];
       const origenes = [...new Set(filas.map((n) => n.origen_id).filter(Boolean))];
-      const [{ data: ps }, { data: os }] = await Promise.all([
-        pedidos.length ? db.from("mkt_colegas_pedidos").select("id, marca, modelo, version, anio_desde, cuenta_id, mkt_cuentas(nombre)").in("id", pedidos) : Promise.resolve({ data: [] }),
-        origenes.length ? db.from("mkt_cuentas").select("id, nombre").in("id", origenes) : Promise.resolve({ data: [] }),
-      ]);
-      const P = new Map((ps ?? []).map((p: A) => [p.id, p]));
+      const { data: ps } = pedidos.length
+        ? await db.from("mkt_colegas_pedidos").select("id, marca, modelo, version, anio_desde, cuenta_id").in("id", pedidos)
+        : { data: [] };
+      const cuentas = [...new Set([...origenes, ...(ps ?? []).map((p: A) => p.cuenta_id)])];
+      const { data: os } = cuentas.length ? await db.from("mkt_cuentas").select("id, nombre").in("id", cuentas) : { data: [] };
       const O = new Map((os ?? []).map((o: A) => [o.id, o]));
+      const P = new Map((ps ?? []).map((p: A) => [p.id, { ...p, autor: O.get(p.cuenta_id)?.nombre }]));
       const items = filas.map((n) => {
         let texto = n.texto as string | null;
         let link = n.link as string | null;
@@ -65,7 +66,7 @@ Deno.serve(async (req) => {
           const p = P.get(n.pedido_id);
           const auto = p ? [p.marca, p.modelo, p.version, p.anio_desde ? `desde ${p.anio_desde}` : ""].filter(Boolean).join(" ") : "un auto";
           texto = n.tipo === "colega_pedido"
-            ? `${p?.mkt_cuentas?.nombre ?? "Una agencia"} busca ${auto}. ¿Lo tenés?`
+            ? `${p?.autor ?? "Una agencia"} busca ${auto}. ¿Lo tenés?`
             : `${O.get(n.origen_id)?.nombre ?? "Una agencia"} tiene el ${auto} que pediste.`;
           link = "mi-cuenta.html#colegas";
         }

@@ -154,7 +154,7 @@ const PAGES = {
     dealers: renderForDealers(),
     sell: renderSellPrivate(),
     independientes: renderForIndependents(),
-    stats: renderStats(),
+    stats: '', // oculto hasta tener cifras reales (renderStats)
     testimonials: renderTestimonials(),
     brands: renderBrands(),
   }),

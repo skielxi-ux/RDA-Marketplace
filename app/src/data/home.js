@@ -33,8 +33,9 @@ export const forIndependents = {
   eyebrow: 'Para vendedores independientes',
   title: '¿Por qué ser vendedor independiente?',
   text: 'Sumate a nuestra red de vendedores y generá ingresos con total flexibilidad, acercando compradores a las agencias que trabajan con vos.',
-  foto: null,
-  fotoAlt: 'Vendedor independiente asesorando a un cliente',
+  foto: './img/home/vendedor-independiente-900.webp',
+  fotoChica: './img/home/vendedor-independiente-480.webp',
+  fotoAlt: 'Vendedor independiente mostrando el baúl de un auto en un salón de ventas',
   benefits: [
     { icon: 'dollar-sign', title: 'Ingresos por comisión', text: 'Ganá una comisión de entre 1 % y 4 % del precio final por cada venta que se cierre. Sin límites: cuantos más clientes traigas, más ganás.' },
     { icon: 'clock', title: 'Horarios flexibles', text: 'Trabajá en tus tiempos y desde donde quieras. Vos manejás tu agenda según tu disponibilidad.' },
