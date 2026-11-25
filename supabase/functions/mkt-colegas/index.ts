@@ -1,5 +1,5 @@
 // RDA Marketplace · Edge Function: mkt-colegas (Red de colegas, solo agencias aprobadas)
-// listar · crear (avisa a todas las agencias: campanita + Telegram) · cerrar · notifs · leer · telegram_estado · telegram_vincular
+// listar · crear (avisa a todas las agencias: campanita + Telegram) · cerrar · lo_tengo · notifs · leer · telegram_estado · telegram_vincular
 // Un pedido queda activo hasta que la agencia que lo publicó lo cierra.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -37,13 +37,12 @@ function resumen(p: A) {
   ].filter(Boolean).join(" · ");
 }
 
-async function tg(chat_id: unknown, text: string, url: string) {
+async function tg(chat_id: unknown, text: string, botones: Record<string, string>[][]) {
   const token = env("TELEGRAM_BOT_TOKEN");
   if (!token) return false;
   const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id, text, parse_mode: "HTML", disable_web_page_preview: true,
-      reply_markup: { inline_keyboard: [[{ text: "Ver el pedido y contactar", url }]] } }),
+    body: JSON.stringify({ chat_id, text, parse_mode: "HTML", disable_web_page_preview: true, reply_markup: { inline_keyboard: botones } }),
   }).catch(() => null);
   return !!r?.ok;
 }
@@ -79,10 +78,22 @@ Deno.serve(async (req) => {
         ? await db.from("mkt_cuentas").select(CAMPOS_AGENCIA).in("id", ids).eq("estado", "aprobada")
         : { data: [] };
       const porId = new Map((ags ?? []).map((a: A) => [String(a.id), a]));
+      // Quiénes dijeron "Lo tengo" a mis pedidos (y a cuáles ya respondí yo)
+      const misIds = (activos ?? []).filter((p: A) => p.cuenta_id === yo.id).map((p: A) => p.id);
+      const { data: resps } = await db.from("mkt_colegas_respuestas").select("pedido_id, cuenta_id, created_at")
+        .or(`cuenta_id.eq.${yo.id}${misIds.length ? `,pedido_id.in.(${misIds.join(",")})` : ""}`);
+      const respIds = [...new Set((resps ?? []).map((r: A) => String(r.cuenta_id)).filter((id) => id !== yo.id))];
+      const { data: respAgs } = respIds.length ? await db.from("mkt_cuentas").select(CAMPOS_AGENCIA).in("id", respIds) : { data: [] };
+      const respPor = new Map((respAgs ?? []).map((a: A) => [String(a.id), a]));
       const pedidos = (activos ?? []).filter((p: A) => porId.has(String(p.cuenta_id))).map((p: A) => {
         const a = porId.get(String(p.cuenta_id)) as A;
         return {
           ...p, mio: p.cuenta_id === yo.id,
+          respondi: (resps ?? []).some((r: A) => r.pedido_id === p.id && r.cuenta_id === yo.id),
+          lo_tienen: p.cuenta_id === yo.id ? (resps ?? []).filter((r: A) => r.pedido_id === p.id && respPor.has(String(r.cuenta_id))).map((r: A) => {
+            const x = respPor.get(String(r.cuenta_id)) as A;
+            return { id: x.id, nombre: x.nombre, ciudad: x.ciudad, whatsapp: x.whatsapp_ventas || x.telefono };
+          }) : undefined,
           agencia: { id: a.id, nombre: a.nombre, tipo: a.agencia_tipo, marca_oficial: a.marca_oficial, ciudad: a.ciudad, provincia: a.provincia, logo: a.logo, whatsapp: a.whatsapp_ventas || a.telefono },
         };
       });
@@ -125,12 +136,12 @@ Deno.serve(async (req) => {
         const titulo = [marca, modelo, texto(b.version, 80)].filter(Boolean).join(" ");
         const det = resumen(p as A);
         const msg = `🤝 <b>Red de colegas</b>\n<b>${html(yo.nombre)}</b> (${html(yo.ciudad)}) busca:\n🚗 <b>${html(titulo)}</b>` +
-          (det ? `\n${html(det)}` : "") + (p.comentario ? `\n💬 ${html(p.comentario)}` : "") + "\n\n¿Lo tenés? Escribile directo.";
+          (det ? `\n${html(det)}` : "") + (p.comentario ? `\n💬 ${html(p.comentario)}` : "") + "\n\n¿Lo tenés?";
         const vistos = new Set<string>();
         for (const c of chats ?? []) {
           if (vistos.has(String(c.chat_id))) continue;
           vistos.add(String(c.chat_id));
-          if (await tg(c.chat_id, msg, `${SITIO}mi-cuenta.html#colegas`)) telegram++;
+          if (await tg(c.chat_id, msg, [[{ text: "🙋 Lo tengo", callback_data: `MK_LT:${p.id}` }, { text: "Ver en la web", url: `${SITIO}mi-cuenta.html#colegas` }]])) telegram++;
         }
       }
       await db.from("mkt_colegas_pedidos").update({ avisadas: lista.length }).eq("id", p.id);
@@ -142,6 +153,26 @@ Deno.serve(async (req) => {
         .eq("id", String(b.id ?? "")).eq("cuenta_id", yo.id).select("id").maybeSingle();
       if (error) throw error;
       if (!data) return err("No encontramos ese pedido.", 404);
+      return json({ ok: true });
+    }
+
+    // "Lo tengo" desde la web: queda registrado y se le avisa a la agencia que pidió (campanita + Telegram)
+    if (b.accion === "lo_tengo") {
+      const { data: p } = await db.from("mkt_colegas_pedidos").select(CAMPOS_PEDIDO).eq("id", String(b.id ?? "")).maybeSingle();
+      if (!p || p.estado !== "activo") return err("Ese pedido ya está cerrado.", 404);
+      if (p.cuenta_id === yo.id) return err("Es tu propio pedido.");
+      const { error } = await db.from("mkt_colegas_respuestas").insert({ pedido_id: p.id, cuenta_id: yo.id });
+      if (!error) {
+        await db.from("mkt_notificaciones").insert({ cuenta_id: p.cuenta_id, tipo: "colega_respuesta", pedido_id: p.id, origen_id: yo.id });
+        const { data: autor } = await db.from("mkt_cuentas").select("telefono").eq("id", p.cuenta_id).maybeSingle();
+        const { data: chat } = autor ? await db.from("telegram_chats").select("chat_id").in("telefono", variantes(String(autor.telefono))).limit(1).maybeSingle() : { data: null };
+        if (chat?.chat_id) {
+          const titulo = [p.marca, p.modelo, p.version].filter(Boolean).join(" ");
+          const tel = yo.whatsapp_ventas || yo.telefono;
+          await tg(chat.chat_id, `🙋 <b>${html(yo.nombre)}</b>${yo.ciudad ? ` (${html(yo.ciudad)})` : ""} tiene un auto para tu pedido:\n🚗 <b>${html(titulo)}</b>`,
+            [[{ text: "Escribir por WhatsApp", url: `https://wa.me/${tel}?text=${encodeURIComponent(`Hola ${yo.nombre}, vi que tenés un ${titulo} para mi pedido en la Red de colegas.`)}` }]]);
+        }
+      }
       return json({ ok: true });
     }
 

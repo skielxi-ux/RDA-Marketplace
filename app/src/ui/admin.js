@@ -403,7 +403,7 @@ async function loadAutos() {
   if (!autos.length) { list.innerHTML = `<p class="rounded-2xl bg-soft px-5 py-8 text-center text-ink/60">${autosQ ? 'No hay autos con esa búsqueda.' : 'Todavía no hay autos cargados por agencias.'}</p>`; return; }
   list.innerHTML = `<p class="mb-3 text-[14px] text-ink/60">${autos.length} ${autos.length === 1 ? 'auto' : 'autos'}</p><ul class="grid gap-3">${autos.map((a) => {
     const foto = fotoUrl(a.fotos?.[0] ?? '');
-    const pausado = a.estado === 'pausado';
+    const pausado = a.estado !== 'publicado';
     return `
     <li class="flex flex-col gap-3 rounded-2xl border border-line bg-white p-4 sm:flex-row sm:items-center">
       <div class="flex min-w-0 flex-1 items-center gap-4">
@@ -411,7 +411,7 @@ async function loadAutos() {
         <div class="min-w-0">
           <p class="truncate font-bold">${esc(`${a.marca} ${a.modelo} ${a.version} ${a.anio}`)}</p>
           <p class="text-[14px] text-ink/70">${esc(formatPrice(Number(a.precio), a.moneda))} · ${esc(a.cuenta?.nombre ?? '')} · ${esc(a.codigo)}${a.cuenta?.es_prueba ? ' · <b>prueba</b>' : ''}</p>
-          <p class="text-[13px] ${pausado ? 'text-[#8A5A00]' : 'text-ok'}">${pausado ? (a.pausado_por_admin ? 'Pausado por vos' : 'Pausado por la agencia') : 'Publicado'} · ${esc(fmtFecha(a.created_at))}</p>
+          <p class="text-[13px] ${pausado ? 'text-[#8A5A00]' : 'text-ok'}">${a.estado === 'vendido' ? 'Vendido' : pausado ? (a.pausado_por_admin ? 'Pausado por vos' : 'Pausado por la agencia') : 'Publicado'} · ${esc(fmtFecha(a.created_at))}</p>
         </div>
       </div>
       <div class="flex shrink-0 gap-2">

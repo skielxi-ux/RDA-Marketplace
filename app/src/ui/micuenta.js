@@ -4,7 +4,7 @@ import { esc, formatPrice } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { supa, cuentaGuardada } from './auth.js';
 import { renderRanking } from './ranking.js';
-import { autosApi, fotoUrl } from './autosApi.js';
+import { autosApi, colegasApi, fotoUrl } from './autosApi.js';
 import { carUrl } from '../data/catalog.js';
 import { initPerfil } from './perfil.js';
 import { initColegas } from './colegas.js';
@@ -60,12 +60,14 @@ export function initMiCuenta() {
       return;
     }
     const pub = autos.filter((a) => a.estado === 'publicado').length;
+    const vend = autos.filter((a) => a.estado === 'vendido').length;
     listaMis.innerHTML = `
-      <p class="mb-4 text-[15px] text-ink/70">${autos.length} ${autos.length === 1 ? 'auto' : 'autos'} · ${pub} ${pub === 1 ? 'publicado' : 'publicados'}</p>
+      <p class="mb-4 text-[15px] text-ink/70">${autos.length} ${autos.length === 1 ? 'auto' : 'autos'} · ${pub} ${pub === 1 ? 'publicado' : 'publicados'}${vend ? ` · ${vend} ${vend === 1 ? 'vendido' : 'vendidos'}` : ''}</p>
       <ul class="grid gap-3">
         ${autos.map((a) => {
           const foto = fotoUrl(a.fotos?.[0] ?? '');
-          const pausado = a.estado === 'pausado';
+          const pausado = a.estado !== 'publicado';
+          const vendido = a.estado === 'vendido';
           const titulo = `${a.marca} ${a.modelo} ${a.version} ${a.anio}`;
           return `
           <li class="flex flex-col gap-4 rounded-2xl border border-line bg-white p-4 sm:flex-row sm:items-center">
@@ -74,7 +76,7 @@ export function initMiCuenta() {
               <div class="min-w-0">
                 <p class="flex flex-wrap items-center gap-2 text-[13px]">
                   <span class="rounded-full bg-ink px-2.5 py-0.5 font-bold text-white">${esc(a.codigo)}</span>
-                  ${pausado ? `<span class="rounded-full bg-[#FFF6E5] px-2.5 py-0.5 font-medium text-[#8A5A00]">${a.pausado_por_admin ? 'Pausado por Red de Autos' : 'Pausado'}</span>` : '<span class="rounded-full bg-[#E8F5E9] px-2.5 py-0.5 font-medium text-ok">Publicado</span>'}
+                  ${vendido ? '<span class="rounded-full bg-ink px-2.5 py-0.5 font-medium text-white">Vendido</span>' : pausado ? `<span class="rounded-full bg-[#FFF6E5] px-2.5 py-0.5 font-medium text-[#8A5A00]">${a.pausado_por_admin ? 'Pausado por Red de Autos' : 'Pausado'}</span>` : '<span class="rounded-full bg-[#E8F5E9] px-2.5 py-0.5 font-medium text-ok">Publicado</span>'}
                   <span class="text-ink/60">${esc(a.fotos?.length ?? 0)} fotos</span>
                 </p>
                 <p class="mt-1 truncate text-[16px] font-bold">${esc(titulo)}</p>
@@ -100,6 +102,44 @@ export function initMiCuenta() {
     }
   };
   const abrirMisAutos = () => { activar(btnMis, boxMis); cargarMisAutos(); };
+  // ---------- Banner: conectar Telegram (agencias aprobadas que todavía no lo conectaron) ----------
+  const tgBanner = $('[data-mc-telegram]');
+  const pintarTelegram = async () => {
+    if (!esAgencia) { tgBanner.hidden = true; return; }
+    try {
+      const { vinculado } = await colegasApi('telegram_estado');
+      tgBanner.hidden = vinculado;
+      if (vinculado) return;
+      tgBanner.innerHTML = `
+        <div class="mb-8 overflow-hidden rounded-[24px] bg-ink text-white">
+          <div class="grid gap-6 p-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:p-8">
+            <div>
+              <p class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[13px] font-medium">${icon('message-circle', 'h-4 w-4')} Bot de Red de Autos en Telegram</p>
+              <p class="mt-3 text-[22px] font-bold leading-tight sm:text-[26px]">Conectá Telegram y manejá tu stock desde el celular</p>
+              <ul class="mt-4 grid gap-2 text-[15px] text-white/85 sm:grid-cols-2">
+                ${[['bell', 'Avisos al instante de pedidos de colegas'], ['tag', 'Cambiar el precio de un auto'], ['circle-check', 'Marcar un auto como vendido'], ['lock', 'Pausar y volver a publicar'], ['handshake', 'Pedir autos a colegas y responder "Lo tengo"'], ['badge-check', 'Avisos de tu cuenta y de ferias nuevas']]
+                  .map(([ic, t]) => `<li class="flex items-start gap-2">${icon(ic, 'mt-0.5 h-4 w-4 shrink-0 text-[#9DB0FF]')}<span>${t}</span></li>`).join('')}
+              </ul>
+            </div>
+            <div class="flex flex-col gap-2 md:items-end">
+              <button type="button" class="btn-primary h-[54px] justify-center !px-8" data-tg-conectar>${icon('message-circle', 'h-4 w-4')} Conectar Telegram</button>
+              <p class="text-[13px] text-white/60 md:text-right">Se abre Telegram: tocá <b>Iniciar</b> y listo.<br>Si no lo tenés, bajalo gratis de tu tienda de apps.</p>
+            </div>
+          </div>
+        </div>`;
+    } catch { tgBanner.hidden = true; }
+  };
+  tgBanner.addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-tg-conectar]');
+    if (!b) return;
+    b.disabled = true;
+    try {
+      const { url } = await colegasApi('telegram_vincular');
+      if (/^https:\/\/t\.me\//.test(url)) window.open(url, '_blank', 'noopener');
+      window.addEventListener('focus', pintarTelegram, { once: true });
+    } catch { /* el banner queda */ } finally { b.disabled = false; }
+  });
+
   let colegasCargado = false;
   const abrirColegas = () => {
     activar(btnColegas, boxColegas);
@@ -166,6 +206,7 @@ export function initMiCuenta() {
     if (cuenta.tipo === 'agencia' && location.hash === '#perfil') abrirPerfil();
 
     btnColegas.hidden = !esAgencia;
+    pintarTelegram();
     if (!esAgencia) boxColegas.hidden = true;
     if (esAgencia && location.hash === '#colegas') abrirColegas();
 

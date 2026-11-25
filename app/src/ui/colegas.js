@@ -66,6 +66,13 @@ export async function initColegas(box) {
   q.addEventListener('input', () => { clearTimeout(tq); tq = setTimeout(pintar, 200); });
 
   list.addEventListener('click', async (e) => {
+    // "Lo tengo": abre WhatsApp y además le avisa a la agencia que pidió (campanita + Telegram)
+    const lt = e.target.closest('[data-cg-lotengo]');
+    if (lt) {
+      const p = pedidos.find((x) => x.id === lt.dataset.cgLotengo);
+      if (p && !p.respondi) { p.respondi = true; colegasApi('lo_tengo', { id: p.id }).then(() => pintar()).catch(() => {}); }
+      return;
+    }
     const b = e.target.closest('[data-cg-cerrar]');
     if (!b) return;
     b.disabled = true;

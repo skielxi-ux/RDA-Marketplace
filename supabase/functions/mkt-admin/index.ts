@@ -3,6 +3,7 @@
 // Acciones: resumen, cuentas, cuenta (aprobar, rechazar, suspender, reactivar, reset_pin, prueba, aprobar_cambios, rechazar_cambios), borrar_pruebas,
 //           ferias, crear_feria, cancelar_feria, invitar_feria (WhatsApp a las agencias aprobadas),
 //           autos, auto_estado (pausar / volver a publicar autos cargados por las agencias).
+// Avisos por Telegram a las agencias: aprobación, cambios de perfil aprobados/rechazados y ferias nuevas.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const env = (k: string, d = "") => Deno.env.get(k) ?? d;
@@ -44,6 +45,24 @@ async function wa(to: string, text: string) {
     wa_message_id: d?.messages?.[0]?.id ?? null, error: r.ok ? null : JSON.stringify(d?.error ?? d).slice(0, 500) });
   return r.ok;
 }
+
+/** Aviso por Telegram a una cuenta del marketplace (si conectó su Telegram). Nunca corta la acción si falla. */
+async function avisarTg(telefono: string, texto: string) {
+  try {
+    const token = env("TELEGRAM_BOT_TOKEN");
+    if (!token) return false;
+    const tels = [telefono, telefono.startsWith("549") ? "54" + telefono.slice(3) : telefono];
+    const { data: c } = await db.from("telegram_chats").select("chat_id").in("telefono", tels).limit(1).maybeSingle();
+    if (!c?.chat_id) return false;
+    const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: c.chat_id, text: texto, parse_mode: "HTML", disable_web_page_preview: true,
+        reply_markup: { inline_keyboard: [[{ text: "Abrir Mi cuenta", url: `${SITIO}mi-cuenta.html` }]] } }),
+    });
+    return r.ok;
+  } catch { return false; }
+}
+const h = (s: unknown) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 const CAMPOS = "id, tipo, telefono, nombre, ciudad, provincia, agencia_tipo, marca_oficial, cuit, estado, es_prueba, user_id, intentos, bloqueado_hasta, revisado_at, created_at, logo, cambios_pendientes, cambios_at";
 const pinDebil = (p: string) => /^(\d)\1{5}$/.test(p) || ["123456", "654321", "012345", "123123", "121212", "112233"].includes(p);
@@ -185,6 +204,10 @@ async function cuenta(b: A) {
     const { error } = await db.from("mkt_cuentas").update({ ...upd, updated_at: ahora }).eq("id", c.id);
     if (error) throw error;
   }
+  // Avisos de la cuenta por Telegram
+  if (b.op === "aprobar" && c.tipo === "agencia") await avisarTg(c.telefono, `✅ <b>¡Aprobamos ${h(c.nombre)}!</b>\nYa podés publicar tu stock, usar la Red de colegas y manejar tus autos desde acá.`);
+  if (b.op === "aprobar_cambios") await avisarTg(c.telefono, `✅ Aprobamos los cambios de tu perfil en Red de Autos. Ya se ven en el sitio.`);
+  if (b.op === "rechazar_cambios") await avisarTg(c.telefono, `ℹ️ No pudimos aprobar los cambios de nombre, CUIT o tipo de tu perfil. Escribinos si necesitás ayuda.`);
   // (Una cuenta suspendida o rechazada no puede ingresar, y su sesión abierta se corta en la próxima visita: ver "perfil" en mkt-cuenta.)
   const { data: nueva } = await db.from("mkt_cuentas").select(CAMPOS).eq("id", c.id).single();
   return { ok: true, cuenta: { ...nueva, user_id: undefined }, pin_temporal: pin };
@@ -233,6 +256,11 @@ async function crearFeria(b: A) {
   if (choca?.length) throw new Error(`Se superpone con "${choca[0].nombre}". Cancelala o cambiá las fechas.`);
   const { data, error } = await db.from("mkt_ferias").insert({ nombre, descripcion, empieza: empieza.toISOString(), termina: termina.toISOString() }).select("*").single();
   if (error) throw error;
+  // Aviso por Telegram a las agencias aprobadas que lo conectaron
+  const { data: ags } = await db.from("mkt_cuentas").select("telefono").eq("tipo", "agencia").eq("estado", "aprobada").eq("es_prueba", false);
+  for (const a of ags ?? []) {
+    await avisarTg(a.telefono, `🎉 <b>Nueva feria: ${h(nombre)}</b>\nDel ${fechaAr(data.empieza)} al ${fechaAr(data.termina)} h.${descripcion ? `\n${h(descripcion)}` : ""}\nPreparate: el descuento lo elegís vos.`);
+  }
   return { ok: true, feria: data };
 }
 
