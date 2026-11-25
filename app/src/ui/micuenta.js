@@ -10,6 +10,7 @@ import { initPerfil } from './perfil.js';
 import { initColegas } from './colegas.js';
 import { editarAuto } from './editarAuto.js';
 import { initMisAlertas } from './misAlertas.js';
+import { initVendedorPanel } from './vendedorPanel.js';
 
 export function initMiCuenta() {
   const guest = $('[data-mc-guest]');
@@ -187,6 +188,15 @@ export function initMiCuenta() {
     activar(btnColegas, boxColegas);
     if (!colegasCargado) { colegasCargado = true; initColegas($('[data-colegas-box]')); }
   };
+  const btnClientes = $('[data-mc-clientes]');
+  const boxClientes = $('#clientes');
+  let clientesCargado = false;
+  let esVendedor = false;
+  const abrirClientes = () => {
+    if (!esVendedor) return;
+    activar(btnClientes, boxClientes);
+    if (!clientesCargado) { clientesCargado = true; initVendedorPanel($('[data-clientes-box]')); }
+  };
   const btnAlertas = $('[data-mc-alertas]');
   const boxAlertas = $('#alertas');
   let alertasCargado = false;
@@ -245,7 +255,7 @@ export function initMiCuenta() {
     }
     const tipo = cuenta.tipo === 'agencia'
       ? (cuenta.agencia_tipo === 'oficial' ? `Concesionario oficial${cuenta.marca_oficial ? ` ${cuenta.marca_oficial}` : ''}` : 'Agencia multimarca')
-      : 'Particular';
+      : cuenta.tipo === 'vendedor' ? 'Vendedor independiente' : 'Particular';
     $('[data-mc-title]').textContent = `Hola, ${cuenta.nombre.split(' ')[0]}`;
     $('[data-mc-sub]').textContent = `${cuenta.nombre} · ${tipo}`;
     const pendiente = cuenta.estado === 'pendiente';
@@ -273,6 +283,20 @@ export function initMiCuenta() {
     if (!pendiente && location.hash === '#buscados') abrirRanking();
     if (esAgencia && location.hash === '#mis-autos') abrirMisAutos();
     if (location.hash === '#alertas') abrirAlertas();
+
+    // Vendedor independiente: no publica autos; tiene su panel de clientes cuando está aprobado
+    const tipoVend = cuenta.tipo === 'vendedor';
+    esVendedor = tipoVend && cuenta.estado === 'aprobada';
+    btnPublicar.hidden = tipoVend;
+    if (tipoVend) btnMis.hidden = true;
+    btnClientes.hidden = !tipoVend;
+    btnClientes.disabled = !esVendedor;
+    btnClientes.classList.toggle('is-soon', tipoVend && !esVendedor);
+    $('[data-mc-clientes-sub]').textContent = esVendedor ? 'Tu código, tu link y los clientes que trajiste.' : 'Disponible cuando aprobemos tu cuenta.';
+    $('[data-mc-pending]').textContent = tipoVend
+      ? 'Tu cuenta de vendedor independiente está en revisión. Cuando la aprobemos vas a ver las comisiones de cada agencia y tu link.'
+      : 'Tu agencia está en revisión. Cuando la aprobemos vas a poder ver el ranking y publicar tu stock.';
+    if (esVendedor && location.hash === '#clientes') abrirClientes();
   };
 
   btnBuscados.addEventListener('click', abrirRanking);
@@ -280,6 +304,7 @@ export function initMiCuenta() {
   btnPerfil.addEventListener('click', abrirPerfil);
   btnColegas.addEventListener('click', abrirColegas);
   btnAlertas.addEventListener('click', abrirAlertas);
+  btnClientes.addEventListener('click', abrirClientes);
   // La campanita lleva a #colegas: si ya estamos en Mi cuenta, abrir la sección
   window.addEventListener('hashchange', () => {
     if (location.hash === '#colegas' && esAgencia) abrirColegas();

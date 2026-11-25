@@ -2,6 +2,7 @@
 // Sesión: la misma del admin de la web actual (login en la función "admin" con celular + contraseña).
 // Acciones: resumen, cuentas, cuenta (aprobar, rechazar, suspender, reactivar, reset_pin, prueba, aprobar_cambios, rechazar_cambios), borrar_pruebas,
 //           ferias, crear_feria, cancelar_feria, invitar_feria (WhatsApp a las agencias aprobadas),
+//           (aprobar / rechazar también vale para vendedores independientes)
 //           autos, auto_estado (aprobar autos de particulares en revisión, pausar / volver a publicar).
 // Avisos por Telegram a las agencias: aprobación, cambios de perfil aprobados/rechazados y ferias nuevas.
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -64,7 +65,7 @@ async function avisarTg(telefono: string, texto: string) {
 }
 const h = (s: unknown) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-const CAMPOS = "id, tipo, telefono, nombre, ciudad, provincia, agencia_tipo, marca_oficial, cuit, estado, es_prueba, user_id, intentos, bloqueado_hasta, revisado_at, created_at, logo, cambios_pendientes, cambios_at";
+const CAMPOS = "id, tipo, telefono, nombre, ciudad, provincia, agencia_tipo, marca_oficial, cuit, estado, es_prueba, user_id, intentos, bloqueado_hasta, revisado_at, created_at, logo, cambios_pendientes, cambios_at, dni, email";
 const pinDebil = (p: string) => /^(\d)\1{5}$/.test(p) || ["123456", "654321", "012345", "123123", "121212", "112233"].includes(p);
 function pinTemporal() {
   for (;;) {
@@ -133,6 +134,8 @@ async function resumen() {
     total: reales.length,
     particulares: n((r) => r.tipo === "particular"),
     agencias: n((r) => r.tipo === "agencia"),
+    vendedores: n((r) => r.tipo === "vendedor"),
+    vendedores_pendientes: rows.filter((r) => r.tipo === "vendedor" && r.estado === "pendiente").length,
     agencias_aprobadas: n((r) => r.tipo === "agencia" && r.estado === "aprobada"),
     pendientes: rows.filter((r) => r.tipo === "agencia" && r.estado === "pendiente").length,
     suspendidas: n((r) => r.estado === "suspendida"),
@@ -146,7 +149,7 @@ async function resumen() {
 
 async function cuentas(b: A) {
   let q = db.from("mkt_cuentas").select(CAMPOS).order("created_at", { ascending: false }).limit(300);
-  if (["particular", "agencia"].includes(b.tipo)) q = q.eq("tipo", b.tipo);
+  if (["particular", "agencia", "vendedor"].includes(b.tipo)) q = q.eq("tipo", b.tipo);
   if (["activa", "pendiente", "aprobada", "rechazada", "suspendida"].includes(b.estado)) q = q.eq("estado", b.estado);
   if (b.prueba === true) q = q.eq("es_prueba", true);
   if (b.cambios === true) q = q.not("cambios_pendientes", "is", null);
@@ -171,13 +174,13 @@ async function cuenta(b: A) {
   let pin: string | null = null;
   switch (b.op) {
     case "aprobar":
-      if (c.tipo !== "agencia") throw new Error("Solo se aprueban agencias.");
+      if (!["agencia", "vendedor"].includes(c.tipo)) throw new Error("Solo se aprueban agencias y vendedores independientes.");
       upd = { estado: "aprobada", revisado_at: ahora }; break;
     case "rechazar":
-      if (c.tipo !== "agencia") throw new Error("Solo se rechazan agencias.");
+      if (!["agencia", "vendedor"].includes(c.tipo)) throw new Error("Solo se rechazan agencias y vendedores independientes.");
       upd = { estado: "rechazada", revisado_at: ahora }; break;
     case "suspender": upd = { estado: "suspendida" }; break;
-    case "reactivar": upd = { estado: c.tipo === "agencia" ? "aprobada" : "activa", intentos: 0, bloqueado_hasta: null }; break;
+    case "reactivar": upd = { estado: c.tipo === "particular" ? "activa" : "aprobada", intentos: 0, bloqueado_hasta: null }; break;
     case "desbloquear": upd = { intentos: 0, bloqueado_hasta: null }; break;
     case "prueba": upd = { es_prueba: !c.es_prueba }; break;
     case "aprobar_cambios": {

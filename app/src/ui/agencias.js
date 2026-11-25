@@ -3,10 +3,14 @@ import { $ } from './dom.js';
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { cargarAgencias } from '../data/autosReales.js';
+import { cuentaGuardada } from './auth.js';
+import { vendedorApi } from './autosApi.js';
 
 const iniciales = (n) => n.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
 const norm = (s) => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 const fmtTel = (t) => { const n = String(t).replace(/^549?/, ''); return n.length === 10 ? `${n.slice(0, 3)} ${n.slice(3, 6)}-${n.slice(6)}` : n; };
+
+let comisiones = {}; // solo para vendedores independientes aprobados
 
 function tarjeta(a) {
   const tipo = a.agencia_tipo === 'oficial' ? `Concesionario oficial${a.marca_oficial ? ` ${a.marca_oficial}` : ''}` : 'Agencia multimarca';
@@ -23,7 +27,7 @@ function tarjeta(a) {
         <p class="mt-1 flex items-center gap-1.5 text-[14px] text-ink/70">${icon('map-pin', 'h-4 w-4 shrink-0')} ${esc([a.ciudad, a.provincia].filter(Boolean).join(', '))}</p>
       </div>
     </div>
-    ${a.acepta_independientes ? `<p class="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-[#E8F5E9] px-3 py-1 text-[13px] font-bold text-[#1E6B34]">${icon('handshake', 'h-4 w-4')} Acepta vendedores independientes</p>` : ''}
+    ${a.acepta_independientes ? `<p class="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-[#E8F5E9] px-3 py-1 text-[13px] font-bold text-[#1E6B34]">${icon('handshake', 'h-4 w-4')} Acepta vendedores independientes${comisiones[a.id] ? ` · ${esc(comisiones[a.id])} %` : ''}</p>` : ''}
     ${a.horario ? `<p class="mt-3 text-[13px] text-ink/60">${icon('clock', 'mr-1 inline h-3.5 w-3.5 align-[-2px]')}${esc(a.horario)}</p>` : ''}
     <div class="mt-auto pt-5">
       <a href="./agencia.html?id=${encodeURIComponent(a.id)}" class="link-view mb-4 text-[15px]">Ver ${esc(a.autos)} ${a.autos === 1 ? 'auto publicado' : 'autos publicados'} ${icon('arrow-up-right', 'h-4 w-4')}</a>
@@ -41,6 +45,10 @@ export async function initAgencias() {
   const form = $('[data-ag-filtros]');
   if (!lista) return;
   let agencias = [];
+  const yo = cuentaGuardada();
+  if (yo?.tipo === 'vendedor' && yo.estado === 'aprobada') {
+    try { comisiones = (await vendedorApi('comisiones')).comisiones ?? {}; } catch { comisiones = {}; }
+  }
   try { agencias = await cargarAgencias(); } catch {
     lista.innerHTML = '<li class="col-span-full rounded-2xl bg-[#FDECEC] px-5 py-4 text-[#B42318]">No pudimos cargar las agencias. Probá de nuevo en un rato.</li>';
     return;

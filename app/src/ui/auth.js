@@ -94,9 +94,10 @@ function paintHeader(cuenta) {
     $('[data-user-name]', menu).textContent = cuenta.nombre;
     $('[data-user-type]', menu).textContent = cuenta.tipo === 'agencia'
       ? (cuenta.agencia_tipo === 'oficial' ? `Concesionario oficial${cuenta.marca_oficial ? ` ${cuenta.marca_oficial}` : ''}` : 'Agencia multimarca')
-      : 'Particular';
+      : cuenta.tipo === 'vendedor' ? 'Vendedor independiente' : 'Particular';
     const pend = $('[data-user-pending]', menu);
     pend.hidden = cuenta.estado !== 'pendiente';
+    pend.textContent = cuenta.tipo === 'vendedor' ? 'Tu cuenta está en revisión.' : 'Tu agencia está en revisión.';
   }
 }
 
@@ -205,7 +206,7 @@ export function initAuth() {
     title.textContent = t || '¡Bienvenido!';
     title.hidden = view === 'listo';
     sub.textContent = view === 'registro'
-      ? (regForm.elements.tipo.value === 'agencia' ? 'Datos de tu agencia o concesionario.' : 'Tus datos para publicar.')
+      ? ({ agencia: 'Datos de tu agencia o concesionario.', vendedor: 'Tus datos como vendedor independiente.' }[regForm.elements.tipo.value] ?? 'Tus datos para publicar.')
       : s;
     sub.hidden = view === 'listo';
     tabs.hidden = view === 'registro' || view === 'listo';
@@ -246,13 +247,15 @@ export function initAuth() {
     regForm.reset();
     regForm.elements.tipo.value = tipo;
     const isAg = tipo === 'agencia';
+    const isVend = tipo === 'vendedor';
     $$('[data-only="agencia"]', regForm).forEach((el) => { el.hidden = !isAg; el.disabled = !isAg; });
+    $$('[data-only="vendedor"]', regForm).forEach((el) => { el.hidden = !isVend; });
     $('[data-only="oficial"]', regForm).hidden = true;
     $('label[for="reg-nombre"]', regForm).textContent = isAg ? 'Nombre comercial' : 'Nombre y apellido';
     regForm.elements.nombre.placeholder = isAg ? 'Ej: Norte Automotores' : 'Juan Pérez';
     regForm.elements.nombre.autocomplete = isAg ? 'organization' : 'name';
-    $('label[for="reg-provincia"]', regForm).textContent = isAg ? 'Provincia' : 'Provincia (opcional)';
-    $('label[for="reg-ciudad"]', regForm).textContent = isAg ? 'Ciudad' : 'Ciudad (opcional)';
+    $('label[for="reg-provincia"]', regForm).textContent = isAg || isVend ? 'Provincia' : 'Provincia (opcional)';
+    $('label[for="reg-ciudad"]', regForm).textContent = isAg || isVend ? 'Ciudad' : 'Ciudad (opcional)';
     show('registro');
   }));
   regForm.addEventListener('change', (e) => {
@@ -296,7 +299,7 @@ export function initAuth() {
       loginForm.reset();
       $('[data-listo-title]', modal).textContent = `¡Hola, ${cuenta.nombre.split(' ')[0]}!`;
       $('[data-listo-text]', modal).textContent = cuenta.estado === 'pendiente'
-        ? 'Ingresaste. Tu agencia todavía está en revisión: la habilitamos apenas verifiquemos los datos.'
+        ? (cuenta.tipo === 'vendedor' ? 'Ingresaste. Tu cuenta todavía está en revisión: la habilitamos apenas verifiquemos tus datos.' : 'Ingresaste. Tu agencia todavía está en revisión: la habilitamos apenas verifiquemos los datos.')
         : 'Ingresaste a tu cuenta.';
       show('listo');
     } catch (err) {
@@ -312,6 +315,7 @@ export function initAuth() {
     const f = regForm.elements;
     const tipo = f.tipo.value;
     const isAg = tipo === 'agencia';
+    const isVend = tipo === 'vendedor';
     const body = {
       accion: 'registrar', tipo,
       nombre: f.nombre.value.trim(), telefono: f.telefono.value, pin: f.pin.value,
@@ -326,8 +330,16 @@ export function initAuth() {
       Object.assign(body, { agencia_tipo: at, marca_oficial: f.marca_oficial.value, cuit: digits(f.cuit.value) });
     }
     if (body.nombre.length < 2) return fail(regForm, isAg ? 'Escribí el nombre comercial.' : 'Escribí tu nombre.', 'nombre');
-    if (isAg && !body.provincia) return fail(regForm, 'Elegí la provincia.', 'provincia');
-    if (isAg && body.ciudad.length < 2) return fail(regForm, 'Escribí la ciudad.', 'ciudad');
+    if (isVend) {
+      if (body.nombre.split(/\s+/).length < 2) return fail(regForm, 'Escribí tu nombre y apellido.', 'nombre');
+      const dni = digits(f.dni.value);
+      if (!/^\d{7,8}$/.test(dni)) return fail(regForm, 'Revisá el DNI: 7 u 8 números, sin puntos.', 'dni');
+      const email = f.email.value.trim();
+      if (email && !/^[^@\s<>]+@[^@\s<>]+\.[^@\s<>]+$/.test(email)) return fail(regForm, 'Revisá el email.', 'email');
+      Object.assign(body, { dni, email });
+    }
+    if ((isAg || isVend) && !body.provincia) return fail(regForm, 'Elegí la provincia.', 'provincia');
+    if ((isAg || isVend) && body.ciudad.length < 2) return fail(regForm, 'Escribí la ciudad.', 'ciudad');
     if (!phoneOk(body.telefono)) return fail(regForm, 'Revisá el celular: código de área + número, sin 0 ni 15.', 'telefono');
     if (!/^\d{6}$/.test(body.pin)) return fail(regForm, 'El PIN tiene que tener 6 números.', 'pin');
     if (pinWeak(body.pin)) return fail(regForm, 'Elegí un PIN más difícil de adivinar (no 123456 ni números repetidos).', 'pin');
@@ -342,7 +354,9 @@ export function initAuth() {
       $('[data-listo-title]', modal).textContent = isAg ? '¡Recibimos tu agencia!' : `¡Bienvenido, ${cuenta.nombre.split(' ')[0]}!`;
       $('[data-listo-text]', modal).textContent = isAg
         ? 'Tu cuenta quedó creada. Revisamos los datos de la agencia antes de habilitar la publicación de tu stock.'
-        : 'Tu cuenta quedó creada. Ya podés publicar tu auto o moto.';
+        : isVend
+          ? 'Tu cuenta quedó creada. Revisamos tus datos y, cuando te aprobemos, vas a ver la comisión de cada agencia y tu link para compartir autos.'
+          : 'Tu cuenta quedó creada. Ya podés publicar tu auto.';
       show('listo');
     } catch (err) {
       fail(regForm, err.message);

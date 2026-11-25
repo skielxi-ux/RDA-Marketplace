@@ -93,7 +93,7 @@ function cuentaCard(c) {
   const [estTxt, estCls] = ESTADOS[c.estado] ?? [c.estado, 'bg-soft'];
   const tipo = c.tipo === 'agencia'
     ? (c.agencia_tipo === 'oficial' ? `Concesionario oficial ${c.marca_oficial ?? ''}` : 'Agencia multimarca')
-    : 'Particular';
+    : c.tipo === 'vendedor' ? 'Vendedor independiente' : 'Particular';
   const acciones = [];
   if (c.estado === 'pendiente') acciones.push(btn('aprobar', c.id, 'Aprobar', 'circle-check', 'btn-primary'), btn('rechazar', c.id, 'Rechazar', 'x'));
   else if (c.estado === 'rechazada') acciones.push(btn('aprobar', c.id, 'Aprobar', 'circle-check', 'btn-primary'));
@@ -113,7 +113,7 @@ function cuentaCard(c) {
     <div class="flex flex-wrap items-start justify-between gap-3">
       <div class="min-w-0">
         <p class="flex flex-wrap items-center gap-2 text-[18px] font-bold leading-tight">
-          ${logo ? `<img src="${esc(logo)}" alt="" width="32" height="32" class="h-8 w-8 rounded-lg border border-line object-contain" />` : icon(c.tipo === 'agencia' ? 'store' : 'user', 'h-5 w-5 text-brand')} <span class="break-words">${esc(c.nombre)}</span>
+          ${logo ? `<img src="${esc(logo)}" alt="" width="32" height="32" class="h-8 w-8 rounded-lg border border-line object-contain" />` : icon(c.tipo === 'agencia' ? 'store' : c.tipo === 'vendedor' ? 'handshake' : 'user', 'h-5 w-5 text-brand')} <span class="break-words">${esc(c.nombre)}</span>
         </p>
         <p class="mt-1 text-[14px] text-ink/70">${esc(tipo)}</p>
       </div>
@@ -122,6 +122,8 @@ function cuentaCard(c) {
     <dl class="mt-4 grid gap-x-6 gap-y-2 text-[14px] sm:grid-cols-2">
       <div class="flex gap-2"><dt class="text-ink/60">WhatsApp</dt><dd><a href="https://wa.me/${esc(c.telefono)}" target="_blank" rel="noopener noreferrer" class="font-medium text-brand underline-offset-4 hover:underline">${esc(fmtTel(c.telefono))}</a></dd></div>
       ${c.cuit ? `<div class="flex gap-2"><dt class="text-ink/60">CUIT</dt><dd class="font-medium">${esc(fmtCuit(c.cuit))}</dd></div>` : ''}
+      ${c.dni ? `<div class="flex gap-2"><dt class="text-ink/60">DNI</dt><dd class="font-medium">${esc(Number(c.dni).toLocaleString('es-AR'))}</dd></div>` : ''}
+      ${c.email && c.tipo === 'vendedor' ? `<div class="flex gap-2"><dt class="text-ink/60">Email</dt><dd class="break-all">${esc(c.email)}</dd></div>` : ''}
       ${c.ciudad || c.provincia ? `<div class="flex gap-2"><dt class="text-ink/60">Zona</dt><dd>${esc([c.ciudad, c.provincia].filter(Boolean).join(', '))}</dd></div>` : ''}
       <div class="flex gap-2"><dt class="text-ink/60">Alta</dt><dd>${esc(fmtFecha(c.created_at))}</dd></div>
       ${c.revisado_at ? `<div class="flex gap-2"><dt class="text-ink/60">Revisada</dt><dd>${esc(fmtFecha(c.revisado_at))}</dd></div>` : ''}
@@ -143,7 +145,7 @@ let resumenData = null;
 
 function renderResumen(r) {
   const cards = [
-    ['Cuentas', r.total, 'user'], ['Particulares', r.particulares, 'user'], ['Agencias', r.agencias, 'store'],
+    ['Cuentas', r.total, 'user'], ['Particulares', r.particulares, 'user'], ['Agencias', r.agencias, 'store'], ['Vendedores independientes', r.vendedores ?? 0, 'handshake'],
     ['Agencias aprobadas', r.agencias_aprobadas, 'badge-check'], ['Por revisar', r.pendientes, 'clipboard-check'],
     ['Suspendidas', r.suspendidas, 'lock'],
   ];
@@ -160,6 +162,7 @@ function renderResumen(r) {
     </div>
     ${r.autos_revision ? `<button type="button" class="mt-6 flex w-full items-center justify-between gap-4 rounded-2xl bg-[#FFF4E0] px-5 py-4 text-left text-[#8A5A00] transition-colors hover:bg-[#FDEBC8]" data-go="autos"><span><b>${esc(r.autos_revision)}</b> ${r.autos_revision === 1 ? 'auto de particular espera' : 'autos de particulares esperan'} tu revisión</span>${icon('arrow-right', 'h-5 w-5')}</button>` : ''}
     ${r.cambios ? `<button type="button" class="mt-6 flex w-full items-center justify-between gap-4 rounded-2xl bg-[#EEF1FB] px-5 py-4 text-left text-brand transition-colors hover:bg-[#E2E7FA]" data-go="concesionarios"><span><b>${esc(r.cambios)}</b> ${r.cambios === 1 ? 'agencia pidió' : 'agencias pidieron'} cambiar datos de su perfil</span>${icon('arrow-right', 'h-5 w-5')}</button>` : ''}
+    ${r.vendedores_pendientes ? `<button type="button" class="mt-6 flex w-full items-center justify-between gap-4 rounded-2xl bg-[#FFF6E5] px-5 py-4 text-left text-[#8A5A00] transition-colors hover:bg-[#FFEFD1]" data-go="vendedores"><span><b>${esc(r.vendedores_pendientes)}</b> ${r.vendedores_pendientes === 1 ? 'vendedor independiente espera' : 'vendedores independientes esperan'} revisión</span>${icon('arrow-right', 'h-5 w-5')}</button>` : ''}
     ${r.pendientes ? `<button type="button" class="mt-6 flex w-full items-center justify-between gap-4 rounded-2xl bg-[#FFF6E5] px-5 py-4 text-left text-[#8A5A00] transition-colors hover:bg-[#FFEFD1]" data-go="concesionarios"><span><b>${esc(r.pendientes)}</b> ${r.pendientes === 1 ? 'agencia espera' : 'agencias esperan'} revisión</span>${icon('arrow-right', 'h-5 w-5')}</button>` : ''}
     <section class="mt-8 rounded-2xl border border-line bg-white p-5 sm:p-6" aria-labelledby="reg-title">
       <div class="flex flex-wrap items-end justify-between gap-3">
@@ -187,6 +190,8 @@ function renderResumen(r) {
   const pend = $('[data-count-pend]');
   pend.textContent = String(r.pendientes);
   pend.hidden = !r.pendientes;
+  const pv = $('[data-count-vend]');
+  if (pv) { pv.textContent = String(r.vendedores_pendientes ?? 0); pv.hidden = !r.vendedores_pendientes; }
   const pr = $('[data-count-pruebas]');
   pr.textContent = String(r.pruebas);
   pr.hidden = !r.pruebas;
@@ -202,6 +207,10 @@ const LIST_TABS = {
   particulares: {
     tipo: 'particular', titulo: 'Particulares', placeholder: 'Buscar por nombre, ciudad o celular',
     estados: [['', 'Todos los estados'], ['activa', 'Activa'], ['suspendida', 'Suspendida']],
+  },
+  vendedores: {
+    tipo: 'vendedor', titulo: 'Vendedores independientes', placeholder: 'Buscar por nombre, ciudad o celular',
+    estados: [['', 'Todos los estados'], ['pendiente', 'En revisión'], ['aprobada', 'Aprobado'], ['rechazada', 'Rechazado'], ['suspendida', 'Suspendido']],
   },
   concesionarios: {
     tipo: 'agencia', titulo: 'Concesionarios y agencias', placeholder: 'Buscar por nombre, ciudad, celular o CUIT',
@@ -447,6 +456,7 @@ const LOADERS = {
   resumen: loadResumen,
   particulares: () => loadList('particulares'),
   concesionarios: () => loadList('concesionarios'),
+  vendedores: () => loadList('vendedores'),
   feria: loadFeria,
   autos: () => loadAutos(),
   buscados: () => renderRanking($('#v-buscados'), sb),
@@ -459,8 +469,8 @@ const reload = async (tab = actual) => {
 
 // ---------- Acciones sobre cuentas ----------
 const OPS = {
-  aprobar: { title: 'Aprobar agencia', text: 'La agencia va a poder publicar su stock. Avisale por WhatsApp que ya está habilitada.', ok: 'Aprobar' },
-  rechazar: { title: 'Rechazar agencia', text: 'La agencia no va a poder ingresar. Podés volver a aprobarla más adelante.', ok: 'Rechazar', danger: true },
+  aprobar: { title: 'Aprobar cuenta', text: 'Una agencia va a poder publicar su stock; un vendedor independiente, ver las comisiones y usar su link. Avisale por WhatsApp que ya está habilitada.', ok: 'Aprobar' },
+  rechazar: { title: 'Rechazar cuenta', text: 'No va a poder ingresar. Podés volver a aprobarla más adelante.', ok: 'Rechazar', danger: true },
   suspender: { title: 'Suspender cuenta', text: 'La cuenta no va a poder ingresar y su sesión abierta se corta. Podés reactivarla cuando quieras.', ok: 'Suspender', danger: true },
   reactivar: { title: 'Reactivar cuenta', text: 'La cuenta vuelve a poder ingresar.', ok: 'Reactivar' },
   desbloquear: { title: 'Desbloquear', text: 'Se borran los intentos fallidos de PIN y puede volver a probar ya.', ok: 'Desbloquear' },

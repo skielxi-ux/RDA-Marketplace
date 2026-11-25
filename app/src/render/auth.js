@@ -97,6 +97,14 @@ export const renderAuthModal = () => `
             </span>
             ${icon('chevron-right', 'h-5 w-5 text-ink/40')}
           </button>
+          <button type="button" class="auth-type group" data-pick-type="vendedor">
+            <span class="auth-type-icon">${icon('handshake', 'h-6 w-6')}</span>
+            <span class="flex-1 text-left">
+              <span class="block text-[18px] font-bold">Soy vendedor independiente</span>
+              <span class="mt-1 block text-[14px] text-ink/70">Acerco clientes a las agencias y cobro una comisión.</span>
+            </span>
+            ${icon('chevron-right', 'h-5 w-5 text-ink/40')}
+          </button>
         </div>
       </div>
 
@@ -119,6 +127,11 @@ export const renderAuthModal = () => `
         </fieldset>
 
         ${field('reg-nombre', 'Nombre y apellido', '<input id="reg-nombre" name="nombre" type="text" autocomplete="name" maxlength="80" required class="auth-input" placeholder="Juan Pérez" />')}
+
+        <div class="grid gap-5 sm:grid-cols-2" data-only="vendedor" hidden>
+          ${field('reg-dni', 'DNI', '<input id="reg-dni" name="dni" type="text" inputmode="numeric" autocomplete="off" maxlength="10" class="auth-input" placeholder="30123456" />', 'Para que las agencias sepan quién sos. No se muestra en el sitio.')}
+          ${field('reg-email', 'Email (opcional)', '<input id="reg-email" name="email" type="email" autocomplete="email" maxlength="120" class="auth-input" placeholder="vos@mail.com" />')}
+        </div>
 
         <div class="grid gap-5 sm:grid-cols-2">
           ${field('reg-provincia', 'Provincia', selectBox('reg-provincia', 'provincia', options(PROVINCIAS, 'Elegí la provincia')))}

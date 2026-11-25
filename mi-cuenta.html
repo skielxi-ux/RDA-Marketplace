@@ -9,18 +9,18 @@
   <title>Mi cuenta · Red de Autos</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
-  <script type="module" crossorigin src="./assets/mi-cuenta-DFZKU0Ns.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/site-COZ6ofeL.js">
-  <link rel="modulepreload" crossorigin href="./assets/auth-CTHJ8k_a.js">
-  <link rel="modulepreload" crossorigin href="./assets/fotos-CIQMRDqR.js">
-  <link rel="modulepreload" crossorigin href="./assets/ranking-BN2hbYTo.js">
+  <script type="module" crossorigin src="./assets/mi-cuenta-CaEBDA1x.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/site-CNCK9ed6.js">
+  <link rel="modulepreload" crossorigin href="./assets/auth-A2ln9C_E.js">
+  <link rel="modulepreload" crossorigin href="./assets/fotos-B0LySqZB.js">
+  <link rel="modulepreload" crossorigin href="./assets/ranking-CDdz0MPN.js">
   <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime-DK3Fl9T5.js">
-  <link rel="modulepreload" crossorigin href="./assets/autosApi-54X8Ezto.js">
+  <link rel="modulepreload" crossorigin href="./assets/autosApi-6TKRzxUK.js">
   <link rel="modulepreload" crossorigin href="./assets/catalog-B6PmF8G3.js">
   <link rel="modulepreload" crossorigin href="./assets/modelos-B845yErK.js">
   <link rel="modulepreload" crossorigin href="./assets/carga-CEIl-EbJ.js">
-  <link rel="modulepreload" crossorigin href="./assets/alertaListado-CtS0ANNP.js">
-  <link rel="stylesheet" crossorigin href="./assets/site-C7srTKqO.css">
+  <link rel="modulepreload" crossorigin href="./assets/alertaListado-Bc_MKY7f.js">
+  <link rel="stylesheet" crossorigin href="./assets/site-CxQKSiUT.css">
 </head>
 <body>
   <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
@@ -126,6 +126,10 @@
             <span class="mc-action-icon"><svg xmlns="http://www.w3.org/2000/svg" class="i-handshake h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg></span>
             <span class="text-left"><span class="block text-[19px] font-bold">Red de colegas</span><span class="mt-1 block text-[14px] text-ink/70">Pedí a otras agencias el auto que busca tu cliente.</span></span>
           </button>
+          <button type="button" class="mc-action" hidden aria-controls="clientes" aria-expanded="false" data-mc-clientes>
+            <span class="mc-action-icon"><svg xmlns="http://www.w3.org/2000/svg" class="i-handshake h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg></span>
+            <span class="text-left"><span class="block text-[19px] font-bold">Mis clientes</span><span class="mt-1 block text-[14px] text-ink/70" data-mc-clientes-sub>Tu código, tu link y los clientes que trajiste.</span></span>
+          </button>
           <button type="button" class="mc-action" aria-controls="alertas" aria-expanded="false" data-mc-alertas>
             <span class="mc-action-icon"><svg xmlns="http://www.w3.org/2000/svg" class="i-bell h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></svg></span>
             <span class="text-left"><span class="block text-[19px] font-bold">Mis alertas</span><span class="mt-1 block text-[14px] text-ink/70">Te avisamos cuando entra el auto que buscás.</span></span>
@@ -152,6 +156,10 @@
           <div data-mis-autos aria-live="polite"></div>
         </section>
         <section id="buscados" class="mt-10 scroll-mt-28" aria-label="+Buscados" hidden></section>
+        <section id="clientes" class="mt-10 scroll-mt-28" aria-labelledby="clientes-title" hidden>
+          <h2 id="clientes-title" class="section-title mb-6">Mis clientes</h2>
+          <div data-clientes-box aria-live="polite"></div>
+        </section>
         <section id="alertas" class="mt-10 scroll-mt-28" aria-labelledby="alertas-title" hidden>
           <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
             <h2 id="alertas-title" class="section-title">Mis alertas</h2>
@@ -326,6 +334,14 @@
             </span>
             <svg xmlns="http://www.w3.org/2000/svg" class="i-chevron-right h-5 w-5 text-ink/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>
           </button>
+          <button type="button" class="auth-type group" data-pick-type="vendedor">
+            <span class="auth-type-icon"><svg xmlns="http://www.w3.org/2000/svg" class="i-handshake h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg></span>
+            <span class="flex-1 text-left">
+              <span class="block text-[18px] font-bold">Soy vendedor independiente</span>
+              <span class="mt-1 block text-[14px] text-ink/70">Acerco clientes a las agencias y cobro una comisión.</span>
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="i-chevron-right h-5 w-5 text-ink/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
         </div>
       </div>
 
@@ -367,6 +383,21 @@
     <input id="reg-nombre" name="nombre" type="text" autocomplete="name" maxlength="80" required class="auth-input" placeholder="Juan Pérez" />
     
   </div>
+
+        <div class="grid gap-5 sm:grid-cols-2" data-only="vendedor" hidden>
+          
+  <div class="auth-field">
+    <label for="reg-dni" class="auth-label">DNI</label>
+    <input id="reg-dni" name="dni" type="text" inputmode="numeric" autocomplete="off" maxlength="10" class="auth-input" placeholder="30123456" />
+    <p class="mt-1.5 text-[13px] text-ink/60">Para que las agencias sepan quién sos. No se muestra en el sitio.</p>
+  </div>
+          
+  <div class="auth-field">
+    <label for="reg-email" class="auth-label">Email (opcional)</label>
+    <input id="reg-email" name="email" type="email" autocomplete="email" maxlength="120" class="auth-input" placeholder="vos@mail.com" />
+    
+  </div>
+        </div>
 
         <div class="grid gap-5 sm:grid-cols-2">
           

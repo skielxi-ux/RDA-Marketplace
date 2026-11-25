@@ -6,6 +6,7 @@ export const autosApi = (accion, extra = {}) => cuentaApi('mkt-autos', accion, e
 export const perfilApi = (accion, extra = {}) => cuentaApi('mkt-perfil', accion, extra);
 export const colegasApi = (accion, extra = {}) => cuentaApi('mkt-colegas', accion, extra);
 export const alertasApi = (accion, extra = {}) => cuentaApi('mkt-alertas', accion, extra);
+export const vendedorApi = (accion, extra = {}) => cuentaApi('mkt-vendedor', accion, extra);
 
 /** Llama a una edge function del marketplace con la sesión de la cuenta. */
 async function cuentaApi(fn, accion, extra) {

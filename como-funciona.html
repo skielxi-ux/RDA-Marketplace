@@ -26,10 +26,10 @@
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1200&amp;h=630&amp;fit=crop&amp;auto=format&amp;q=75" />
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
-  <script type="module" crossorigin src="./assets/como-funciona-B5gywY8j.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/site-COZ6ofeL.js">
-  <link rel="modulepreload" crossorigin href="./assets/auth-CTHJ8k_a.js">
-  <link rel="stylesheet" crossorigin href="./assets/site-C7srTKqO.css">
+  <script type="module" crossorigin src="./assets/como-funciona-7c4ro9LT.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/site-CNCK9ed6.js">
+  <link rel="modulepreload" crossorigin href="./assets/auth-A2ln9C_E.js">
+  <link rel="stylesheet" crossorigin href="./assets/site-CxQKSiUT.css">
 </head>
 <body>
   <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
@@ -426,6 +426,14 @@
             </span>
             <svg xmlns="http://www.w3.org/2000/svg" class="i-chevron-right h-5 w-5 text-ink/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>
           </button>
+          <button type="button" class="auth-type group" data-pick-type="vendedor">
+            <span class="auth-type-icon"><svg xmlns="http://www.w3.org/2000/svg" class="i-handshake h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m11 17 2 2a1 1 0 1 0 3-3"/><path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="m21 3 1 11h-2"/><path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/></svg></span>
+            <span class="flex-1 text-left">
+              <span class="block text-[18px] font-bold">Soy vendedor independiente</span>
+              <span class="mt-1 block text-[14px] text-ink/70">Acerco clientes a las agencias y cobro una comisión.</span>
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="i-chevron-right h-5 w-5 text-ink/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
         </div>
       </div>
 
@@ -467,6 +475,21 @@
     <input id="reg-nombre" name="nombre" type="text" autocomplete="name" maxlength="80" required class="auth-input" placeholder="Juan Pérez" />
     
   </div>
+
+        <div class="grid gap-5 sm:grid-cols-2" data-only="vendedor" hidden>
+          
+  <div class="auth-field">
+    <label for="reg-dni" class="auth-label">DNI</label>
+    <input id="reg-dni" name="dni" type="text" inputmode="numeric" autocomplete="off" maxlength="10" class="auth-input" placeholder="30123456" />
+    <p class="mt-1.5 text-[13px] text-ink/60">Para que las agencias sepan quién sos. No se muestra en el sitio.</p>
+  </div>
+          
+  <div class="auth-field">
+    <label for="reg-email" class="auth-label">Email (opcional)</label>
+    <input id="reg-email" name="email" type="email" autocomplete="email" maxlength="120" class="auth-input" placeholder="vos@mail.com" />
+    
+  </div>
+        </div>
 
         <div class="grid gap-5 sm:grid-cols-2">
           

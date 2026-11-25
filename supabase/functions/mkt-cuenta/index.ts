@@ -1,5 +1,6 @@
 // RDA Marketplace · Edge Function: mkt-cuenta
-// Cuentas del marketplace (particulares y agencias/concesionarios) con celular + PIN de 6 números.
+// Cuentas del marketplace (particulares, agencias/concesionarios y vendedores independientes) con celular + PIN de 6 números.
+// Agencias y vendedores independientes quedan "pendiente" hasta que el admin los aprueba.
 // Público: registrar, ingresar · Con sesión: perfil
 // Datos en public.mkt_cuentas (sin acceso público; solo esta función con service role).
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -48,6 +49,13 @@ function cuitValido(c: string) {
   return v === Number(c[10]);
 }
 
+/** Código del link de cada vendedor independiente (6 letras/números sin 0, O, 1, I ni L para que no se confundan). */
+function nuevoRef() {
+  const L = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  const r = crypto.getRandomValues(new Uint8Array(6));
+  return Array.from(r, (x) => L[x % L.length]).join("");
+}
+
 const texto = (v: unknown, max: number) => String(v ?? "").replace(/[\u0000-\u001f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, max);
 const pinDebil = (p: string) => /^(\d)\1{5}$/.test(p) || ["123456", "654321", "012345", "123123", "121212", "112233"].includes(p);
 
@@ -85,6 +93,7 @@ async function avisarAdminTelegram(texto: string) {
 const publica = (c: A) => ({
   tipo: c.tipo, nombre: c.nombre, ciudad: c.ciudad, provincia: c.provincia, estado: c.estado,
   agencia_tipo: c.agencia_tipo, marca_oficial: c.marca_oficial,
+  ref_code: c.tipo === "vendedor" && c.estado === "aprobada" ? c.ref_code : undefined,
   telefono: String(c.telefono ?? "").replace(/^549(\d+)(\d{4})$/, (_, a, b) => `${a.slice(0, -2).replace(/./g, "•")}${a.slice(-2)} ${b}`),
 });
 
@@ -126,8 +135,8 @@ type J = (b: unknown, s?: number) => Response;
 async function registrar(b: A, json: J, err: J) {
   if (texto(b.sitio_web, 10)) return err("No pudimos crear la cuenta."); // campo trampa para bots
   if (b.acepto !== true) return err("Tenés que aceptar los términos y condiciones.");
-  const tipo = b.tipo === "agencia" ? "agencia" : b.tipo === "particular" ? "particular" : "";
-  if (!tipo) return err("Elegí si sos particular o agencia.");
+  const tipo = ["agencia", "particular", "vendedor"].includes(String(b.tipo)) ? String(b.tipo) : "";
+  if (!tipo) return err("Elegí cómo vas a usar Red de Autos.");
 
   const tel = normTel(b.telefono);
   const pin = String(b.pin ?? "").replace(/\D/g, "");
@@ -141,7 +150,20 @@ async function registrar(b: A, json: J, err: J) {
   const provincia = texto(b.provincia, 60) || null;
   if (provincia && !PROVINCIAS.has(provincia)) return err("Elegí una provincia de la lista.");
 
-  const fila: A = { tipo, telefono: tel, nombre, ciudad, provincia, estado: tipo === "agencia" ? "pendiente" : "activa", acepto_terminos_at: new Date().toISOString() };
+  const fila: A = { tipo, telefono: tel, nombre, ciudad, provincia, estado: tipo === "particular" ? "activa" : "pendiente", acepto_terminos_at: new Date().toISOString() };
+
+  if (tipo === "vendedor") {
+    if (nombre.split(" ").length < 2) return err("Escribí tu nombre y apellido.");
+    const dni = String(b.dni ?? "").replace(/\D/g, "");
+    if (!/^\d{7,8}$/.test(dni)) return err("Revisá el DNI: 7 u 8 números, sin puntos.");
+    if (!ciudad || ciudad.length < 2) return err("Escribí la ciudad.");
+    if (!provincia) return err("Elegí la provincia.");
+    const email = texto(b.email, 120).toLowerCase() || null;
+    if (email && !/^[^@\s<>]+@[^@\s<>]+\.[^@\s<>]+$/.test(email)) return err("Revisá el email.");
+    const { data: dupDni } = await db.from("mkt_cuentas").select("id").eq("tipo", "vendedor").eq("dni", dni).maybeSingle();
+    if (dupDni) return err("Ya hay un vendedor registrado con ese DNI. Ingresá con su celular.", 409);
+    Object.assign(fila, { dni, email, ref_code: nuevoRef() });
+  }
 
   if (tipo === "agencia") {
     const agencia_tipo = b.agencia_tipo === "oficial" ? "oficial" : b.agencia_tipo === "multimarca" ? "multimarca" : "";
@@ -168,6 +190,15 @@ async function registrar(b: A, json: J, err: J) {
   await db.rpc("mkt_set_pin", { p_tel: tel, p_pin: pin });
   const s = await sesion(tel, tipo);
   const { data: c } = await db.from("mkt_cuentas").select("*").eq("telefono", tel).single();
+  if (tipo === "vendedor") {
+    await avisarAdminTelegram([
+      "🤝 Nuevo vendedor independiente (para revisar)",
+      `${c.nombre} · DNI ${c.dni}`,
+      `${c.ciudad}, ${c.provincia}${c.email ? ` · ${c.email}` : ""}`,
+      `WhatsApp +${tel}`,
+      "Aprobalo o rechazalo en: https://skielxi-ux.github.io/RDA-Marketplace/admin.html (Vendedores)",
+    ].join("\n"));
+  }
   if (tipo === "agencia") {
     const cuit = String(c.cuit);
     await avisarAdminTelegram([

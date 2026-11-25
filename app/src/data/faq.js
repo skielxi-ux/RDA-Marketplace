@@ -8,6 +8,7 @@ export const FAQ = [
       ['¿Qué es Red de Autos?', 'Es un marketplace de autos 0km y usados nacido en Tucumán. Reúne en un solo lugar el stock de concesionarios oficiales, agencias multimarca y particulares, y te conecta directo con quien vende por WhatsApp.'],
       ['¿Tiene algún costo?', 'No. Buscar, consultar, publicar tu auto como particular y usar todas las herramientas para agencias (carga de stock, Red de colegas y bot de Telegram) es gratis.'],
       ['¿Red de Autos vende los autos?', 'No. Somos la vidriera y el punto de contacto: la operación, la prueba del auto y el pago se arreglan directamente entre comprador y vendedor. No cobramos comisiones ni intermediamos en los pagos.'],
+      ['¿Qué es un vendedor independiente?', 'Es alguien que tiene contactos que buscan auto y se los acerca a las agencias a cambio de una comisión. Se registra como "Vendedor independiente", lo aprobamos, y ve qué agencias aceptan trabajar así y cuánto pagan (de 1 % a 4 % del precio final de venta). Comparte los autos con su link propio y en Mi cuenta ve las visitas y contactos de sus clientes. La comisión se arregla y se cobra directo con la agencia.'],
       ['¿Cómo me contacto con ustedes?', 'Llamanos o escribinos por mail: los datos están en el bloque de contacto, al pie de cada página.'],
     ],
   },
