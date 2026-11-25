@@ -10,7 +10,8 @@ const logo = (nombre) => {
   const l = BRAND_LOGOS[slug(nombre)] ?? BRAND_LOGOS_EXTRA[slug(nombre)];
   if (l) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${l.vb}" class="h-14 w-14 sm:h-16 sm:w-16" fill="currentColor" aria-hidden="true" focusable="false">${l.inner}</svg>`;
   // Sin logo libre: el nombre en letras grandes
-  return `<span class="px-2 text-center text-[22px] font-bold uppercase leading-tight tracking-[0.06em] sm:text-[24px]" aria-hidden="true">${esc(nombre)}</span>`;
+  const tam = nombre.length > 10 ? 'text-[15px] sm:text-[16px]' : nombre.length > 7 ? 'text-[18px] sm:text-[19px]' : 'text-[22px] sm:text-[24px]';
+  return `<span class="break-words px-3 text-center font-bold uppercase leading-tight tracking-[0.06em] ${tam}" aria-hidden="true">${esc(nombre)}</span>`;
 };
 
 export const renderMarcas = () => searchBrands.map((m) => `
