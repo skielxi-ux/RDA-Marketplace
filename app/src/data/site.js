@@ -5,7 +5,9 @@ export const SITE = {
   description:
     'Encontrá autos 0km y usados de agencias multimarca y concesionarios oficiales de todo el país. Compará precios, financiación y entrega inmediata.',
   locale: 'es_AR',
-  phone: { display: '381 000-0000', tel: '+543810000000' },
+  phone: { display: '381 633-5234', tel: '+543816335234' },
+  email: 'reddeautostuc@gmail.com',
+  address: ['San Miguel de Tucumán', 'Tucumán, Argentina'],
   ogImage:
     'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1200&h=630&fit=crop&auto=format&q=75',
   // Supabase (proyecto RED DE AUTOS IA). La clave "publishable" es pública por diseño:

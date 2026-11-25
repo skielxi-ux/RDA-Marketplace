@@ -130,7 +130,26 @@ export const renderBrands = () => `
     </div>
   </section>`;
 
-export const renderFooter = () => `
+const renderContacto = () => `
+  <section class="container-x mt-20 md:mt-[120px]" aria-labelledby="contacto-titulo">
+    <div class="grid items-center gap-10 md:grid-cols-2 lg:gap-[100px]">
+      <div class="overflow-hidden rounded-2xl bg-line">
+        <img src="./img/contacto-760.webp" srcset="./img/contacto-480.webp 480w, ./img/contacto-760.webp 760w"
+          sizes="(min-width: 768px) 45vw, 100vw" width="753" height="659" loading="lazy" decoding="async"
+          alt="Mujer sonriendo mientras mira su celular en la calle" class="h-full w-full object-cover">
+      </div>
+      <div>
+        <h2 id="contacto-titulo" class="text-[28px] font-bold leading-[1.25] tracking-tight sm:text-[36px] lg:text-[40px]">¿Tenés más preguntas? No dudes en contactarnos</h2>
+        <address class="mt-6 text-[15px] not-italic leading-[1.75]">${SITE.address.map(esc).join('<br>')}</address>
+        <div class="mt-6 flex flex-wrap gap-4">
+          <a href="tel:${esc(SITE.phone.tel)}" class="btn-outline h-[54px] rounded-full px-7 max-sm:w-full max-sm:justify-center">${icon('smartphone', 'h-5 w-5')} ${esc(SITE.phone.display)}</a>
+          <a href="mailto:${esc(SITE.email)}" class="btn-outline h-[54px] rounded-full px-7 max-sm:w-full max-sm:justify-center">${icon('mail', 'h-5 w-5')} ${esc(SITE.email)}</a>
+        </div>
+      </div>
+    </div>
+  </section>`;
+
+export const renderFooter = () => `${renderContacto()}
   <footer class="mt-20 rounded-t-[32px] bg-ink text-white md:mt-[120px] md:rounded-t-[80px]">
     <div class="container-x">
       <div class="flex flex-col gap-6 border-b border-white/10 py-12 md:flex-row md:items-center md:justify-between md:py-[60px]">
@@ -145,7 +164,8 @@ export const renderFooter = () => `
         <div class="col-span-2 md:col-span-4 lg:col-span-1">
           <a href="./" aria-label="Red de Autos, ir al inicio" class="inline-block">${logoSvg('h-10 w-auto', { text: '#FFFFFF' })}</a>
           <p class="mt-5 max-w-[300px] text-[15px] leading-[1.75] text-white/80">${esc(footer.about)}</p>
-          <a href="tel:${esc(SITE.phone.tel)}" class="mt-5 inline-flex items-center gap-2 text-[15px] transition-colors hover:text-brand-hover">${icon('phone', 'h-4 w-4')} ${esc(SITE.phone.display)}</a>
+          <a href="tel:${esc(SITE.phone.tel)}" class="mt-5 flex w-fit items-center gap-2 text-[15px] transition-colors hover:text-brand-hover">${icon('phone', 'h-4 w-4')} ${esc(SITE.phone.display)}</a>
+          <a href="mailto:${esc(SITE.email)}" class="mt-3 flex w-fit items-center gap-2 text-[15px] transition-colors hover:text-brand-hover">${icon('mail', 'h-4 w-4')} ${esc(SITE.email)}</a>
         </div>
         ${footer.columns.map((col) => `
         <nav aria-label="${esc(col.title)}">

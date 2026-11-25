@@ -72,7 +72,7 @@
   :is(.round-nav, .hero-nav, .lightbox-btn):hover .i-chevron-left { translate: -3px 0; }
   .lightbox-btn:hover .i-chevron-right { translate: 3px 0; }
   :is(.round-nav, .lightbox-btn):hover .i-x { rotate: 90deg; }
-  .btn-outline:hover :is(.i-share-2, .i-heart, .i-images, .i-map-pin, .i-phone, .i-sliders-horizontal) { scale: 1.12; }
+  .btn-outline:hover :is(.i-share-2, .i-heart, .i-images, .i-map-pin, .i-phone, .i-smartphone, .i-mail, .i-sliders-horizontal) { scale: 1.12; }
   .btn-outline:hover .i-rotate-ccw { rotate: -180deg; }
   :is(.btn-primary, .btn-outline, .btn-cta, .link-view, .car-card a):hover .i-arrow-up-right { translate: 2px -2px; }
   .to-top:hover .i-arrow-up { translate: 0 -3px; }

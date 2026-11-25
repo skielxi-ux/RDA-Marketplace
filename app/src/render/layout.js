@@ -2,6 +2,8 @@
 import { logoSvg } from './logo.js';
 import { renderAuthModal } from './auth.js';
 import { renderSocial } from './social.js';
+import { SITE } from '../data/site.js';
+import { esc } from '../lib/html.js';
 
 export const renderSiteHeader = () => `
   <!-- ================= HEADER ================= -->
@@ -17,8 +19,8 @@ export const renderSiteHeader = () => `
           </span>
           <span class="hidden sm:inline">Menú</span>
         </button>
-        <a href="tel:+543810000000" class="hidden items-center gap-2 font-medium transition-colors duration-300 hover:text-brand md:flex">
-          <i data-icon="phone" class="h-4 w-4"></i> 381 000-0000
+        <a href="tel:${esc(SITE.phone.tel)}" class="hidden items-center gap-2 font-medium transition-colors duration-300 hover:text-brand md:flex">
+          <i data-icon="phone" class="h-4 w-4"></i> ${esc(SITE.phone.display)}
         </a>
       </div>
 
