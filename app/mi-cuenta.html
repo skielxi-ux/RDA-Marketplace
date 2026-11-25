@@ -37,7 +37,7 @@
 
       <!-- Con sesión -->
       <div data-mc-panel hidden>
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           <button type="button" class="mc-action group" data-mc-buscados aria-controls="buscados" aria-expanded="false">
             <span class="mc-action-icon"><i data-icon="search" class="h-6 w-6"></i></span>
             <span class="text-left"><span class="block text-[19px] font-bold">+Buscados</span><span class="mt-1 block text-[14px] text-ink/70">Los 10 vehículos más buscados del mes y del año.</span></span>
@@ -50,12 +50,20 @@
             <span class="mc-action-icon"><i data-icon="store" class="h-6 w-6"></i></span>
             <span class="text-left"><span class="block text-[19px] font-bold">Perfil de la agencia</span><span class="mt-1 block text-[14px] text-ink/70">Datos, contacto y logo.</span></span>
           </button>
+          <button type="button" class="mc-action" hidden aria-controls="colegas" aria-expanded="false" data-mc-colegas>
+            <span class="mc-action-icon"><i data-icon="handshake" class="h-6 w-6"></i></span>
+            <span class="text-left"><span class="block text-[19px] font-bold">Red de colegas</span><span class="mt-1 block text-[14px] text-ink/70">Pedí a otras agencias el auto que busca tu cliente.</span></span>
+          </button>
           <button type="button" class="mc-action is-soon" disabled aria-controls="mis-autos" aria-expanded="false" data-mc-misautos>
             <span class="mc-action-icon"><i data-icon="car" class="h-6 w-6"></i></span>
             <span class="text-left"><span class="block text-[19px] font-bold">Mis autos</span><span class="mt-1 block text-[14px] text-ink/70" data-mc-misautos-sub>Próximamente.</span></span>
           </button>
         </div>
         <p class="mt-6 hidden rounded-2xl bg-[#FFF6E5] px-5 py-4 text-[15px] text-[#8A5A00]" data-mc-pending>Tu agencia está en revisión. Cuando la aprobemos vas a poder ver el ranking y publicar tu stock.</p>
+        <section id="colegas" class="mt-10 scroll-mt-28" aria-labelledby="colegas-title" hidden>
+          <h2 id="colegas-title" class="section-title mb-6">Red de colegas</h2>
+          <div data-colegas-box></div>
+        </section>
         <section id="perfil" class="mt-10 scroll-mt-28" aria-labelledby="perfil-title" hidden>
           <h2 id="perfil-title" class="section-title mb-6">Perfil de la agencia</h2>
           <div data-perfil-box></div>

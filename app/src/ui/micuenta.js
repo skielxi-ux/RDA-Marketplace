@@ -7,6 +7,7 @@ import { renderRanking } from './ranking.js';
 import { autosApi, fotoUrl } from './autosApi.js';
 import { carUrl } from '../data/catalog.js';
 import { initPerfil } from './perfil.js';
+import { initColegas } from './colegas.js';
 
 export function initMiCuenta() {
   const guest = $('[data-mc-guest]');
@@ -17,6 +18,8 @@ export function initMiCuenta() {
   const btnMis = $('[data-mc-misautos]');
   const boxMis = $('#mis-autos');
   const listaMis = $('[data-mis-autos]');
+  const btnColegas = $('[data-mc-colegas]');
+  const boxColegas = $('#colegas');
   const btnPerfil = $('[data-mc-perfil]');
   const boxPerfil = $('#perfil');
   let rankingCargado = false;
@@ -89,6 +92,11 @@ export function initMiCuenta() {
     }
   };
   const abrirMisAutos = () => { activar(btnMis, boxMis); cargarMisAutos(); };
+  let colegasCargado = false;
+  const abrirColegas = () => {
+    activar(btnColegas, boxColegas);
+    if (!colegasCargado) { colegasCargado = true; initColegas($('[data-colegas-box]')); }
+  };
   let perfilCargado = false;
   const abrirPerfil = () => {
     activar(btnPerfil, boxPerfil);
@@ -126,6 +134,8 @@ export function initMiCuenta() {
       boxMis.hidden = true;
       boxPerfil.hidden = true;
       perfilCargado = false;
+      boxColegas.hidden = true;
+      colegasCargado = false;
       return;
     }
     const tipo = cuenta.tipo === 'agencia'
@@ -147,6 +157,10 @@ export function initMiCuenta() {
     if (cuenta.tipo !== 'agencia') boxPerfil.hidden = true;
     if (cuenta.tipo === 'agencia' && location.hash === '#perfil') abrirPerfil();
 
+    btnColegas.hidden = !esAgencia;
+    if (!esAgencia) boxColegas.hidden = true;
+    if (esAgencia && location.hash === '#colegas') abrirColegas();
+
     if (!pendiente && location.hash === '#buscados') abrirRanking();
     if (esAgencia && location.hash === '#mis-autos') abrirMisAutos();
   };
@@ -154,6 +168,9 @@ export function initMiCuenta() {
   btnBuscados.addEventListener('click', abrirRanking);
   btnMis.addEventListener('click', abrirMisAutos);
   btnPerfil.addEventListener('click', abrirPerfil);
+  btnColegas.addEventListener('click', abrirColegas);
+  // La campanita lleva a #colegas: si ya estamos en Mi cuenta, abrir la sección
+  window.addEventListener('hashchange', () => { if (location.hash === '#colegas' && esAgencia) abrirColegas(); });
   btnPublicar.addEventListener('click', (e) => { if (!esAgencia) e.preventDefault(); });
   window.addEventListener('rda:cuenta', (e) => pintar(e.detail));
   pintar(cuentaGuardada());

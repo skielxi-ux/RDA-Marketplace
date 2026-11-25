@@ -32,6 +32,29 @@ function cuitOk(c) {
 const pinWeak = (p) => /^(\d)\1{5}$/.test(p) || ['123456', '654321', '012345', '123123', '121212', '112233'].includes(p);
 
 let supabasePromise = null;
+// ---------- Campanita: pedidos nuevos de la Red de colegas (solo agencias aprobadas) ----------
+let ultimaConsulta = 0;
+async function pintarCampanita(cuenta) {
+  const links = $$('[data-campanita]');
+  const ok = cuenta?.tipo === 'agencia' && cuenta.estado === 'aprobada';
+  links.forEach((a) => { a.hidden = !ok; });
+  if (!ok || !links.length || Date.now() - ultimaConsulta < 5000) return;
+  ultimaConsulta = Date.now();
+  try {
+    const { colegasApi } = await import('./autosApi.js');
+    const { sin_leer: n } = await colegasApi('notifs');
+    links.forEach((a) => {
+      const badge = $('[data-campanita-n]', a);
+      badge.textContent = n > 99 ? '99+' : String(n);
+      badge.hidden = !n;
+      a.classList.toggle('tiene-nuevos', n > 0);
+      a.setAttribute('aria-label', n ? `Red de colegas: ${n} ${n === 1 ? 'pedido nuevo' : 'pedidos nuevos'}` : 'Red de colegas');
+    });
+  } catch { /* sin aviso si falla */ }
+}
+/** Vuelve a consultar la campanita (por ejemplo, después de leer los pedidos). */
+export const refrescarCampanita = () => { ultimaConsulta = 0; pintarCampanita(cuentaGuardada()); };
+
 export function supa() {
   supabasePromise ||= import('@supabase/supabase-js').then(({ createClient }) =>
     createClient(SITE.supabase.url, SITE.supabase.publishableKey, {
@@ -59,6 +82,7 @@ async function callFn(body, accessToken) {
 // ---------- Header: botón Ingresar / menú de usuario ----------
 function paintHeader(cuenta) {
   window.dispatchEvent(new CustomEvent('rda:cuenta', { detail: cuenta }));
+  pintarCampanita(cuenta);
   $$('[data-auth-open]').forEach((b) => {
     const label = $('[data-auth-label]', b);
     if (label) label.textContent = cuenta ? `Hola, ${cuenta.nombre.split(' ')[0]}` : 'Ingresar';

@@ -256,6 +256,16 @@
   .pub-asignar { @apply mt-1.5 w-full rounded-lg border border-line bg-white px-2 py-1.5 text-[13px] outline-none focus:border-brand; }
   .pub-slot { @apply grid aspect-[4/3] w-[118px] place-items-center rounded-xl border-2 border-dashed border-line p-2 text-center text-[12px] text-ink/50 sm:w-[132px]; }
   .pub-overlay { @apply fixed inset-0 z-[70] grid place-items-center bg-ink/60 p-4 backdrop-blur-sm; }
+  .colega-card { @apply rounded-[20px] border border-line bg-white p-5 transition-all duration-300 hover:border-brand/40 hover:shadow-[0_14px_30px_-18px_rgba(64,95,242,0.45)] sm:p-6; }
+  .colega-form summary::-webkit-details-marker { display: none; }
+  .campanita {
+    @apply relative grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line text-ink transition-all duration-300
+           hover:-translate-y-0.5 hover:border-brand hover:text-brand active:translate-y-0 active:scale-95;
+  }
+  .campanita.tiene-nuevos .i-bell { animation: campana 1.2s ease-in-out 2; transform-origin: 50% 10%; }
+  .campanita-badge { @apply absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-full bg-[#E5484D] px-1 text-[11px] font-bold leading-none text-white ring-2 ring-white; }
+  @keyframes campana { 0%,100% { rotate: 0deg; } 20% { rotate: 14deg; } 40% { rotate: -12deg; } 60% { rotate: 8deg; } 80% { rotate: -4deg; } }
+  @media (prefers-reduced-motion: reduce) { .campanita.tiene-nuevos .i-bell { animation: none; } }
   .social-btn {
     @apply grid h-10 w-10 place-items-center rounded-full text-ink transition-all duration-300
            hover:-translate-y-0.5 hover:bg-[#EEF1FB] hover:text-brand active:translate-y-0 active:scale-95;
