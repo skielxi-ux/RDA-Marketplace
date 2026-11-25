@@ -27,7 +27,7 @@ initAuth();
   let oferta = null;
   try { [c, oferta] = await Promise.all([cargarAuto(id), cargarOfertaFeria(id)]); } catch { c = null; }
   // En feria: se muestra el precio relámpago y el normal tachado, con lo que falta para que termine
-  if (c && oferta && oferta.precio < c.price) Object.assign(c, { priceBefore: c.price, price: oferta.precio, feria: { ini: 0, fin: oferta.fin } });
+  if (c && oferta && oferta.precio < c.price) Object.assign(c, { priceBefore: c.price, price: oferta.precio, feria: { ini: 0, fin: oferta.fin }, relampago: null });
   $('[data-ficha-cargando]').remove();
   main.removeAttribute('aria-busy');
   if (!c) {
@@ -50,5 +50,5 @@ initAuth();
   document.head.append(script);
   initFicha();
   initFichaVendedor(c);
-  if (c.feria) relojesOferta(main, () => location.reload());
+  if (c.feria || c.relampago) relojesOferta(main, () => location.reload());
 })();

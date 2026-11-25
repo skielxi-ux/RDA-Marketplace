@@ -9,6 +9,12 @@ import { comprimir, formatoFotos, fotoUrl } from '../lib/fotos.js';
 import { searchBrands } from '../data/modelos.js';
 import { supa } from './auth.js';
 import { autosApi } from './autosApi.js';
+import { textoOferta, relojesOferta } from '../lib/oferta.js';
+
+const DURA_RELAMPAGO = [[2, '2 horas'], [6, '6 horas'], [12, '12 horas'], [24, '24 horas'], [48, '48 horas'], [72, '3 días'], [168, '7 días'], [360, '15 días'], [720, '30 días']];
+const pad2 = (n) => String(n).padStart(2, '0');
+const aInput = (t) => { const d = new Date(t); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}T${pad2(d.getHours())}:${pad2(d.getMinutes())}`; };
+const fmtFecha = (t) => new Date(t).toLocaleString('es-AR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
 const opts = (lista, sel, vacio = '') => (vacio ? `<option value="">${esc(vacio)}</option>` : '') +
   lista.map((o) => { const [v, t] = Array.isArray(o) ? o : [o, o]; return `<option value="${esc(v)}"${String(v) === String(sel ?? '') ? ' selected' : ''}>${esc(t)}</option>`; }).join('');
@@ -59,6 +65,23 @@ export function editarAuto(a, onGuardado) {
           <label class="btn-outline mt-3 h-[44px] w-fit cursor-pointer !px-4 text-[14px]"><input type="file" accept="image/jpeg,image/png,image/webp" multiple class="sr-only" data-ea-input /> ${icon('images', 'h-4 w-4')} Reemplazar fotos</label>
           <p class="mt-2 text-[13px] text-ink/60" data-ea-fotos-nota>Si elegís fotos nuevas (hasta ${MAX_FOTOS}), reemplazan a las actuales. La primera es la portada.</p>
         </div>
+        ${(() => {
+          const vigente = a.relampago_precio && new Date(a.relampago_termina).getTime() > Date.now();
+          const horas = vigente ? Math.round((new Date(a.relampago_termina) - new Date(a.relampago_empieza)) / 36e5) : 24;
+          const dura = DURA_RELAMPAGO.some(([h]) => h === horas) ? horas : 24;
+          return `
+        <fieldset class="mt-6 rounded-2xl border border-[#F3B8B4] bg-[#FFF7F6] p-4 sm:p-5" data-ea-relampago>
+          <legend class="px-1 text-[16px] font-bold"><span aria-hidden="true">🔥</span> Precio relámpago</legend>
+          <p class="text-[14px] text-ink/70">Bajale el precio por un tiempo determinado. Se muestra con la etiqueta <b>🔥 Relámpago</b>, el precio normal tachado y un contador. Al terminar, vuelve solo a su precio.</p>
+          ${vigente ? `<p class="mt-3 flex flex-wrap items-center gap-2 text-[14px]"><span class="feria-timer" data-oferta-ini="${esc(a.relampago_empieza)}" data-oferta-fin="${esc(a.relampago_termina)}"><span aria-hidden="true">🔥</span> <span data-oferta-txt>${esc(textoOferta({ ini: a.relampago_empieza, fin: a.relampago_termina }))}</span></span> ${esc(fmtFecha(a.relampago_empieza))} → ${esc(fmtFecha(a.relampago_termina))} <button type="button" class="font-bold text-[#B42318] underline underline-offset-2" data-ea-rel-quitar>Quitar relámpago</button></p>` : ''}
+          <div class="mt-4 grid gap-4 sm:grid-cols-3">
+            ${campo('Precio relámpago', input('rel_precio', vigente ? Number(a.relampago_precio).toLocaleString('es-AR') : '', 'inputmode="numeric" maxlength="15" placeholder="Vacío = sin relámpago"'))}
+            ${campo('Empieza', `<input class="auth-input" type="datetime-local" name="rel_empieza" value="${esc(aInput(vigente ? Math.max(new Date(a.relampago_empieza).getTime(), Date.now()) : Date.now()))}" min="${esc(aInput(Date.now()))}" />`)}
+            ${campo('Dura', `<select class="auth-input" name="rel_horas">${opts(DURA_RELAMPAGO, dura)}</select>`)}
+          </div>
+          <p class="mt-3 text-[13px] text-ink/60" data-ea-rel-resumen></p>
+        </fieldset>`;
+        })()}
         <p class="mt-5 hidden rounded-2xl bg-[#FDECEC] px-5 py-4 text-[15px] text-[#B42318]" role="alert" data-ea-error></p>
       </div>
       <div class="flex flex-col-reverse gap-3 border-t border-line px-5 py-4 sm:flex-row sm:justify-end sm:px-7">
@@ -79,7 +102,34 @@ export function editarAuto(a, onGuardado) {
     ul.innerHTML = items.map((u, i) => `<li class="relative aspect-[4/3] overflow-hidden rounded-lg bg-soft"><img src="${esc(u)}" alt="Foto ${i + 1}" class="h-full w-full object-cover" />${i === 0 ? '<span class="absolute left-1 top-1 rounded bg-ink/80 px-1.5 py-0.5 text-[11px] font-bold text-white">Portada</span>' : ''}</li>`).join('');
   };
   const error = (m) => { err.textContent = m || ''; err.classList.toggle('hidden', !m); if (m) err.scrollIntoView({ block: 'nearest' }); };
-  const cerrar = () => { if (ocupado) return; nuevas.forEach((f) => URL.revokeObjectURL(f.url)); dlg.close(); dlg.remove(); };
+  let reloj = 0;
+  const cerrar = () => { if (ocupado) return; clearInterval(reloj); nuevas.forEach((f) => URL.revokeObjectURL(f.url)); dlg.close(); dlg.remove(); };
+
+  // ---- Precio relámpago: resumen en vivo, y solo se guarda si se tocó ----
+  const relBox = $('[data-ea-relampago]', dlg);
+  let relTocado = false;
+  const relResumen = () => {
+    const p = numero(form.elements.rel_precio.value);
+    const normal = numero(form.elements.precio.value);
+    const ini = Math.max(new Date(form.elements.rel_empieza.value).getTime() || Date.now(), Date.now());
+    const fin = ini + Number(form.elements.rel_horas.value) * 36e5;
+    const mon = form.elements.moneda.value === 'USD' ? 'USD ' : '$ ';
+    $('[data-ea-rel-resumen]', dlg).textContent = !p
+      ? 'Sin precio relámpago.'
+      : p >= normal
+      ? `Tiene que ser más bajo que el precio actual (${mon}${normal.toLocaleString('es-AR')}).`
+      : `${mon}${p.toLocaleString('es-AR')} en vez de ${mon}${normal.toLocaleString('es-AR')} (-${Math.round((1 - p / normal) * 100)}%) · del ${fmtFecha(ini)} al ${fmtFecha(fin)} h.`;
+  };
+  relBox.addEventListener('input', (e) => {
+    relTocado = true;
+    if (e.target.name === 'rel_precio') { const n = numero(e.target.value); e.target.value = n ? n.toLocaleString('es-AR') : ''; }
+    relResumen();
+  });
+  relBox.addEventListener('change', () => { relTocado = true; relResumen(); });
+  form.elements.precio.addEventListener('input', relResumen);
+  $('[data-ea-rel-quitar]', dlg)?.addEventListener('click', () => { form.elements.rel_precio.value = ''; relTocado = true; relResumen(); });
+  relResumen();
+  reloj = relojesOferta(dlg);
 
   $('[data-ea-input]', dlg).addEventListener('change', (e) => {
     error('');
@@ -112,6 +162,10 @@ export function editarAuto(a, onGuardado) {
     if (!Number.isInteger(auto.anio) || auto.anio < 1950 || auto.anio > anioMax) return error(`El año tiene que estar entre 1950 y ${anioMax}.`);
     if (!Number.isInteger(auto.km) || auto.km < 0 || auto.km > 2000000) return error('Revisá los kilómetros (solo números).');
     if (!Number.isFinite(auto.precio) || auto.precio <= 0 || auto.precio >= 1e11) return error('Revisá el precio (solo números).');
+    const relPrecio = numero(v('rel_precio'));
+    if (relPrecio && relPrecio >= auto.precio) return error('El precio relámpago tiene que ser más bajo que el precio.');
+    const relEmpieza = new Date(v('rel_empieza'));
+    if (relPrecio && Number.isNaN(relEmpieza.getTime())) return error('Elegí cuándo empieza el precio relámpago.');
 
     ocupado = true; error('');
     const btn = $('[data-ea-guardar]', dlg), label = $('[data-ea-label]', dlg);
@@ -134,6 +188,10 @@ export function editarAuto(a, onGuardado) {
       }
       label.textContent = 'Guardando…';
       await autosApi('publicar', { autos: [{ ...auto, fotos }] });
+      if (relTocado || (relPrecio && Number(a.relampago_precio) !== relPrecio)) {
+        if (relPrecio) await autosApi('relampago', { id: a.id, precio: relPrecio, empieza: relEmpieza.toISOString(), horas: Number(v('rel_horas')) });
+        else if (a.relampago_precio) await autosApi('relampago_quitar', { id: a.id });
+      }
       ocupado = false;
       cerrar();
       onGuardado?.();

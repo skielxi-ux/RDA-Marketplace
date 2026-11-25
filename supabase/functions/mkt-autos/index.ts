@@ -3,6 +3,7 @@
 // y carga de a uno para particulares (hasta 2 autos activos; cada carga o cambio queda "en revisión" hasta que la aprueba el admin).
 // Con sesión de agencia aprobada o particular activo: mios · urls_fotos · publicar · estado · borrar · estadisticas
 // Solo agencias: feria · feria_sumar · feria_quitar (autos del stock con precio relámpago en la feria vigente)
+//                relampago · relampago_quitar (precio relámpago por tiempo determinado, cuando la agencia quiera)
 // Las fotos se suben directo a Storage (bucket mkt-fotos) con URLs firmadas que da esta función,
 // siempre dentro de la carpeta de la cuenta. Datos en public.mkt_autos (sin acceso público directo).
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -47,7 +48,7 @@ const PROVINCIAS = new Set([
   "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquén", "Río Negro", "Salta", "San Juan", "San Luis", "Santa Cruz",
   "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucumán",
 ]);
-const CAMPOS = "id, codigo, marca, modelo, version, anio, condicion, km, precio, moneda, combustible, transmision, carroceria, ciudad, provincia, motor, puertas, color, traccion, descripcion, fotos, estado, pausado_por_admin, created_at, updated_at";
+const CAMPOS = "id, codigo, marca, modelo, version, anio, condicion, km, precio, moneda, combustible, transmision, carroceria, ciudad, provincia, motor, puertas, color, traccion, descripcion, fotos, estado, pausado_por_admin, created_at, updated_at, relampago_precio, relampago_empieza, relampago_termina";
 
 /** Valida un auto que viene de la plantilla. Devuelve el auto limpio o el motivo del error. */
 function validarAuto(x: A, anioMax: number): { ok: A } | { error: string } {
@@ -230,6 +231,35 @@ Deno.serve(async (req) => {
       const { error } = await db.from("mkt_autos").delete().eq("id", a.id);
       if (error) throw error;
       if ((a.fotos as string[])?.length) await db.storage.from(BUCKET).remove(a.fotos as string[]);
+      return json({ ok: true });
+    }
+
+    // ---- Precio relámpago de un auto propio (agencias), por tiempo determinado ----
+    if (b.accion === "relampago" || b.accion === "relampago_quitar") {
+      if (esParticular) return err("El precio relámpago es para agencias.", 403);
+      if (typeof b.id !== "string") return err("Datos inválidos");
+      const { data: a } = await db.from("mkt_autos").select("id, precio, estado").eq("id", b.id).eq("cuenta_id", cuenta.id).maybeSingle();
+      if (!a) return err("No encontramos ese auto.", 404);
+      if (b.accion === "relampago_quitar") {
+        const { error } = await db.from("mkt_autos").update({ relampago_precio: null, relampago_empieza: null, relampago_termina: null }).eq("id", a.id);
+        if (error) throw error;
+        return json({ ok: true });
+      }
+      if (a.estado === "vendido") return err("Ese auto ya está vendido.");
+      const precio = Math.round(Number(b.precio));
+      if (!Number.isFinite(precio) || precio <= 0) return err("Poné el precio relámpago.");
+      if (precio >= Number(a.precio)) return err("El precio relámpago tiene que ser más bajo que el precio actual.");
+      const ahora = Date.now();
+      let ini = b.empieza ? new Date(String(b.empieza)).getTime() : ahora;
+      if (!Number.isFinite(ini)) return err("La fecha de inicio no es válida.");
+      if (ini > ahora + 30 * 864e5) return err("Puede empezar como máximo dentro de 30 días.");
+      ini = Math.max(ini, ahora);
+      const horas = Number(b.horas);
+      if (!Number.isInteger(horas) || horas < 1 || horas > 720) return err("Elegí cuánto dura (hasta 30 días).");
+      const { error } = await db.from("mkt_autos").update({
+        relampago_precio: precio, relampago_empieza: new Date(ini).toISOString(), relampago_termina: new Date(ini + horas * 3_600_000).toISOString(),
+      }).eq("id", a.id);
+      if (error) throw error;
       return json({ ok: true });
     }
 

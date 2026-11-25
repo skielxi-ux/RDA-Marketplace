@@ -12,6 +12,7 @@ import { editarAuto } from './editarAuto.js';
 import { initMisAlertas } from './misAlertas.js';
 import { initVendedorPanel } from './vendedorPanel.js';
 import { initMiFeria } from './miFeria.js';
+import { textoOferta, relojGlobal } from '../lib/oferta.js';
 
 export function initMiCuenta() {
   const guest = $('[data-mc-guest]');
@@ -118,7 +119,10 @@ export function initMiCuenta() {
                   <span class="text-ink/60">${esc(a.fotos?.length ?? 0)} fotos</span>
                 </p>
                 <p class="mt-1 truncate text-[16px] font-bold">${esc(titulo)}</p>
-                <p class="text-[15px]">${esc(formatPrice(Number(a.precio), a.moneda))}</p>
+                ${a.relampago_precio && new Date(a.relampago_termina).getTime() > Date.now()
+                  ? `<p class="flex flex-wrap items-center gap-x-2 text-[15px]"><s class="text-ink/50">${esc(formatPrice(Number(a.precio), a.moneda))}</s> <b class="text-[#E5484D]">${esc(formatPrice(Number(a.relampago_precio), a.moneda))}</b></p>
+                     <p class="mt-1"><span class="feria-timer !px-2.5 !py-0.5 !text-[12px]" data-oferta-ini="${esc(a.relampago_empieza)}" data-oferta-fin="${esc(a.relampago_termina)}"><span aria-hidden="true">🔥</span> Relámpago · <span data-oferta-txt>${esc(textoOferta({ ini: a.relampago_empieza, fin: a.relampago_termina }))}</span></span></p>`
+                  : `<p class="text-[15px]">${esc(formatPrice(Number(a.precio), a.moneda))}</p>`}
                 ${(() => { const x = porAuto.get(a.id); return x ? `<p class="mt-1 flex flex-wrap gap-x-3 text-[13px] text-ink/60" title="Últimos 30 días (total histórico: ${esc(x.vistas_total)} vistas, ${esc(x.whatsapp_total + x.llamadas_total)} contactos)"><span class="inline-flex items-center gap-1">${icon('eye', 'h-3.5 w-3.5')} ${esc(x.vistas_30)} ${x.vistas_30 === 1 ? 'vista' : 'vistas'}</span><span class="inline-flex items-center gap-1">${icon('message-circle', 'h-3.5 w-3.5')} ${esc(x.whatsapp_30)} WhatsApp</span>${x.llamadas_30 ? `<span class="inline-flex items-center gap-1">${icon('phone', 'h-3.5 w-3.5')} ${esc(x.llamadas_30)} ${x.llamadas_30 === 1 ? 'llamada' : 'llamadas'}</span>` : ''}</p>` : ''; })()}
               </div>
             </div>
@@ -139,6 +143,7 @@ export function initMiCuenta() {
       const [{ autos }, st] = await Promise.all([autosApi('mios'), autosApi('estadisticas').catch(() => null)]);
       stats = st;
       pintarMisAutos(autos ?? []);
+      relojGlobal();
       // Alto de cada barra por CSSOM (la CSP no deja estilos en línea)
       listaMis.querySelectorAll('.mc-bar').forEach((b) => { b.style.height = `${b.dataset.h}%`; });
     } catch (e) {

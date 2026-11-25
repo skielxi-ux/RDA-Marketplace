@@ -1,3 +1,4 @@
+import { relojGlobal } from '../lib/oferta.js';
 import { $, $$ } from './dom.js';
 
 /** Galería al pasar el mouse por la tarjeta: la posición del cursor sobre la foto elige la imagen. */
@@ -71,6 +72,7 @@ export function bindFavorites(root = document) {
 }
 
 export function initCards(root = document) {
+  relojGlobal();
   bindGalleries(root);
   bindFavorites(root);
 }

@@ -27,3 +27,9 @@ export function relojesOferta(root = document, onFin) {
   tick();
   return setInterval(tick, 1000);
 }
+
+let global = 0;
+/** Un solo reloj para todas las tarjetas de la página (listado, home, agencia, favoritos). */
+export function relojGlobal() {
+  if (!global) global = relojesOferta(document);
+}
