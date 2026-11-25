@@ -60,3 +60,10 @@ El build escribe el sitio compilado en la raíz del repo (index.html + assets/),
 - Mi cuenta → **Perfil de la agencia** (cualquier agencia no suspendida): nombre, CUIT, tipo/marca, ciudad, provincia, dirección, horario, WhatsApp de ventas, email, descripción, sitio web, Instagram y logo (recorte cuadrado en el navegador, 400 px).
 - Edge function `mkt-perfil` (`ver`, `guardar`, `url_logo`, `guardar_logo`, `quitar_logo`). Nombre, CUIT y tipo quedan en `cambios_pendientes` y avisan al admin por Telegram; el admin los aprueba o rechaza en Concesionarios (`mkt-admin`: `aprobar_cambios` / `rechazar_cambios`).
 - Página pública `agencia.html?id=<uuid>` (funciones `mkt_agencia` y `mkt_autos_agencia`). El logo se ve en las tarjetas, en la ficha y en esa página; "Ver todo su stock" lleva ahí. Las consultas por WhatsApp van al número de ventas si lo cargó.
+
+## Red de colegas (agencias aprobadas)
+
+- Mi cuenta → **Red de colegas**: una agencia pide el auto que busca su cliente (marca, modelo, versión, año desde/hasta, km máximo, color, caja, combustible, presupuesto opcional y comentario). Queda activo hasta que lo cierra ("Ya lo conseguí").
+- Al publicar, se avisa a todas las agencias aprobadas: **campanita** con contador en el header (tabla `mkt_notificaciones`) y **Telegram** con el mismo bot de la web actual (vínculo por `telegram_tokens` → `telegram_chats`, botón "Conectar Telegram").
+- Cada pedido muestra la agencia (logo, ciudad, link a su página) y botones **Lo tengo** (WhatsApp con mensaje armado) y **Llamar**. Pestañas "Pedidos de colegas" / "Mis pedidos" y buscador.
+- Edge function `mkt-colegas` (`listar`, `crear` —máx. 10 por día—, `cerrar`, `notifs`, `leer`, `telegram_estado`, `telegram_vincular`). Tabla `mkt_colegas_pedidos` (RLS sin políticas).
