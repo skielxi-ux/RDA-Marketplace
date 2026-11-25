@@ -1,5 +1,6 @@
 // RDA Marketplace · Edge Function: mkt-perfil
 // Perfil de la agencia (con su sesión): ver · guardar · url_logo · guardar_logo · quitar_logo
+// Incluye si acepta vendedores independientes y la comisión (1 a 4 %).
 // Nombre, CUIT y tipo (multimarca / oficial y marca) quedan como "cambios pendientes" hasta que el admin los apruebe.
 // El resto se guarda al instante. El logo se sube a Storage (mkt-fotos) con URL firmada, dentro de la carpeta de la cuenta.
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -62,7 +63,7 @@ async function avisarAdminTelegram(msg: string) {
   } catch (e) { console.error("aviso telegram", e); }
 }
 
-const CAMPOS = "id, tipo, estado, nombre, cuit, agencia_tipo, marca_oficial, ciudad, provincia, direccion, horario, telefono, whatsapp_ventas, email, descripcion, sitio_web, instagram, logo, cambios_pendientes, cambios_at";
+const CAMPOS = "id, tipo, estado, nombre, cuit, agencia_tipo, marca_oficial, ciudad, provincia, direccion, horario, telefono, whatsapp_ventas, email, descripcion, sitio_web, instagram, logo, cambios_pendientes, cambios_at, acepta_independientes, comision_independientes";
 const publico = (c: A) => ({ ...c, telefono: undefined, tipo: undefined });
 
 Deno.serve(async (req) => {
@@ -108,8 +109,13 @@ Deno.serve(async (req) => {
       }
       const instagram = texto(b.instagram, 60).replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/^@/, "").replace(/\/.*$/, "") || null;
       if (instagram && !/^[A-Za-z0-9._]{1,30}$/.test(instagram)) return err("Revisá el usuario de Instagram (ej. @motorshow).");
+      // Vendedores independientes: si acepta, comisión entera de 1 a 4 % sobre el precio final de venta
+      const acepta_independientes = b.acepta_independientes === true || b.acepta_independientes === "si";
+      const comision = Number(b.comision_independientes);
+      if (acepta_independientes && !(Number.isInteger(comision) && comision >= 1 && comision <= 4)) return err("Elegí la comisión para vendedores independientes (de 1 a 4 %).");
       const directos: A = {
         ciudad, provincia, whatsapp_ventas, email, sitio_web, instagram,
+        acepta_independientes, comision_independientes: acepta_independientes ? comision : null,
         direccion: texto(b.direccion, 120) || null,
         horario: texto(b.horario, 120) || null,
         descripcion: textoLargo(b.descripcion, 600) || null,

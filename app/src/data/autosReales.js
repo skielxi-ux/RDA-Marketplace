@@ -81,3 +81,13 @@ export async function cargarAgencia(id) {
     autos: (Array.isArray(autos) ? autos : []).map(fromDb).filter((c) => c.photoUrls.length),
   };
 }
+
+/** Agencias aprobadas para el directorio (sin comisiones). */
+export async function cargarAgencias() {
+  const filas = await rpc('mkt_agencias_publicas', {});
+  return (Array.isArray(filas) ? filas : []).map((a) => ({
+    ...a,
+    tel: /^\d{10,15}$/.test(a.tel ?? '') ? a.tel : '',
+    logoUrl: fotoUrl(a.logo ?? '') || null,
+  }));
+}

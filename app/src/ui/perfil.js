@@ -39,12 +39,17 @@ export async function initPerfil(box) {
   desc.addEventListener('input', contar);
   contar();
 
+  // Vendedores independientes: la comisión solo se pide si acepta
+  form.addEventListener('change', (e) => {
+    if (e.target.name === 'acepta_independientes') $('[data-pf-comision]', box).hidden = e.target.value !== 'si';
+  });
+
   // ---------- Guardar datos ----------
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     error(''); ok.textContent = '';
     const fd = new FormData(form);
-    const datos = Object.fromEntries(['nombre', 'cuit', 'agencia_tipo', 'marca_oficial', 'ciudad', 'provincia', 'direccion', 'horario', 'whatsapp_ventas', 'email', 'descripcion', 'sitio_web', 'instagram'].map((k) => [k, fd.get(k) ?? '']));
+    const datos = Object.fromEntries(['nombre', 'cuit', 'agencia_tipo', 'marca_oficial', 'ciudad', 'provincia', 'direccion', 'horario', 'whatsapp_ventas', 'email', 'descripcion', 'sitio_web', 'instagram', 'acepta_independientes', 'comision_independientes'].map((k) => [k, fd.get(k) ?? '']));
     if (datos.agencia_tipo === 'oficial' && !datos.marca_oficial) return error('Elegí la marca que representa el concesionario.');
     if (!datos.provincia) return error('Elegí la provincia.');
     const btn = $('[data-perfil-guardar]', box);

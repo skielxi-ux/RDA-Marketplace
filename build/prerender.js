@@ -85,6 +85,13 @@ const PAGES = {
     indice: renderFaqIndice(),
     faq: renderFaq(),
   }),
+  'agencias.html': () => ({
+    head: renderHeadTags({
+      title: 'Agencias y concesionarios | Red de Autos',
+      description: 'Agencias multimarca y concesionarios oficiales verificados de Red de Autos. Mirá su stock y contactalos directo por WhatsApp.',
+      path: 'agencias.html',
+    }),
+  }),
   'marcas.html': () => ({
     head: renderHeadTags({
       title: 'Marcas de autos 0km y usados | Red de Autos',

@@ -118,6 +118,23 @@ export function renderPerfilForm(p) {
         </div>
       </fieldset>
 
+      <fieldset class="rounded-[20px] border border-line bg-white p-5 sm:p-7">
+        <legend class="px-2 text-[17px] font-bold">Vendedores independientes</legend>
+        <p class="text-[14px] leading-[1.6] text-ink/70">Son personas que te acercan un cliente para uno de tus autos y cobran una comisión si se concreta la venta. Si aceptás, tu agencia aparece con la etiqueta <b>"Acepta vendedores independientes"</b> en el listado de agencias. La comisión solo la ven ellos.</p>
+        <div class="mt-4 grid gap-5 sm:grid-cols-2">
+          <fieldset>
+            <legend class="vd-label">¿Aceptás trabajar con vendedores independientes?</legend>
+            <div class="flex gap-2">
+              <label class="filter-pill"><input type="radio" name="acepta_independientes" value="si" class="sr-only"${p.acepta_independientes ? ' checked' : ''} /><span>Sí</span></label>
+              <label class="filter-pill"><input type="radio" name="acepta_independientes" value="no" class="sr-only"${p.acepta_independientes ? '' : ' checked'} /><span>No</span></label>
+            </div>
+          </fieldset>
+          <div data-pf-comision${p.acepta_independientes ? '' : ' hidden'}>
+            ${field('pf-comision', 'Comisión que pagás', `<select id="pf-comision" name="comision_independientes" class="auth-input">${[1, 2, 3, 4].map((n) => `<option value="${n}"${Number(p.comision_independientes ?? 2) === n ? ' selected' : ''}>${n} %</option>`).join('')}</select>`, 'Sobre el precio final de venta del auto.')}
+          </div>
+        </div>
+      </fieldset>
+
       <p class="auth-error" role="alert" data-perfil-error hidden></p>
       <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
         <button type="submit" class="btn-primary h-[54px] justify-center !px-8" data-perfil-guardar>${icon('check', 'h-4 w-4')} <span>Guardar cambios</span></button>
