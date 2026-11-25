@@ -27,3 +27,10 @@ export const SITE = {
     linkedin: 'https://www.linkedin.com/company/144697996/',
   },
 };
+
+// Equipo (página Quiénes somos). Fotos en app/public/img/equipo/{foto}-400.webp y -700.webp
+export const EQUIPO = [
+  { nombre: 'Exequiel Fernandez Montini', cargo: 'Co Founder', foto: 'exequiel' },
+  { nombre: 'Nicolas Vera Robinson', cargo: 'Co Founder', foto: 'nicolas' },
+  { nombre: 'Hernán Lorusso', cargo: 'Co Founder', foto: 'hernan' },
+];

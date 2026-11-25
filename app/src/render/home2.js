@@ -131,7 +131,7 @@ export const renderBrands = () => `
   </section>`;
 
 const renderContacto = () => `
-  <section class="container-x mt-20 md:mt-[120px]" aria-labelledby="contacto-titulo">
+  <section id="contacto" class="container-x mt-20 scroll-mt-28 md:mt-[120px]" aria-labelledby="contacto-titulo">
     <div class="grid items-center gap-10 md:grid-cols-2 lg:gap-[100px]">
       <div class="overflow-hidden rounded-2xl bg-line">
         <img src="./img/contacto-760.webp" srcset="./img/contacto-480.webp 480w, ./img/contacto-760.webp 760w"

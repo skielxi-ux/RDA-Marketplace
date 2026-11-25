@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--slot:csp-->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <!--slot:head-->
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <script type="module" src="/src/quienes-somos.js"></script>
+</head>
+<body>
+  <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
+  <!--slot:site-header-->
+  <main id="contenido">
+    <section class="border-b border-line bg-soft">
+      <div class="container-x py-8 md:py-12">
+        <nav aria-label="Migas de pan" class="text-[14px] text-ink/60">
+          <ol class="flex items-center gap-2"><li><a href="./" class="transition-colors hover:text-brand">Inicio</a></li><li aria-hidden="true">/</li><li aria-current="page" class="text-ink">Quiénes somos</li></ol>
+        </nav>
+        <h1 class="mt-3 text-[30px] font-bold leading-[1.1] sm:text-[38px] md:text-[44px]">Quiénes somos</h1>
+      </div>
+    </section>
+
+    <!-- ================= INTRO ================= -->
+    <section aria-labelledby="intro-titulo" class="container-x pt-14 md:pt-[90px]">
+      <div class="grid gap-10 lg:grid-cols-[1.3fr_1fr] lg:gap-[100px]">
+        <h2 id="intro-titulo" class="reveal text-[28px] font-bold leading-[1.25] tracking-tight sm:text-[34px] md:text-[40px]">Conectamos a quienes venden autos con quienes los buscan, sin vueltas.</h2>
+        <div class="reveal space-y-5 text-[16px] leading-[1.8] text-ink/80">
+          <p>Red de Autos nació en Tucumán con una idea simple: que encontrar un auto sea tan fácil como hablar con quien lo vende. Reunimos en un solo lugar autos 0km y usados de concesionarios oficiales, agencias multimarca y particulares.</p>
+          <p>Cada agencia pasa por una verificación antes de publicar, los precios están a la vista y el contacto es directo por WhatsApp, sin intermediarios.</p>
+          <p>Para las agencias somos también una herramienta de trabajo: cargan su stock en minutos, lo manejan desde Telegram y se ayudan entre colegas para conseguir el auto que busca cada cliente.</p>
+        </div>
+      </div>
+
+      <!-- Galería -->
+      <div class="mt-12 grid grid-cols-2 gap-4 md:mt-[70px] md:grid-cols-4 md:gap-6">
+        <div class="reveal col-span-2 flex flex-col justify-center rounded-2xl bg-ink p-8 text-white md:col-span-1 md:row-span-2">
+          <p class="text-[64px] font-bold leading-none md:text-[80px]">2026</p>
+          <p class="mt-3 text-[16px] text-white/80">Año en que lanzamos Red de Autos en Tucumán</p>
+        </div>
+        <img src="./img/hero/byd-dolphin-mini-1024.webp" width="1024" height="683" loading="lazy" decoding="async" alt="BYD Dolphin Mini amarillo en una calle de edificios de colores" class="reveal aspect-[4/3] h-full w-full rounded-2xl object-cover md:col-span-2 md:aspect-auto">
+        <img src="./img/contacto-760.webp" width="753" height="659" loading="lazy" decoding="async" alt="Mujer sonriendo mientras mira su celular" class="reveal aspect-[4/3] h-full w-full rounded-2xl object-cover md:aspect-auto">
+        <img src="./img/hero/mg3-1024.webp" width="1024" height="683" loading="lazy" decoding="async" alt="MG3 en la calle" class="reveal aspect-[4/3] h-full w-full rounded-2xl object-cover">
+        <img src="./img/hero/concesionario-1024.webp" width="1024" height="683" loading="lazy" decoding="async" alt="Salón de un concesionario con autos en exhibición" class="reveal aspect-[4/3] h-full w-full rounded-2xl object-cover md:col-span-2">
+      </div>
+    </section>
+
+    <!-- ================= POR QUÉ ELEGIRNOS ================= -->
+    <section aria-labelledby="why-title" class="pt-20 md:pt-[110px]">
+      <div class="container-x">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-1/2 w-full max-w-[1160px] -translate-x-1/2 rounded-2xl bg-soft" aria-hidden="true"></div>
+          <div class="relative py-12 md:py-[60px] md:pb-[110px]">
+            <h2 id="why-title" class="section-title reveal mb-10 text-center md:mb-[46px]">¿Por qué Red de Autos?</h2>
+            <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-4 xl:gap-[30px]"><!--slot:reasons--></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= EQUIPO ================= -->
+    <section aria-labelledby="equipo-titulo" class="container-x pt-20 md:pt-[110px]">
+      <h2 id="equipo-titulo" class="section-title reveal mb-10 md:mb-[46px]">Nuestro equipo</h2>
+      <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-[30px]"><!--slot:equipo--></ul>
+    </section>
+
+    <!--slot:sell-->
+  </main>
+  <!--slot:footer-->
+  <!--slot:to-top-->
+</body>
+</html>

@@ -54,6 +54,7 @@ export const renderSiteHeader = () => `
       <a href="./autos.html?vendedor=multimarca" class="menu-link">Agencias multimarca</a>
       <a href="./#vender" class="menu-link">Vendé tu auto</a>
       <a href="./favoritos.html" class="menu-link">Mis favoritos</a>
+      <a href="./quienes-somos.html" class="menu-link">Quiénes somos</a>
       <a href="#contacto" class="menu-link">Contacto</a>
     </nav>
     <div class="mt-8 flex items-center gap-2" role="group" aria-label="Nuestras redes">${renderSocial('!h-11 !w-11 border border-line')}</div>

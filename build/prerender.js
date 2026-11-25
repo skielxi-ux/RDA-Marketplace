@@ -8,6 +8,18 @@ import { renderHeadTags, renderJsonLd } from '../app/src/render/seo.js';
 import { renderForDealers, renderSellPrivate, renderStats, renderTestimonials, renderBrands, renderFooter } from '../app/src/render/home2.js';
 import { renderSiteHeader, renderToTop } from '../app/src/render/layout.js';
 import { logoSvg } from '../app/src/render/logo.js';
+import { EQUIPO } from '../app/src/data/site.js';
+
+const renderEquipo = () => EQUIPO.map((p) => `
+        <li class="reveal">
+          <div class="overflow-hidden rounded-2xl bg-soft">
+            <img src="./img/equipo/${esc(p.foto)}-700.webp" srcset="./img/equipo/${esc(p.foto)}-400.webp 400w, ./img/equipo/${esc(p.foto)}-700.webp 700w"
+              sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw" width="700" height="875" loading="lazy" decoding="async"
+              alt="${esc(p.nombre)}, ${esc(p.cargo)} de Red de Autos" class="aspect-[4/5] w-full object-cover transition-transform duration-500 hover:scale-[1.03]">
+          </div>
+          <p class="mt-5 text-[22px] font-medium">${esc(p.nombre)}</p>
+          <p class="mt-1 text-[15px] text-ink/70">${esc(p.cargo)}</p>
+        </li>`).join('');
 import { renderFilters, renderSortOptions } from '../app/src/render/listing.js';
 import { cars, featuredTabs } from '../app/src/data/catalog.js';
 import { renderFicha, renderFichaHead, renderFichaJsonLd } from '../app/src/render/ficha.js';
@@ -49,6 +61,16 @@ const PAGES = {
   'auto.html': () => ({}),
   'agencia.html': () => ({}),
   'favoritos.html': () => ({}),
+  'quienes-somos.html': () => ({
+    head: renderHeadTags({
+      title: 'Quiénes somos | Red de Autos',
+      description: 'Red de Autos es el marketplace tucumano de autos 0km y usados: agencias verificadas, precios a la vista y contacto directo con el vendedor.',
+      path: 'quienes-somos.html',
+    }),
+    reasons: renderReasons(),
+    equipo: renderEquipo(),
+    sell: renderSellPrivate(),
+  }),
   'index.html': () => ({
     head: renderHeadTags(),
     jsonld: renderJsonLd(featuredTabs[0].cars.concat(featuredTabs[1].cars), 'Autos destacados'),

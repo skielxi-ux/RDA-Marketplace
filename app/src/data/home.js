@@ -57,7 +57,7 @@ export const footer = {
     cta: { label: 'Sumá tu agencia', href: '#sumate' },
   },
   columns: [
-    { title: 'Red de Autos', links: [['Quiénes somos', '#nosotros'], ['Cómo funciona', '#como-funciona'], ['Preguntas frecuentes', '#faq'], ['Contacto', '#contacto']] },
+    { title: 'Red de Autos', links: [['Quiénes somos', './quienes-somos.html'], ['Cómo funciona', '#como-funciona'], ['Preguntas frecuentes', '#faq'], ['Contacto', '#contacto']] },
     { title: 'Comprá', links: [['Todos los autos', './autos.html'], ['Autos 0km', './autos.html?condicion=0km'], ['Autos usados', './autos.html?condicion=usados'], ['De concesionarios oficiales', './autos.html?vendedor=oficial'], ['De particulares', './autos.html?vendedor=particular']] },
     { title: 'Marcas', links: [['Toyota', './autos.html?marca=Toyota'], ['Volkswagen', './autos.html?marca=Volkswagen'], ['Ford', './autos.html?marca=Ford'], ['Chevrolet', './autos.html?marca=Chevrolet'], ['Fiat', './autos.html?marca=Fiat'], ['Peugeot', './autos.html?marca=Peugeot']] },
     { title: 'Carrocerías', links: [['SUV', './autos.html?carroceria=suv'], ['Sedán', './autos.html?carroceria=sedan'], ['Hatchback', './autos.html?carroceria=hatchback'], ['Eléctrico', './autos.html?carroceria=electrico'], ['Deportivo', './autos.html?carroceria=deportivo']] },
