@@ -14,7 +14,7 @@ for (const c of cars) {
   fs.writeFileSync(path.join(root, carUrl(c).replace('./', '')), template);
 }
 
-const urls = ['', 'autos.html', 'quienes-somos.html', 'como-funciona.html', 'preguntas-frecuentes.html', 'seguros.html', 'vender.html', ...cars.map((c) => carUrl(c).replace('./', ''))];
+const urls = ['', 'autos.html', 'quienes-somos.html', 'como-funciona.html', 'preguntas-frecuentes.html', 'seguros.html', 'marcas.html', 'vender.html', ...cars.map((c) => carUrl(c).replace('./', ''))];
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((u) => `  <url><loc>${SITE.url}${u}</loc></url>`).join('\n')}

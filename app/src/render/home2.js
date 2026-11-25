@@ -113,7 +113,7 @@ export const renderBrands = () => `
         <div class="relative py-12 md:py-[70px]">
           <div class="reveal mb-8 flex items-end justify-between gap-4 md:mb-10">
             <h2 id="brands-title" class="section-title">Explorá por marca</h2>
-            <a href="./autos.html" class="link-view">Ver todas ${icon('arrow-up-right', 'h-4 w-4')}</a>
+            <a href="./marcas.html" class="link-view">Ver todas ${icon('arrow-up-right', 'h-4 w-4')}</a>
           </div>
           <ul class="reveal grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 lg:gap-6">
             ${brands.map((b) => `

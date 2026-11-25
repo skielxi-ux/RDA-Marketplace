@@ -12,6 +12,7 @@ import { EQUIPO, SITE as SITE_DATA } from '../app/src/data/site.js';
 const SITE_SEG = SITE_DATA.seguros.nombre;
 import { renderGuias } from '../app/src/render/comoFunciona.js';
 import { renderSeguros } from '../app/src/render/seguros.js';
+import { renderMarcas } from '../app/src/render/marcas.js';
 import { renderFaq, renderFaqIndice, renderFaqJsonLd } from '../app/src/render/faq.js';
 
 const renderEquipo = () => EQUIPO.map((p) => `
@@ -83,6 +84,14 @@ const PAGES = {
     jsonld: renderFaqJsonLd(),
     indice: renderFaqIndice(),
     faq: renderFaq(),
+  }),
+  'marcas.html': () => ({
+    head: renderHeadTags({
+      title: 'Marcas de autos 0km y usados | Red de Autos',
+      description: 'Todas las marcas de autos en Red de Autos: Toyota, Volkswagen, Ford, Chevrolet, Fiat, Peugeot, BYD, MG, Chery y muchas más. Elegí la tuya y mirá los autos publicados.',
+      path: 'marcas.html',
+    }),
+    marcas: renderMarcas(),
   }),
   'seguros.html': () => ({
     head: renderHeadTags({
