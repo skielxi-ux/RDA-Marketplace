@@ -57,7 +57,9 @@ export async function initAgencias() {
       && (filtro !== 'oficial' || a.agencia_tipo === 'oficial'));
     cuenta.textContent = `${vis.length} ${vis.length === 1 ? 'agencia' : 'agencias'}`;
     lista.innerHTML = vis.length ? vis.map(tarjeta).join('')
-      : '<li class="col-span-full rounded-[20px] border border-dashed border-line p-10 text-center text-ink/70">No encontramos agencias con ese filtro.</li>';
+      : `<li class="col-span-full rounded-[20px] border border-dashed border-line p-10 text-center text-ink/70">${filtro === 'independientes' && !q
+        ? 'Todavía ninguna agencia se sumó a trabajar con vendedores independientes. ¡Volvé pronto!'
+        : 'No encontramos agencias con ese filtro.'}</li>`;
   };
   form.addEventListener('input', pintar);
   // Botón del banner: muestra solo las que aceptan vendedores independientes, sin recargar
