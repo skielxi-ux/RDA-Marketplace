@@ -51,6 +51,7 @@ export const renderSiteHeader = () => `
       <a href="./autos.html?vendedor=oficial" class="menu-link">Concesionarios oficiales</a>
       <a href="./autos.html?vendedor=multimarca" class="menu-link">Agencias multimarca</a>
       <a href="./#vender" class="menu-link">Vendé tu auto</a>
+      <a href="./favoritos.html" class="menu-link">Mis favoritos</a>
       <a href="#contacto" class="menu-link">Contacto</a>
     </nav>
     <div class="mt-8 flex items-center gap-2" role="group" aria-label="Nuestras redes">${renderSocial('!h-11 !w-11 border border-line')}</div>
@@ -73,6 +74,9 @@ export const renderAccountUi = () => `
     </a>
     <a href="./mi-cuenta.html#buscados" role="menuitem" class="flex w-full items-center gap-2.5 rounded-lg px-4 py-2.5 text-left text-[15px] transition-colors hover:bg-soft hover:text-brand">
       <i data-icon="search" class="h-4 w-4"></i> +Buscados
+    </a>
+    <a href="./favoritos.html" role="menuitem" class="flex w-full items-center gap-2.5 rounded-lg px-4 py-2.5 text-left text-[15px] transition-colors hover:bg-soft hover:text-brand">
+      <i data-icon="heart" class="h-4 w-4"></i> Mis favoritos
     </a>
     <button type="button" role="menuitem" data-logout class="flex w-full items-center gap-2.5 rounded-lg px-4 py-2.5 text-left text-[15px] transition-colors hover:bg-soft hover:text-brand">
       <i data-icon="log-out" class="h-4 w-4"></i> Cerrar sesión

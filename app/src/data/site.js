@@ -19,9 +19,9 @@ export const SITE = {
   // Redes (en este orden en el header y el menú). Pegá la URL completa de cada perfil (https://...).
   // Mientras esté vacía, el ícono se ve pero no es un link.
   social: {
-    instagram: '',
+    instagram: 'https://www.instagram.com/reddeautos/',
     facebook: '',
     spotify: '',
-    linkedin: '',
+    linkedin: 'https://www.linkedin.com/company/144697996/',
   },
 };

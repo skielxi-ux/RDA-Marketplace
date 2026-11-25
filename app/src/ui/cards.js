@@ -39,7 +39,7 @@ export function bindGalleries(root = document) {
 
 // ---------- Favoritos (se guardan solo en este navegador) ----------
 const KEY = 'rda:favoritos';
-const readFavs = () => {
+export const readFavs = () => {
   try { return new Set(JSON.parse(localStorage.getItem(KEY) || '[]')); } catch { return new Set(); }
 };
 const saveFavs = (set) => {
@@ -65,6 +65,7 @@ export function bindFavorites(root = document) {
       favs.has(id) ? favs.delete(id) : favs.add(id);
       saveFavs(favs);
       paint();
+      btn.dispatchEvent(new CustomEvent('rda:favorito', { bubbles: true, detail: { id, guardado: favs.has(id) } }));
     });
   });
 }

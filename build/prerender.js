@@ -48,6 +48,7 @@ const PAGES = {
   'publicar.html': () => ({}),
   'auto.html': () => ({}),
   'agencia.html': () => ({}),
+  'favoritos.html': () => ({}),
   'index.html': () => ({
     head: renderHeadTags(),
     jsonld: renderJsonLd(featuredTabs[0].cars.concat(featuredTabs[1].cars), 'Autos destacados'),
