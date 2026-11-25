@@ -6,6 +6,7 @@ import { esc, formatPrice } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { SITE } from '../data/site.js';
 import { renderRanking } from './ranking.js';
+import { renderEstadisticas } from './adminEstadisticas.js';
 import { fotoUrl } from '../lib/fotos.js';
 
 const sb = createClient(SITE.supabase.url, SITE.supabase.publishableKey, {
@@ -495,6 +496,7 @@ const LOADERS = {
   feria: loadFeria,
   autos: () => loadAutos(),
   buscados: () => renderRanking($('#v-buscados'), sb),
+  estadisticas: () => renderEstadisticas($('#v-estadisticas'), sb),
   pruebas: loadPruebas,
 };
 let actual = 'resumen';

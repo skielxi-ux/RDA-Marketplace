@@ -56,6 +56,7 @@
 
       <div class="tabs-brand mt-6 flex gap-6 overflow-x-auto border-b border-line sm:gap-8" role="tablist" aria-label="Secciones del admin" id="adm-tabs">
         <button type="button" role="tab" id="t-resumen" class="tab-btn is-active shrink-0" aria-selected="true" aria-controls="v-resumen" data-tab="resumen">Resumen</button>
+        <button type="button" role="tab" id="t-estadisticas" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-estadisticas" data-tab="estadisticas">Estadísticas</button>
         <button type="button" role="tab" id="t-particulares" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-particulares" data-tab="particulares">Particulares</button>
         <button type="button" role="tab" id="t-concesionarios" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-concesionarios" data-tab="concesionarios">Concesionarios <span class="adm-badge" data-count-pend hidden></span></button>
         <button type="button" role="tab" id="t-vendedores" class="tab-btn shrink-0" aria-selected="false" tabindex="-1" aria-controls="v-vendedores" data-tab="vendedores">Vendedores <span class="adm-badge" data-count-vend hidden></span></button>
@@ -66,6 +67,7 @@
       </div>
 
       <div id="v-resumen" role="tabpanel" aria-labelledby="t-resumen" class="pt-8"></div>
+      <div id="v-estadisticas" role="tabpanel" aria-labelledby="t-estadisticas" class="pt-8" hidden></div>
       <div id="v-particulares" role="tabpanel" aria-labelledby="t-particulares" class="pt-8" hidden></div>
       <div id="v-concesionarios" role="tabpanel" aria-labelledby="t-concesionarios" class="pt-8" hidden></div>
       <div id="v-vendedores" role="tabpanel" aria-labelledby="t-vendedores" class="pt-8" hidden></div>

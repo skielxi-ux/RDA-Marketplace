@@ -65,7 +65,7 @@ for (const a of autos) {
 <meta property="og:image:alt" content="${esc(`${a.marca} ${a.modelo} ${a.version} ${a.anio}`)}" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta http-equiv="refresh" content="1;url=${esc(ficha)}" />
-<script>var r=(new URLSearchParams(location.search).get('ref')||'').toUpperCase();location.replace(${JSON.stringify(ficha)}+(/^[A-Z2-9]{6}$/.test(r)?'&ref='+r:''));</script>
+<script>var r=(new URLSearchParams(location.search).get('ref')||'').toUpperCase();location.replace(${JSON.stringify(ficha)}+(/^[A-Z2-9]{6}$/.test(r)?'&ref='+r:'&utm_source=link%20compartido'));</script>
 </head>
 <body style="font-family:system-ui,sans-serif;padding:24px">
 <p><a href="${esc(ficha)}">Ver ${esc(titulo)} en Red de Autos</a></p>

@@ -1,7 +1,9 @@
+import { registrarVisita } from '../lib/visitas.js';
 import { $ } from './dom.js';
 
 /** Header que se esconde al bajar y reaparece al subir + botón "volver arriba". */
 export function initHeader() {
+  registrarVisita();
   const header = $('#site-header');
   const toTop = $('#to-top');
   const H = header.offsetHeight;

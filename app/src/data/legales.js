@@ -84,7 +84,7 @@ export const PRIVACIDAD = [
       'Vendedores independientes: nombre y apellido, DNI y, si lo das, email.',
       'Publicaciones: datos y fotos de los vehículos.',
       'Alertas: los criterios de búsqueda y los datos técnicos de suscripción a notificaciones de tu navegador.',
-      'Uso del sitio: búsquedas, visitas a fichas y clics de contacto, de forma anónima (guardamos un código irreversible que cambia todos los días, no tu dirección IP ni tu identidad).',
+      'Uso del sitio: páginas vistas, de dónde llegó la visita (por ejemplo, Google o WhatsApp), si es desde celular o compu, búsquedas, visitas a fichas y clics de contacto, de forma anónima (guardamos un código irreversible que cambia todos los días, no tu dirección IP ni tu identidad). No usamos cookies de seguimiento ni servicios de analítica de terceros.',
       'En tu propio navegador guardamos tus favoritos y tu sesión. Esos datos no viajan a nuestros servidores.',
     ] },
   ]],
