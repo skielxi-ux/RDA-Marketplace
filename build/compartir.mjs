@@ -10,6 +10,7 @@ import { formatPrice, formatKm } from '../app/src/lib/html.js';
 const DIR = 'c';
 const IMG = `${DIR}/img`;
 const INDICE = `${DIR}/indice.json`; // id → foto de origen, para no regenerar imágenes que no cambiaron
+const VERSION = 2; // subir para regenerar todas las imágenes (cambio de encuadre)
 const SEGURA = /^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(webp|jpg)$/;
 const ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -27,13 +28,14 @@ const nuevo = {};
 for (const a of autos) {
   const foto = a.fotos[0];
   const img = `${IMG}/${a.id}.jpg`;
-  if (indice[a.id] !== foto || !existsSync(img)) {
+  const clave = `${foto}#${VERSION}`;
+  if (indice[a.id] !== clave || !existsSync(img)) {
     const r = await fetch(`${SITE.supabase.url}/storage/v1/object/public/mkt-fotos/${foto}`);
     if (!r.ok) { console.warn('sin foto', a.id); continue; }
-    await sharp(Buffer.from(await r.arrayBuffer())).rotate().resize(1200, 630, { fit: 'cover', position: 'attention' })
+    await sharp(Buffer.from(await r.arrayBuffer())).rotate().resize(1200, 630, { fit: 'cover', position: 'centre' })
       .jpeg({ quality: 78, mozjpeg: true }).toFile(img);
   }
-  nuevo[a.id] = foto;
+  nuevo[a.id] = clave;
 
   const titulo = `${a.marca} ${a.modelo} ${a.anio} · ${formatPrice(Number(a.precio), a.moneda)}`;
   const antes = a.precio_antes && Number(a.precio_antes) > Number(a.precio) ? ` (antes ${formatPrice(Number(a.precio_antes), a.moneda)})` : '';
