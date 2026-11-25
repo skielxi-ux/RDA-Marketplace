@@ -54,6 +54,8 @@ export const renderSiteHeader = () => `
       <a href="./autos.html?vendedor=multimarca" class="menu-link">Agencias multimarca</a>
       <a href="./#vender" class="menu-link">Vendé tu auto</a>
       <a href="./favoritos.html" class="menu-link">Mis favoritos</a>
+      <a href="./como-funciona.html" class="menu-link">Cómo funciona</a>
+      <a href="./preguntas-frecuentes.html" class="menu-link">Preguntas frecuentes</a>
       <a href="./quienes-somos.html" class="menu-link">Quiénes somos</a>
       <a href="#contacto" class="menu-link">Contacto</a>
     </nav>

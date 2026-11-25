@@ -10,6 +10,7 @@ import { renderSiteHeader, renderToTop } from '../app/src/render/layout.js';
 import { logoSvg } from '../app/src/render/logo.js';
 import { EQUIPO } from '../app/src/data/site.js';
 import { renderGuias } from '../app/src/render/comoFunciona.js';
+import { renderFaq, renderFaqIndice, renderFaqJsonLd } from '../app/src/render/faq.js';
 
 const renderEquipo = () => EQUIPO.map((p) => `
         <li class="reveal">
@@ -70,6 +71,16 @@ const PAGES = {
       path: 'como-funciona.html',
     }),
     guias: renderGuias(),
+  }),
+  'preguntas-frecuentes.html': () => ({
+    head: renderHeadTags({
+      title: 'Preguntas frecuentes | Red de Autos',
+      description: 'Respuestas sobre cómo comprar, cómo vender tu auto gratis, cómo trabajan las agencias en Red de Autos y cómo cuidar tu cuenta.',
+      path: 'preguntas-frecuentes.html',
+    }),
+    jsonld: renderFaqJsonLd(),
+    indice: renderFaqIndice(),
+    faq: renderFaq(),
   }),
   'vender.html': () => ({
     head: renderHeadTags({

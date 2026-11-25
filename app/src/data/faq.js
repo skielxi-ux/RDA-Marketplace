@@ -1,0 +1,66 @@
+// Preguntas frecuentes, agrupadas por tema. Se usan en la página y en el JSON-LD (FAQPage) para Google.
+export const FAQ = [
+  {
+    id: 'general',
+    titulo: 'Sobre Red de Autos',
+    icon: 'sparkle',
+    preguntas: [
+      ['¿Qué es Red de Autos?', 'Es un marketplace de autos 0km y usados nacido en Tucumán. Reúne en un solo lugar el stock de concesionarios oficiales, agencias multimarca y particulares, y te conecta directo con quien vende por WhatsApp.'],
+      ['¿Tiene algún costo?', 'No. Buscar, consultar, publicar tu auto como particular y usar todas las herramientas para agencias (carga de stock, Red de colegas y bot de Telegram) es gratis.'],
+      ['¿Red de Autos vende los autos?', 'No. Somos la vidriera y el punto de contacto: la operación, la prueba del auto y el pago se arreglan directamente entre comprador y vendedor. No cobramos comisiones ni intermediamos en los pagos.'],
+      ['¿Cómo me contacto con ustedes?', 'Llamanos o escribinos por mail: los datos están en el bloque de contacto, al pie de cada página.'],
+    ],
+  },
+  {
+    id: 'comprar',
+    titulo: 'Comprar un auto',
+    icon: 'search',
+    preguntas: [
+      ['¿Necesito una cuenta para buscar o consultar?', 'No. Podés buscar, ver fichas, guardar favoritos y escribirle al vendedor sin crear una cuenta.'],
+      ['¿Cómo contacto al vendedor?', 'En la ficha de cada auto tocá el botón de WhatsApp: se abre una conversación con el vendedor con el auto ya mencionado en el mensaje.'],
+      ['¿Dónde quedan mis favoritos?', 'En "Mis favoritos", desde el menú. Se guardan en el navegador que usaste, así que si cambiás de celular o de compu no los vas a ver ahí.'],
+      ['¿Cómo sé si el vendedor es confiable?', 'Cada ficha indica si el auto lo vende un concesionario oficial, una agencia multimarca o un particular. Las agencias pasan por una verificación antes de publicar y las publicaciones de particulares las revisamos antes de que salgan online.'],
+      ['¿Qué tengo que tener en cuenta para comprar seguro?', 'Mirá el auto en persona antes de pagar cualquier seña, pedí el título y el informe de dominio, hacé revisar el auto por un mecánico de confianza y desconfiá de precios muy por debajo del mercado o de quien te apure para pagar.'],
+      ['¿Los precios incluyen gastos de transferencia?', 'Depende de cada vendedor. Consultalo por WhatsApp antes de avanzar: el precio publicado es el que informa quien vende.'],
+    ],
+  },
+  {
+    id: 'vender',
+    titulo: 'Vender mi auto (particulares)',
+    icon: 'user',
+    preguntas: [
+      ['¿Cómo publico mi auto?', 'Creá tu cuenta como particular con tu celular, entrá a "Vendé tu auto", completá los datos y subí hasta 7 fotos. Lo revisamos y, cuando lo aprobamos, aparece en el listado.'],
+      ['¿Cuánto tarda la revisión?', 'La hacemos lo antes posible. Mientras tanto ves el estado "En revisión" en la página "Vendé tu auto" y, cuando la aprobamos, pasa a "Publicado".'],
+      ['¿Cuántos autos puedo publicar?', 'Hasta 2 a la vez. Cuando vendas uno, marcalo como vendido o borralo y podés cargar otro.'],
+      ['¿Puedo cambiar el precio o las fotos?', 'Sí, tocá "Editar" en tu publicación. Al guardar, vuelve a revisión por un rato antes de mostrarse de nuevo.'],
+      ['¿Quién ve mi número de celular?', 'Los interesados te escriben por WhatsApp al celular de tu cuenta, así que lo ven quienes te contactan. No mostramos tu número de otra forma.'],
+      ['¿Por qué rechazaron mi publicación?', 'Suele ser por fotos que no corresponden al auto, datos incompletos o un precio que no es real. Corregilo desde "Editar" y volvé a enviarlo, o escribinos y lo vemos juntos.'],
+    ],
+  },
+  {
+    id: 'agencias',
+    titulo: 'Agencias y concesionarios',
+    icon: 'store',
+    preguntas: [
+      ['¿Cómo sumo mi agencia?', 'Creá tu cuenta como agencia o concesionario con tu celular, tu CUIT y el tipo de agencia. Revisamos los datos y, cuando te aprobamos, ya podés publicar tu stock.'],
+      ['¿Cómo cargo mis autos?', 'Desde Mi cuenta → Publicar vehículos: descargás la plantilla de Excel, la completás con una fila por auto, arrastrás la carpeta de fotos (hasta 7 por auto), revisás y publicás todo de una vez.'],
+      ['¿Cómo sabe el sistema qué foto va con cada auto?', 'Por el código de cada auto en la plantilla. Poné las fotos en una carpeta con el código como nombre (por ejemplo A001) o nombrá cada foto empezando con el código (A001-1.jpg, A001-2.jpg).'],
+      ['¿Cómo actualizo precios o datos?', 'Volvé a subir la plantilla con los mismos códigos: los autos que ya existen se actualizan y no se duplican. También podés cambiar precios, pausar o marcar vendidos desde el bot de Telegram.'],
+      ['¿Qué es la Red de colegas?', 'Es el espacio B2B entre agencias. Si un cliente busca un auto que no tenés, publicás el pedido y les llega a todas las agencias de la red. La que lo tiene toca "Lo tengo" y se contactan directo por WhatsApp.'],
+      ['¿Para qué conecto Telegram?', 'Para recibir al instante los pedidos de colegas y los avisos de tu cuenta, y para manejar tus autos desde el chat: cambiar precios, marcarlos como vendidos, pausarlos y pedir autos a la red.'],
+      ['¿Qué es +Buscados?', 'Un ranking con los 10 autos más buscados del mes y del año en Red de Autos, para que sepas qué stock conviene tener.'],
+      ['¿Puedo tener una página de mi agencia?', 'Sí. Al completar tu perfil y subir tu logo, tu agencia tiene su propia página con todo tu stock publicado, para compartir donde quieras.'],
+    ],
+  },
+  {
+    id: 'cuenta',
+    titulo: 'Cuenta y seguridad',
+    icon: 'lock',
+    preguntas: [
+      ['¿Cómo ingreso a mi cuenta?', 'Con tu número de celular y tu PIN. Lo elegís vos cuando creás la cuenta.'],
+      ['Me olvidé el PIN, ¿qué hago?', 'Por seguridad no lo enviamos por mensaje. Escribinos desde el celular de tu cuenta y te ayudamos a crear uno nuevo.'],
+      ['¿Puedo usar la cuenta en varios dispositivos?', 'Podés ingresar desde cualquier dispositivo, pero solo queda una sesión abierta por vez: al entrar en uno nuevo, se cierra la anterior.'],
+      ['Intenté ingresar varias veces y no me deja', 'Después de varios intentos con el PIN equivocado, la cuenta se bloquea por 15 minutos para protegerla. Esperá y probá de nuevo.'],
+    ],
+  },
+];
