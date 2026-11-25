@@ -1,4 +1,4 @@
-import{n as e,r as t}from"./site-g4Vc9JGE.js";import{i as n,n as r,o as i,r as a,s as o,t as s}from"./auth-CtpMWsDi.js";import{a as c,i as l,n as u,r as d,s as f}from"./fotos-B4jkY6rM.js";import{t as p}from"./ranking-DDryLnVQ.js";import{i as m,r as h,t as g}from"./autosApi-DNzNSbMK.js";import{o as _}from"./catalog-Bvstg05i.js";import{i as v,t as y}from"./modelos-C4UpMEQ_.js";import{t as b}from"./carga-04TQKseX.js";var x=e=>/^\d{11}$/.test(e??``)?`${e.slice(0,2)}-${e.slice(2,10)}-${e.slice(10)}`:e??``,S=e=>String(e??``).replace(/^549(\d+)$/,`$1`),C=(e,t,n,r=``)=>`
+import{n as e,r as t}from"./site-CbFiRQJW.js";import{i as n,n as r,o as i,r as a,s as o,t as s}from"./auth-DJq8yGv7.js";import{a as c,i as l,n as u,r as d,s as f}from"./fotos-CaLkchi2.js";import{t as p}from"./ranking-sws-Gv_0.js";import{i as m,r as h,t as g}from"./autosApi-Cg099wrh.js";import{o as _}from"./catalog-Bvstg05i.js";import{i as v,t as y}from"./modelos-C4UpMEQ_.js";import{t as b}from"./carga-04TQKseX.js";var x=e=>/^\d{11}$/.test(e??``)?`${e.slice(0,2)}-${e.slice(2,10)}-${e.slice(10)}`:e??``,S=e=>String(e??``).replace(/^549(\d+)$/,`$1`),C=(e,t,n,r=``)=>`
   <div>
     <label for="${e}" class="auth-label">${c(t)}</label>
     ${n}
@@ -194,13 +194,13 @@ import{n as e,r as t}from"./site-g4Vc9JGE.js";import{i as n,n as r,o as i,r as a
     ${n.length?`<ul class="mt-3 flex flex-wrap gap-2">${n.map(([e,t])=>`<li class="inline-flex items-center gap-1.5 rounded-full bg-soft px-3 py-1 text-[13px]">${e}${c(t)}</li>`).join(``)}</ul>`:``}
     ${e.presupuesto?`<p class="mt-3 text-[15px]">Presupuesto: <b>${c(e.moneda===`USD`?`USD`:`$`)} ${c(L(e.presupuesto))}</b></p>`:``}
     ${e.comentario?`<p class="mt-2 text-[15px] text-ink/75">“${c(e.comentario)}”</p>`:``}
-    <div class="mt-5 flex flex-col gap-4 border-t border-line pt-4 sm:flex-row sm:items-center sm:justify-between">
-      <a href="./agencia.html?id=${c(encodeURIComponent(r.id))}" class="flex min-w-0 items-center gap-3 transition-colors hover:text-brand">
+    <div class="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-line pt-4">
+      <a href="./agencia.html?id=${c(encodeURIComponent(r.id))}" class="flex min-w-0 flex-1 basis-[200px] items-center gap-3 transition-colors hover:text-brand">
         ${i?`<img src="${c(i)}" alt="" width="40" height="40" loading="lazy" class="h-10 w-10 shrink-0 rounded-lg border border-line bg-white object-contain p-0.5" />`:`<span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-ink text-[13px] font-bold text-white" aria-hidden="true">${c(R(r.nombre))}</span>`}
         <span class="min-w-0"><span class="block truncate font-bold">${c(r.nombre)}</span><span class="block truncate text-[13px] text-ink/60">${c([r.ciudad,r.provincia].filter(Boolean).join(`, `))}</span></span>
       </a>
-      ${e.mio?u?`<p class="text-[13px] text-ink/60">Avisado a ${c(e.avisadas)} ${e.avisadas===1?`agencia`:`agencias`}</p>`:`<div class="flex items-center gap-3"><span class="text-[13px] text-ink/60">Avisado a ${c(e.avisadas)}</span><button type="button" class="btn-outline h-[42px] !px-4 text-[14px]" data-cg-cerrar="${c(e.id)}">${l(`check`,`h-4 w-4`)} Ya lo conseguí</button></div>`:a&&!u?`<div class="flex gap-2">
-            <a href="https://wa.me/${c(a)}?text=${c(encodeURIComponent(s))}" target="_blank" rel="noopener noreferrer" class="btn-primary h-[44px] !px-4 text-[14px]">${l(`message-circle`,`h-4 w-4`)} Lo tengo</a>
+      ${e.mio?u?`<p class="text-[13px] text-ink/60">Avisado a ${c(e.avisadas)} ${e.avisadas===1?`agencia`:`agencias`}</p>`:`<div class="flex shrink-0 items-center gap-3"><span class="whitespace-nowrap text-[13px] text-ink/60">Avisado a ${c(e.avisadas)}</span><button type="button" class="btn-outline h-[42px] whitespace-nowrap !px-4 text-[14px]" data-cg-cerrar="${c(e.id)}">${l(`check`,`h-4 w-4`)} Ya lo conseguí</button></div>`:a&&!u?`<div class="flex shrink-0 gap-2">
+            <a href="https://wa.me/${c(a)}?text=${c(encodeURIComponent(s))}" target="_blank" rel="noopener noreferrer" class="btn-primary h-[44px] whitespace-nowrap !px-4 text-[14px]">${l(`message-circle`,`h-4 w-4`)} Lo tengo</a>
             <a href="tel:+${c(a)}" class="btn-outline h-[44px] !px-3.5" aria-label="Llamar a ${c(r.nombre)}">${l(`phone`,`h-4 w-4`)}</a>
           </div>`:``}
     </div>

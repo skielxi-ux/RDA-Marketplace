@@ -143,17 +143,17 @@ export function renderPedido(p) {
     ${chips.length ? `<ul class="mt-3 flex flex-wrap gap-2">${chips.map(([ic, t]) => `<li class="inline-flex items-center gap-1.5 rounded-full bg-soft px-3 py-1 text-[13px]">${ic}${esc(t)}</li>`).join('')}</ul>` : ''}
     ${p.presupuesto ? `<p class="mt-3 text-[15px]">Presupuesto: <b>${esc(p.moneda === 'USD' ? 'USD' : '$')} ${esc(miles(p.presupuesto))}</b></p>` : ''}
     ${p.comentario ? `<p class="mt-2 text-[15px] text-ink/75">“${esc(p.comentario)}”</p>` : ''}
-    <div class="mt-5 flex flex-col gap-4 border-t border-line pt-4 sm:flex-row sm:items-center sm:justify-between">
-      <a href="./agencia.html?id=${esc(encodeURIComponent(a.id))}" class="flex min-w-0 items-center gap-3 transition-colors hover:text-brand">
+    <div class="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-line pt-4">
+      <a href="./agencia.html?id=${esc(encodeURIComponent(a.id))}" class="flex min-w-0 flex-1 basis-[200px] items-center gap-3 transition-colors hover:text-brand">
         ${logo ? `<img src="${esc(logo)}" alt="" width="40" height="40" loading="lazy" class="h-10 w-10 shrink-0 rounded-lg border border-line bg-white object-contain p-0.5" />`
           : `<span class="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-ink text-[13px] font-bold text-white" aria-hidden="true">${esc(initials(a.nombre))}</span>`}
         <span class="min-w-0"><span class="block truncate font-bold">${esc(a.nombre)}</span><span class="block truncate text-[13px] text-ink/60">${esc([a.ciudad, a.provincia].filter(Boolean).join(', '))}</span></span>
       </a>
       ${p.mio
         ? (cerrado ? `<p class="text-[13px] text-ink/60">Avisado a ${esc(p.avisadas)} ${p.avisadas === 1 ? 'agencia' : 'agencias'}</p>`
-          : `<div class="flex items-center gap-3"><span class="text-[13px] text-ink/60">Avisado a ${esc(p.avisadas)}</span><button type="button" class="btn-outline h-[42px] !px-4 text-[14px]" data-cg-cerrar="${esc(p.id)}">${icon('check', 'h-4 w-4')} Ya lo conseguí</button></div>`)
-        : tel && !cerrado ? `<div class="flex gap-2">
-            <a href="https://wa.me/${esc(tel)}?text=${esc(encodeURIComponent(msg))}" target="_blank" rel="noopener noreferrer" class="btn-primary h-[44px] !px-4 text-[14px]">${icon('message-circle', 'h-4 w-4')} Lo tengo</a>
+          : `<div class="flex shrink-0 items-center gap-3"><span class="whitespace-nowrap text-[13px] text-ink/60">Avisado a ${esc(p.avisadas)}</span><button type="button" class="btn-outline h-[42px] whitespace-nowrap !px-4 text-[14px]" data-cg-cerrar="${esc(p.id)}">${icon('check', 'h-4 w-4')} Ya lo conseguí</button></div>`)
+        : tel && !cerrado ? `<div class="flex shrink-0 gap-2">
+            <a href="https://wa.me/${esc(tel)}?text=${esc(encodeURIComponent(msg))}" target="_blank" rel="noopener noreferrer" class="btn-primary h-[44px] whitespace-nowrap !px-4 text-[14px]">${icon('message-circle', 'h-4 w-4')} Lo tengo</a>
             <a href="tel:+${esc(tel)}" class="btn-outline h-[44px] !px-3.5" aria-label="Llamar a ${esc(a.nombre)}">${icon('phone', 'h-4 w-4')}</a>
           </div>` : ''}
     </div>
