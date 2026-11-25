@@ -2,6 +2,7 @@
 // Carga masiva de autos de agencias aprobadas (plantilla Excel + carpeta de fotos)
 // y carga de a uno para particulares (hasta 2 autos activos; cada carga o cambio queda "en revisión" hasta que la aprueba el admin).
 // Con sesión de agencia aprobada o particular activo: mios · urls_fotos · publicar · estado · borrar · estadisticas
+// Solo agencias: feria · feria_sumar · feria_quitar (autos del stock con precio relámpago en la feria vigente)
 // Las fotos se suben directo a Storage (bucket mkt-fotos) con URLs firmadas que da esta función,
 // siempre dentro de la carpeta de la cuenta. Datos en public.mkt_autos (sin acceso público directo).
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -230,6 +231,58 @@ Deno.serve(async (req) => {
       if (error) throw error;
       if ((a.fotos as string[])?.length) await db.storage.from(BUCKET).remove(a.fotos as string[]);
       return json({ ok: true });
+    }
+
+    // ---- Feria: la vigente o próxima, con los autos que esta agencia sumó ----
+    if (String(b.accion).startsWith("feria")) {
+      if (esParticular) return err("La feria es para agencias.", 403);
+      const { data: feria } = await db.from("mkt_ferias").select("id, nombre, descripcion, empieza, termina")
+        .eq("estado", "activa").gt("termina", new Date().toISOString()).order("empieza").limit(1).maybeSingle();
+
+      if (b.accion === "feria") {
+        if (!feria) return json({ feria: null, ofertas: [] });
+        const { data: mios } = await db.from("mkt_autos").select("id").eq("cuenta_id", cuenta.id);
+        const ids = (mios ?? []).map((a: A) => a.id as string);
+        const { data: ofertas, error } = ids.length
+          ? await db.from("mkt_feria_autos").select("auto_id, precio_feria, empieza, termina").eq("feria_id", feria.id).in("auto_id", ids)
+          : { data: [], error: null };
+        if (error) throw error;
+        return json({ feria, ofertas });
+      }
+
+      if (!feria) return err("No hay ninguna feria programada.", 404);
+      if (typeof b.id !== "string") return err("Datos inválidos");
+      const { data: a } = await db.from("mkt_autos").select("id, precio, estado").eq("id", b.id).eq("cuenta_id", cuenta.id).maybeSingle();
+      if (!a) return err("No encontramos ese auto.", 404);
+
+      if (b.accion === "feria_quitar") {
+        const { error } = await db.from("mkt_feria_autos").delete().eq("feria_id", feria.id).eq("auto_id", a.id);
+        if (error) throw error;
+        return json({ ok: true });
+      }
+
+      if (b.accion === "feria_sumar") {
+        if (a.estado !== "publicado") return err("Solo pueden entrar autos publicados.");
+        const precio = Math.round(Number(b.precio));
+        if (!Number.isFinite(precio) || precio <= 0) return err("Poné el precio de feria.");
+        if (precio >= Number(a.precio)) return err("El precio de feria tiene que ser más bajo que el precio actual.");
+        const fIni = new Date(feria.empieza).getTime(), fFin = new Date(feria.termina).getTime();
+        const ahora = Date.now();
+        let ini = b.empieza ? new Date(String(b.empieza)).getTime() : Math.max(fIni, ahora);
+        if (!Number.isFinite(ini)) return err("La fecha de inicio no es válida.");
+        if (ini < fIni) return err("La oferta no puede empezar antes que la feria.");
+        if (ini >= fFin) return err("La oferta tiene que empezar antes de que termine la feria.");
+        ini = Math.max(ini, Math.min(ahora, fFin - 60_000));
+        const horas = Number(b.horas);
+        if (!Number.isInteger(horas) || horas < 0 || horas > 720) return err("Duración inválida.");
+        const fin = horas === 0 ? fFin : Math.min(ini + horas * 3_600_000, fFin);
+        const { error } = await db.from("mkt_feria_autos").upsert({
+          feria_id: feria.id, auto_id: a.id, precio_feria: precio,
+          empieza: new Date(ini).toISOString(), termina: new Date(fin).toISOString(),
+        }, { onConflict: "feria_id,auto_id" });
+        if (error) throw error;
+        return json({ ok: true });
+      }
     }
 
     return err("Acción desconocida");

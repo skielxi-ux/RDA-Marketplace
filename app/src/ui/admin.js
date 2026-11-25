@@ -287,6 +287,32 @@ function feriaEstado(f) {
   return ['Próxima', 'bg-[#EEF1FB] text-brand', true];
 }
 
+/** Autos que las agencias sumaron a una feria, con su precio relámpago y el botón para sacarlos. */
+function feriaAutos(f) {
+  const lista = (feriaData.autos ?? []).filter((x) => x.feria_id === f.id);
+  if (!lista.length) return `<p class="mt-3 text-[14px] text-ink/60">${icon('zap', 'inline h-4 w-4')} Todavía ninguna agencia sumó autos.</p>`;
+  const ahora = Date.now();
+  return `
+    <details class="mt-4 rounded-xl border border-line">
+      <summary class="cursor-pointer select-none px-4 py-3 text-[15px] font-bold">${icon('zap', 'inline h-4 w-4 text-[#E5484D]')} ${lista.length} ${lista.length === 1 ? 'auto sumado' : 'autos sumados'} por las agencias</summary>
+      <ul class="divide-y divide-line border-t border-line">
+        ${lista.map((x) => {
+          const a = x.mkt_autos ?? {};
+          const ini = new Date(x.empieza).getTime(), fin = new Date(x.termina).getTime();
+          const est = fin <= ahora ? 'Terminó' : ini > ahora ? 'Programada' : 'Activa';
+          return `
+          <li class="flex flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div class="min-w-0 text-[14px]">
+              <p class="font-bold">${esc(`${a.marca ?? ''} ${a.modelo ?? ''} ${a.version ?? ''} ${a.anio ?? ''}`)} <span class="font-normal text-ink/60">· ${esc(a.mkt_cuentas?.nombre ?? '')} · ${esc(a.codigo ?? '')}</span></p>
+              <p class="mt-0.5"><s class="text-ink/50">${esc(formatPrice(Number(a.precio), a.moneda))}</s> <b class="text-[#E5484D]">${esc(formatPrice(Number(x.precio_feria), a.moneda))}</b> · ${esc(fmtFeria(x.empieza))} → ${esc(fmtFeria(x.termina))} · ${esc(est)}${a.estado !== 'publicado' ? ' · no publicado' : ''}</p>
+            </div>
+            <button type="button" class="btn-outline h-[40px] shrink-0 !px-4 text-[14px] hover:!border-[#D92D20] hover:!bg-[#D92D20]" data-feria-sacar="${esc(x.auto_id)}" data-feria-de="${esc(f.id)}">${icon('x', 'h-4 w-4')} Sacar</button>
+          </li>`;
+        }).join('')}
+      </ul>
+    </details>`;
+}
+
 function feriaCard(f, aprobadas) {
   const [txt, cls, viva] = feriaEstado(f);
   const inv = f.invitacion_enviada_at
@@ -300,6 +326,7 @@ function feriaCard(f, aprobadas) {
       ${f.descripcion ? `<p class="mt-1 text-[15px] text-ink/70">${esc(f.descripcion)}</p>` : ''}
       <p class="mt-2 text-[15px]">${esc(fmtFeria(f.empieza))} → ${esc(fmtFeria(f.termina))}</p>
       <p class="mt-1 text-[13px] text-ink/60">${inv}</p>
+      ${feriaAutos(f)}
     </div>
     ${viva ? `<div class="flex shrink-0 flex-wrap gap-2">
       <button type="button" class="btn-primary h-[46px] !px-5" data-feria-invitar="${esc(f.id)}">${icon('message-circle', 'h-4 w-4')} ${f.invitacion_enviada_at ? 'Volver a invitar' : 'Invitar agencias'}</button>
@@ -308,7 +335,7 @@ function feriaCard(f, aprobadas) {
   </article>`;
 }
 
-let feriaData = { ferias: [], agencias_aprobadas: 0 };
+let feriaData = { ferias: [], agencias_aprobadas: 0, autos: [] };
 async function loadFeria() {
   const box = $('#feria-lista');
   box.innerHTML = vacio('Cargando…');
@@ -370,6 +397,14 @@ async function cancelarFeria(id) {
   const ok = await dialog({ title: 'Cancelar feria', text: `"${f?.nombre ?? ''}" deja de mostrarse en el sitio. No se puede reactivar: si hace falta, creá una nueva.`, ok: 'Cancelar feria', cancel: 'Volver', danger: true });
   if (!ok) return;
   try { await admin('cancelar_feria', { id }); toast('Feria cancelada'); await loadFeria(); } catch (e) { handleError(e); }
+}
+
+async function sacarDeFeria(feria, auto) {
+  const x = (feriaData.autos ?? []).find((a) => a.feria_id === feria && a.auto_id === auto);
+  const a = x?.mkt_autos ?? {};
+  const ok = await dialog({ title: 'Sacar de la feria', text: `${a.marca ?? ''} ${a.modelo ?? ''} ${a.anio ?? ''} de ${a.mkt_cuentas?.nombre ?? 'la agencia'} deja de mostrarse en la feria y vuelve a su precio normal. La agencia puede volver a sumarlo.`, ok: 'Sacar', cancel: 'Volver', danger: true });
+  if (!ok) return;
+  try { await admin('quitar_auto_feria', { feria, auto }); toast('Auto sacado de la feria'); await loadFeria(); } catch (e) { handleError(e); }
 }
 
 async function loadPruebas() {
@@ -589,6 +624,8 @@ export async function initAdmin() {
     if (inv) invitarFeria(inv.dataset.feriaInvitar);
     const can = e.target.closest('[data-feria-cancelar]');
     if (can) cancelarFeria(can.dataset.feriaCancelar);
+    const sac = e.target.closest('[data-feria-sacar]');
+    if (sac) sacarDeFeria(sac.dataset.feriaDe, sac.dataset.feriaSacar);
   });
   $('#adm-refresh').addEventListener('click', () => Promise.all([reload('resumen'), actual !== 'resumen' ? reload(actual) : null]).then(() => toast('Actualizado')));
 

@@ -11,6 +11,7 @@ import { initColegas } from './colegas.js';
 import { editarAuto } from './editarAuto.js';
 import { initMisAlertas } from './misAlertas.js';
 import { initVendedorPanel } from './vendedorPanel.js';
+import { initMiFeria } from './miFeria.js';
 
 export function initMiCuenta() {
   const guest = $('[data-mc-guest]');
@@ -197,6 +198,14 @@ export function initMiCuenta() {
     activar(btnClientes, boxClientes);
     if (!clientesCargado) { clientesCargado = true; initVendedorPanel($('[data-clientes-box]')); }
   };
+  const btnFeria = $('[data-mc-feria]');
+  const boxFeria = $('#feria');
+  let feriaCargada = false;
+  const abrirFeria = () => {
+    if (!esAgencia) return;
+    activar(btnFeria, boxFeria);
+    if (!feriaCargada) { feriaCargada = true; initMiFeria($('[data-feria-box]')); }
+  };
   const btnAlertas = $('[data-mc-alertas]');
   const boxAlertas = $('#alertas');
   let alertasCargado = false;
@@ -276,6 +285,9 @@ export function initMiCuenta() {
     if (cuenta.tipo === 'agencia' && location.hash === '#perfil') abrirPerfil();
 
     btnColegas.hidden = !esAgencia;
+    btnFeria.hidden = !esAgencia;
+    if (!esAgencia) boxFeria.hidden = true;
+    if (esAgencia && location.hash === '#feria') abrirFeria();
     pintarTelegram();
     if (!esAgencia) boxColegas.hidden = true;
     if (esAgencia && location.hash === '#colegas') abrirColegas();
@@ -304,11 +316,13 @@ export function initMiCuenta() {
   btnPerfil.addEventListener('click', abrirPerfil);
   btnColegas.addEventListener('click', abrirColegas);
   btnAlertas.addEventListener('click', abrirAlertas);
+  btnFeria.addEventListener('click', abrirFeria);
   btnClientes.addEventListener('click', abrirClientes);
   // La campanita lleva a #colegas: si ya estamos en Mi cuenta, abrir la sección
   window.addEventListener('hashchange', () => {
     if (location.hash === '#colegas' && esAgencia) abrirColegas();
     if (location.hash === '#alertas') abrirAlertas();
+    if (location.hash === '#feria' && esAgencia) abrirFeria();
   });
   btnPublicar.addEventListener('click', (e) => { if (!esAgencia && !esParticular) e.preventDefault(); });
   window.addEventListener('rda:cuenta', (e) => pintar(e.detail));

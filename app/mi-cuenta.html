@@ -59,6 +59,10 @@
             <span class="mc-action-icon"><i data-icon="handshake" class="h-6 w-6"></i></span>
             <span class="text-left"><span class="block text-[19px] font-bold">Mis clientes</span><span class="mt-1 block text-[14px] text-ink/70" data-mc-clientes-sub>Tu código, tu link y los clientes que trajiste.</span></span>
           </button>
+          <button type="button" class="mc-action" hidden aria-controls="feria" aria-expanded="false" data-mc-feria>
+            <span class="mc-action-icon"><i data-icon="zap" class="h-6 w-6"></i></span>
+            <span class="text-left"><span class="block text-[19px] font-bold">Feria</span><span class="mt-1 block text-[14px] text-ink/70">Elegí qué autos entran y ponéles precio relámpago.</span></span>
+          </button>
           <button type="button" class="mc-action" aria-controls="alertas" aria-expanded="false" data-mc-alertas>
             <span class="mc-action-icon"><i data-icon="bell" class="h-6 w-6"></i></span>
             <span class="text-left"><span class="block text-[19px] font-bold">Mis alertas</span><span class="mt-1 block text-[14px] text-ink/70">Te avisamos cuando entra el auto que buscás.</span></span>
@@ -83,6 +87,10 @@
             <a href="./publicar.html" class="btn-outline h-[46px]"><i data-icon="plus" class="h-4 w-4"></i> Cargar o actualizar</a>
           </div>
           <div data-mis-autos aria-live="polite"></div>
+        </section>
+        <section id="feria" class="mt-10 scroll-mt-28" aria-labelledby="feria-title" hidden>
+          <h2 id="feria-title" class="section-title mb-6">Feria</h2>
+          <div data-feria-box aria-live="polite"></div>
         </section>
         <section id="buscados" class="mt-10 scroll-mt-28" aria-label="+Buscados" hidden></section>
         <section id="clientes" class="mt-10 scroll-mt-28" aria-labelledby="clientes-title" hidden>

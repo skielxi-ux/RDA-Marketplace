@@ -1,4 +1,5 @@
-// Aviso de feria online en la home: lee la feria vigente (función pública de solo lectura) y muestra la cuenta regresiva.
+// Aviso de feria online (home y página de la feria): lee la feria vigente (función pública de solo lectura) y muestra la cuenta regresiva.
+// Devuelve la feria si hay una próxima o en curso, o null.
 import { $, $$ } from './dom.js';
 import { SITE } from '../data/site.js';
 
@@ -7,7 +8,7 @@ const fecha = (d) => new Date(d).toLocaleString('es-AR', { weekday: 'short', day
 
 export async function initFeria() {
   const box = $('#feria-banner');
-  if (!box) return;
+  if (!box) return null;
   let f;
   try {
     const res = await fetch(`${SITE.supabase.url}/rest/v1/rpc/mkt_feria_actual`, {
@@ -15,14 +16,14 @@ export async function initFeria() {
       headers: { apikey: SITE.supabase.publishableKey, 'Content-Type': 'application/json' },
       body: '{}',
     });
-    if (!res.ok) return;
+    if (!res.ok) return null;
     [f] = await res.json();
-  } catch { return; }
-  if (!f?.nombre) return;
+  } catch { return null; }
+  if (!f?.nombre) return null;
 
   const empieza = new Date(f.empieza).getTime();
   const termina = new Date(f.termina).getTime();
-  if (Number.isNaN(empieza) || Number.isNaN(termina)) return;
+  if (Number.isNaN(empieza) || Number.isNaN(termina)) return null;
 
   // Todo con textContent: los datos vienen de la base, nunca se insertan como HTML.
   $('[data-feria-nombre]', box).textContent = f.nombre;
@@ -47,4 +48,5 @@ export async function initFeria() {
   const timer = setInterval(tick, 1000);
   tick();
   box.hidden = false;
+  return f;
 }

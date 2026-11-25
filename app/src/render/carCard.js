@@ -1,6 +1,7 @@
 // Tarjeta de auto (una sola para todo el sitio: destacados de la home y listado).
 import { esc, formatPrice, formatKm } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
+import { textoOferta } from '../lib/oferta.js';
 import { srcset, sellerOf, carShot, photoCount, SELLER_TYPES, carTitle, carUrl } from '../data/catalog.js';
 
 export { carTitle };
@@ -11,6 +12,7 @@ const BADGES = {
   'mejor-precio': { text: 'Mejor precio', icon: 'tag', cls: 'text-ok' },
   oferta: { text: 'Oferta', icon: 'tag', cls: 'text-[#E5484D]' },
   usado: { text: 'Usado', icon: 'car', cls: 'text-ink/70' },
+  feria: { text: 'Feria', icon: 'zap', cls: 'text-[#E5484D]' },
 };
 
 const initials = (name) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
@@ -53,12 +55,13 @@ export function renderCarCard(c, { lazy = true, slide = false } = {}) {
         width="900" height="675" alt="${esc(title)}" ${lazy ? 'loading="lazy"' : ''} decoding="async" />
       <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] bg-gradient-to-t from-ink/85 via-ink/40 to-transparent"></div>
       ${badge ? `<span class="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[14px] font-medium shadow-sm">${icon(badge.icon, `h-4 w-4 ${badge.cls}`)}${esc(badge.text)}</span>` : ''}
+      ${c.feria ? `<span class="feria-timer absolute left-4 top-[58px]" data-oferta-ini="${esc(c.feria.ini)}" data-oferta-fin="${esc(c.feria.fin)}">${icon('clock', 'h-3.5 w-3.5')} <span data-oferta-txt>${esc(textoOferta(c.feria))}</span></span>` : ''}
       <button type="button" class="icon-btn fav-btn absolute right-4 top-4 grid h-10 w-10 place-items-center rounded-full bg-white text-ink" aria-label="Guardar ${esc(title)} en favoritos" aria-pressed="false">
         ${icon('heart', 'h-5 w-5')}
       </button>
       <div class="pointer-events-none absolute inset-x-4 bottom-4 text-white">
         <p class="flex items-center gap-2 text-[14px] font-medium"><span>${esc(c.year)}</span><span class="h-3.5 w-px bg-white/50" aria-hidden="true"></span><span>${esc(formatKm(c.km))}</span></p>
-        ${c.priceBefore ? `<p class="mt-1 text-[14px] text-white/75"><span class="sr-only">Antes: </span><s>${esc(formatPrice(c.priceBefore, c.currency))}</s></p>` : ''}
+        ${c.priceBefore ? `<p class="mt-1 text-[14px] text-white/75"><span class="sr-only">${c.feria ? 'Precio normal' : 'Antes'}: </span><s>${esc(formatPrice(c.priceBefore, c.currency))}</s></p>` : ''}
         <p class="mt-0.5 text-[24px] font-bold leading-tight">${esc(formatPrice(c.price, c.currency))}</p>
       </div>
       <div class="gallery-dots" aria-hidden="true">${shots.map((_, i) => `<span class="${i === 0 ? 'is-on' : ''}"></span>`).join('')}</div>

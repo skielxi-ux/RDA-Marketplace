@@ -7,11 +7,11 @@ import {
   Store, FileSpreadsheet, Images, Bot, ArrowRight,
   CircleCheck, Tag, Heart, MapPin, SlidersHorizontal, ArrowUpDown, RotateCcw,
   Car, DoorOpen, Settings2, Palette, Share2,
-  Eye, EyeOff, LogOut, Lock, Smartphone, LoaderCircle, ArrowLeft, CircleAlert, Bell, Handshake, Mail, Clock,
+  Eye, EyeOff, LogOut, Lock, Smartphone, LoaderCircle, ArrowLeft, CircleAlert, Bell, Handshake, Mail, Clock, Zap,
 } from 'lucide';
 
 const NODES = {
-  bell: Bell, handshake: Handshake, mail: Mail, clock: Clock,
+  bell: Bell, handshake: Handshake, mail: Mail, clock: Clock, zap: Zap,
   menu: Menu, phone: Phone, user: User, search: Search, 'chevron-down': ChevronDown,
   'chevron-left': ChevronLeft, 'chevron-right': ChevronRight, 'arrow-up-right': ArrowUpRight,
   'arrow-up': ArrowUp, gauge: Gauge, fuel: Fuel, cog: Cog, calendar: Calendar, bookmark: Bookmark,

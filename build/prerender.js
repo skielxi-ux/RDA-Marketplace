@@ -99,6 +99,9 @@ const PAGES = {
     indice: renderIndiceLegal(PRIVACIDAD),
     legal: renderLegal(PRIVACIDAD),
   }),
+  'feria.html': () => ({
+    head: renderHeadTags({ title: 'Feria online | Red de Autos', description: 'Feria online de Red de Autos: autos 0km y usados de agencias con precio relámpago por tiempo limitado. Mirá cuánto falta y aprovechá.', path: 'feria.html' }),
+  }),
   'agencias.html': () => ({
     head: renderHeadTags({
       title: 'Agencias y concesionarios | Red de Autos',

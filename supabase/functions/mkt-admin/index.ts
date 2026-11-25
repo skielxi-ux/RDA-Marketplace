@@ -1,7 +1,7 @@
 // RDA Marketplace · Edge Function: mkt-admin (panel del administrador del marketplace)
 // Sesión: la misma del admin de la web actual (login en la función "admin" con celular + contraseña).
 // Acciones: resumen, cuentas, cuenta (aprobar, rechazar, suspender, reactivar, reset_pin, prueba, aprobar_cambios, rechazar_cambios), borrar_pruebas,
-//           ferias, crear_feria, cancelar_feria, invitar_feria (WhatsApp a las agencias aprobadas),
+//           ferias (con los autos que sumó cada agencia), crear_feria, cancelar_feria, quitar_auto_feria, invitar_feria (WhatsApp a las agencias aprobadas),
 //           (aprobar / rechazar también vale para vendedores independientes)
 //           autos, auto_estado (aprobar autos de particulares en revisión, pausar / volver a publicar).
 // Avisos por Telegram a las agencias: aprobación, cambios de perfil aprobados/rechazados y ferias nuevas.
@@ -103,6 +103,7 @@ Deno.serve(async (req) => {
       case "crear_feria": return json(await crearFeria(b));
       case "cancelar_feria": return json(await cancelarFeria(b));
       case "invitar_feria": return json(await invitarFeria(b));
+      case "quitar_auto_feria": return json(await quitarAutoFeria(b));
       case "autos": return json(await autos(b));
       case "auto_estado": return json(await autoEstado(b));
     }
@@ -242,7 +243,19 @@ async function ferias() {
   const { data, error } = await db.from("mkt_ferias").select("*").order("empieza", { ascending: false }).limit(50);
   if (error) throw error;
   const { count } = await db.from("mkt_cuentas").select("id", { count: "exact", head: true }).eq("tipo", "agencia").eq("estado", "aprobada").eq("es_prueba", false);
-  return { ferias: data ?? [], agencias_aprobadas: count ?? 0 };
+  const ids = (data ?? []).map((f: A) => f.id as string);
+  const { data: autos, error: e2 } = ids.length
+    ? await db.from("mkt_feria_autos").select("feria_id, auto_id, precio_feria, empieza, termina, mkt_autos(marca, modelo, version, anio, codigo, precio, moneda, estado, mkt_cuentas(nombre))").in("feria_id", ids).order("empieza")
+    : { data: [], error: null };
+  if (e2) throw e2;
+  return { ferias: data ?? [], agencias_aprobadas: count ?? 0, autos: autos ?? [] };
+}
+
+async function quitarAutoFeria(b: A) {
+  const { error, count } = await db.from("mkt_feria_autos").delete({ count: "exact" }).eq("feria_id", String(b.feria ?? "")).eq("auto_id", String(b.auto ?? ""));
+  if (error) throw error;
+  if (!count) throw new Error("Ese auto ya no estaba en la feria.");
+  return { ok: true };
 }
 
 async function crearFeria(b: A) {
@@ -263,7 +276,7 @@ async function crearFeria(b: A) {
   // Aviso por Telegram a las agencias aprobadas que lo conectaron
   const { data: ags } = await db.from("mkt_cuentas").select("telefono").eq("tipo", "agencia").eq("estado", "aprobada").eq("es_prueba", false);
   for (const a of ags ?? []) {
-    await avisarTg(a.telefono, `🎉 <b>Nueva feria: ${h(nombre)}</b>\nDel ${fechaAr(data.empieza)} al ${fechaAr(data.termina)} h.${descripcion ? `\n${h(descripcion)}` : ""}\nPreparate: el descuento lo elegís vos.`);
+    await avisarTg(a.telefono, `🎉 <b>Nueva feria: ${h(nombre)}</b>\nDel ${fechaAr(data.empieza)} al ${fechaAr(data.termina)} h.${descripcion ? `\n${h(descripcion)}` : ""}\nElegí qué autos entran y ponele a cada uno su precio relámpago desde Mi cuenta → Feria: ${SITIO}mi-cuenta.html#feria`);
   }
   return { ok: true, feria: data };
 }
@@ -286,7 +299,7 @@ async function invitarFeria(b: A) {
   for (const a of lista) {
     const texto = `🎉 Hola ${a.nombre}! Te invitamos a la *${f.nombre}* de Red de Autos, del ${fechaAr(f.empieza)} al ${fechaAr(f.termina)} h.` +
       (f.descripcion ? `\n${f.descripcion}` : "") +
-      `\nSumá tus autos con precio de feria (el descuento lo elegís vos). Entrá: ${SITIO}`;
+      `\nElegí qué autos de tu stock entran y ponele a cada uno su precio relámpago y cuánto dura, desde Mi cuenta → Feria: ${SITIO}mi-cuenta.html#feria`;
     if (await wa(a.telefono, texto).catch(() => false)) ok++;
   }
   const { data, error } = await db.from("mkt_ferias").update({ invitacion_enviada_at: new Date().toISOString(), invitados: lista.length, invitados_ok: ok })

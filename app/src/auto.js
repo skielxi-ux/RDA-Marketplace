@@ -9,7 +9,8 @@ import { initFicha } from './ui/ficha.js';
 import { initFichaVendedor } from './ui/fichaVendedor.js';
 import { $ } from './ui/dom.js';
 import { cars, carTitle } from './data/catalog.js';
-import { cargarAuto, cargarAutosReales } from './data/autosReales.js';
+import { cargarAuto, cargarAutosReales, cargarOfertaFeria } from './data/autosReales.js';
+import { relojesOferta } from './lib/oferta.js';
 import { renderFicha, renderFichaJsonLd } from './render/ficha.js';
 import { formatPrice, formatKm } from './lib/html.js';
 
@@ -23,7 +24,10 @@ initAuth();
   const main = $('#contenido');
   const id = new URLSearchParams(location.search).get('id');
   let c = null;
-  try { c = await cargarAuto(id); } catch { c = null; }
+  let oferta = null;
+  try { [c, oferta] = await Promise.all([cargarAuto(id), cargarOfertaFeria(id)]); } catch { c = null; }
+  // En feria: se muestra el precio relámpago y el normal tachado, con lo que falta para que termine
+  if (c && oferta && oferta.precio < c.price) Object.assign(c, { priceBefore: c.price, price: oferta.precio, feria: { ini: 0, fin: oferta.fin } });
   $('[data-ficha-cargando]').remove();
   main.removeAttribute('aria-busy');
   if (!c) {
@@ -46,4 +50,5 @@ initAuth();
   document.head.append(script);
   initFicha();
   initFichaVendedor(c);
+  if (c.feria) relojesOferta(main, () => location.reload());
 })();

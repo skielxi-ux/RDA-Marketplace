@@ -82,6 +82,29 @@ export async function cargarAgencia(id) {
   };
 }
 
+/** Autos de la feria vigente con su precio relámpago (precio = precio de feria, priceBefore = precio normal). */
+export async function cargarFeria() {
+  const [feria, filas] = await Promise.all([rpc('mkt_feria_actual'), rpc('mkt_feria_autos')]);
+  const f = Array.isArray(feria) && feria[0]?.nombre ? feria[0] : null;
+  const autos = (Array.isArray(filas) ? filas : []).map((r) => ({
+    ...fromDb(r),
+    price: Number(r.precio_feria),
+    priceBefore: Number(r.precio),
+    badge: 'feria',
+    feria: { ini: r.oferta_empieza, fin: r.oferta_termina },
+  })).filter((c) => c.photoUrls.length && c.price < c.priceBefore);
+  return { feria: f, autos };
+}
+
+/** Precio de feria vigente de un auto (null si no está en feria ahora). */
+export async function cargarOfertaFeria(id) {
+  if (!esIdReal(id)) return null;
+  try {
+    const [o] = await rpc('mkt_feria_oferta', { p_id: id });
+    return o?.precio_feria ? { precio: Number(o.precio_feria), fin: o.termina, nombre: o.feria } : null;
+  } catch { return null; }
+}
+
 /** Agencias aprobadas para el directorio (sin comisiones). */
 export async function cargarAgencias() {
   const filas = await rpc('mkt_agencias_publicas', {});

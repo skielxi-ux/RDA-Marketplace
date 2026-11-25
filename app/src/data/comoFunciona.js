@@ -45,7 +45,7 @@ export const GUIAS = [
       { icon: 'car', titulo: 'Gestioná tus autos', texto: 'Desde Mi cuenta editás, pausás o eliminás tus autos y ves sus estadísticas: vistas de cada ficha y clics en WhatsApp y llamadas. Y en +Buscados ves los 10 autos más buscados del mes y del año.' },
       { icon: 'handshake', titulo: 'Red de colegas (B2B)', texto: '¿Un cliente busca un auto que no tenés? Publicá el pedido con modelo, año, km, color, caja y combustible. Les llega a todas las agencias de la red y, si alguna lo tiene, toca "Lo tengo" y se contactan directo por WhatsApp.' },
       { icon: 'bot', titulo: 'Todo desde Telegram', texto: 'Conectá nuestro bot y recibí al instante los pedidos de colegas. Desde el chat cambiás precios, marcás autos vendidos, los pausás, pedís autos a la red y recibís los avisos de tu cuenta.' },
-      { icon: 'sparkle', titulo: 'Ferias online', texto: 'Organizamos ferias con fecha y hora para mover stock. Te avisamos con tiempo y el descuento lo elegís vos.' },
+      { icon: 'sparkle', titulo: 'Ferias online', texto: 'Organizamos ferias con fecha y hora para mover stock. Desde Mi cuenta → Feria elegís qué autos entran y les ponés un precio relámpago por el tiempo que quieras. Al terminar, vuelven solos a su precio.' },
     ],
     consejo: { titulo: 'Sin costo', texto: 'Publicar, usar la Red de colegas y el bot de Telegram es gratis para todas las agencias aprobadas.' },
     cta: { label: 'Sumá tu agencia', href: './#agencias', icon: 'arrow-right' },
