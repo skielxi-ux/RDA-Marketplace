@@ -115,6 +115,25 @@
   .field-label { @apply mb-1 block text-[15px] font-medium; }
   .field-select { @apply w-full cursor-pointer appearance-none truncate bg-transparent pr-6 text-[14px] text-ink/80 outline-none; }
 
+  /* Lista desplegable propia (ui/selectPro.js): mismo estilo que el resto del sitio */
+  .cs-panel {
+    @apply fixed z-[70] max-h-[320px] overflow-y-auto overscroll-contain rounded-2xl border border-line bg-white p-1.5 text-[15px] text-ink
+           shadow-[0_20px_50px_-12px_rgba(5,11,32,0.25)] outline-none;
+    animation: cs-in .16s ease-out;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--color-brand) 45%, transparent) transparent;
+  }
+  .cs-panel::-webkit-scrollbar { width: 8px; }
+  .cs-panel::-webkit-scrollbar-track { background: transparent; margin: 8px; }
+  .cs-panel::-webkit-scrollbar-thumb { border-radius: 999px; border: 2px solid #fff; background: color-mix(in srgb, var(--color-brand) 45%, transparent); }
+  .cs-panel::-webkit-scrollbar-thumb:hover { background: var(--color-brand); }
+  .cs-opt { @apply cursor-pointer truncate rounded-xl px-3.5 py-2.5 transition-colors duration-150; }
+  .cs-opt.is-active { @apply bg-[#EEF1FB] text-brand; }
+  .cs-opt[aria-selected="true"] { @apply font-bold text-brand; }
+  .cs-opt.is-disabled { @apply cursor-not-allowed opacity-40; }
+  @keyframes cs-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .cs-panel { animation: none; } }
+
   /* Bloque "Para particulares" */
   .step-row {
     @apply flex items-start gap-4 border-b border-line px-5 py-6 transition-colors duration-300 last:border-b-0 hover:bg-soft sm:gap-5 sm:px-8 sm:py-8;
