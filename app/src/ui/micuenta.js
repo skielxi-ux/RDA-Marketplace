@@ -9,6 +9,7 @@ import { carUrl } from '../data/catalog.js';
 import { initPerfil } from './perfil.js';
 import { initColegas } from './colegas.js';
 import { editarAuto } from './editarAuto.js';
+import { initMisAlertas } from './misAlertas.js';
 
 export function initMiCuenta() {
   const guest = $('[data-mc-guest]');
@@ -52,8 +53,39 @@ export function initMiCuenta() {
 
   // ---------- Mis autos ----------
   let misAutos = [];
+  /** Resumen de los últimos 30 días + gráfico de vistas por día. */
+  const pintarStats = (st) => {
+    if (!st) return '';
+    const t = st.autos.reduce((acc, x) => ({ v: acc.v + x.vistas_30, w: acc.w + x.whatsapp_30, l: acc.l + x.llamadas_30 }), { v: 0, w: 0, l: 0 });
+    const contactos = t.w + t.l;
+    const tasa = t.v ? Math.round((contactos / t.v) * 1000) / 10 : 0;
+    const max = Math.max(1, ...st.dias.map((d) => d.vistas));
+    const fmtDia = (d) => new Date(`${d}T12:00:00`).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' });
+    const dato = (n, txt, ic) => `<div class="rounded-2xl bg-white p-4 sm:p-5"><p class="flex items-center gap-2 text-[13px] font-medium text-ink/60">${icon(ic, 'h-4 w-4')} ${txt}</p><p class="mt-1 text-[28px] font-bold leading-none">${esc(n.toLocaleString('es-AR'))}</p></div>`;
+    return `
+      <div class="mb-6 rounded-[24px] bg-soft p-4 sm:p-6">
+        <div class="flex flex-wrap items-end justify-between gap-2">
+          <h3 class="text-[18px] font-bold">Estadísticas · últimos 30 días</h3>
+          <p class="text-[13px] text-ink/60">Una vista o contacto por persona, auto y día.</p>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+          ${dato(t.v, 'Vistas de fichas', 'eye')}${dato(t.w, 'Clics en WhatsApp', 'message-circle')}${dato(t.l, 'Llamadas', 'phone')}
+          <div class="rounded-2xl bg-white p-4 sm:p-5"><p class="text-[13px] font-medium text-ink/60">Contactos por cada 100 vistas</p><p class="mt-1 text-[28px] font-bold leading-none">${esc(String(tasa).replace('.', ','))}</p></div>
+        </div>
+        <div class="mt-5 rounded-2xl bg-white p-4 sm:p-5">
+          <p class="text-[13px] font-medium text-ink/60">Vistas por día</p>
+          <div class="mt-3 flex h-[110px] items-end gap-[3px]" role="img" aria-label="Vistas por día de los últimos 30 días: ${esc(st.dias.map((d) => `${fmtDia(d.dia)} ${d.vistas}`).join(', '))}">
+            ${st.dias.map((d) => `<span class="mc-bar group relative flex-1 rounded-t-[4px] ${d.vistas ? 'bg-brand' : 'bg-line'}" data-h="${Math.max(3, Math.round((d.vistas / max) * 100))}"><span class="pointer-events-none absolute bottom-full left-1/2 z-10 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-ink px-2 py-1 text-[12px] text-white group-hover:block">${esc(fmtDia(d.dia))}: ${esc(d.vistas)} vistas · ${esc(d.contactos)} contactos</span></span>`).join('')}
+          </div>
+          <div class="mt-2 flex justify-between text-[12px] text-ink/50"><span>${esc(fmtDia(st.dias[0]?.dia ?? ''))}</span><span>Hoy</span></div>
+        </div>
+      </div>`;
+  };
+
+  let stats = null;
   const pintarMisAutos = (autos) => {
     misAutos = autos;
+    const porAuto = new Map((stats?.autos ?? []).map((x) => [x.auto_id, x]));
     if (!autos.length) {
       listaMis.innerHTML = `
         <div class="rounded-[20px] border border-dashed border-line p-8 text-center">
@@ -65,7 +97,7 @@ export function initMiCuenta() {
     }
     const pub = autos.filter((a) => a.estado === 'publicado').length;
     const vend = autos.filter((a) => a.estado === 'vendido').length;
-    listaMis.innerHTML = `
+    listaMis.innerHTML = `${pintarStats(stats)}
       <p class="mb-4 text-[15px] text-ink/70">${autos.length} ${autos.length === 1 ? 'auto' : 'autos'} · ${pub} ${pub === 1 ? 'publicado' : 'publicados'}${vend ? ` · ${vend} ${vend === 1 ? 'vendido' : 'vendidos'}` : ''}</p>
       <ul class="grid gap-3">
         ${autos.map((a) => {
@@ -85,6 +117,7 @@ export function initMiCuenta() {
                 </p>
                 <p class="mt-1 truncate text-[16px] font-bold">${esc(titulo)}</p>
                 <p class="text-[15px]">${esc(formatPrice(Number(a.precio), a.moneda))}</p>
+                ${(() => { const x = porAuto.get(a.id); return x ? `<p class="mt-1 flex flex-wrap gap-x-3 text-[13px] text-ink/60" title="Últimos 30 días (total histórico: ${esc(x.vistas_total)} vistas, ${esc(x.whatsapp_total + x.llamadas_total)} contactos)"><span class="inline-flex items-center gap-1">${icon('eye', 'h-3.5 w-3.5')} ${esc(x.vistas_30)} vistas</span><span class="inline-flex items-center gap-1">${icon('message-circle', 'h-3.5 w-3.5')} ${esc(x.whatsapp_30)} WhatsApp</span>${x.llamadas_30 ? `<span class="inline-flex items-center gap-1">${icon('phone', 'h-3.5 w-3.5')} ${esc(x.llamadas_30)} llamadas</span>` : ''}</p>` : ''; })()}
               </div>
             </div>
             <div class="flex shrink-0 flex-wrap gap-2">
@@ -101,8 +134,11 @@ export function initMiCuenta() {
   const cargarMisAutos = async () => {
     listaMis.innerHTML = `<p class="flex items-center gap-2 text-ink/60">${icon('loader-circle', 'h-4 w-4 animate-spin')} Cargando tus autos…</p>`;
     try {
-      const { autos } = await autosApi('mios');
+      const [{ autos }, st] = await Promise.all([autosApi('mios'), autosApi('estadisticas').catch(() => null)]);
+      stats = st;
       pintarMisAutos(autos ?? []);
+      // Alto de cada barra por CSSOM (la CSP no deja estilos en línea)
+      listaMis.querySelectorAll('.mc-bar').forEach((b) => { b.style.height = `${b.dataset.h}%`; });
     } catch (e) {
       listaMis.innerHTML = `<p class="rounded-2xl bg-[#FDECEC] px-5 py-4 text-[15px] text-[#B42318]">${esc(e.message)}</p>`;
     }
@@ -150,6 +186,13 @@ export function initMiCuenta() {
   const abrirColegas = () => {
     activar(btnColegas, boxColegas);
     if (!colegasCargado) { colegasCargado = true; initColegas($('[data-colegas-box]')); }
+  };
+  const btnAlertas = $('[data-mc-alertas]');
+  const boxAlertas = $('#alertas');
+  let alertasCargado = false;
+  const abrirAlertas = () => {
+    activar(btnAlertas, boxAlertas);
+    if (!alertasCargado) { alertasCargado = true; initMisAlertas($('[data-alertas-box]')); }
   };
   let perfilCargado = false;
   const abrirPerfil = () => {
@@ -229,14 +272,19 @@ export function initMiCuenta() {
 
     if (!pendiente && location.hash === '#buscados') abrirRanking();
     if (esAgencia && location.hash === '#mis-autos') abrirMisAutos();
+    if (location.hash === '#alertas') abrirAlertas();
   };
 
   btnBuscados.addEventListener('click', abrirRanking);
   btnMis.addEventListener('click', abrirMisAutos);
   btnPerfil.addEventListener('click', abrirPerfil);
   btnColegas.addEventListener('click', abrirColegas);
+  btnAlertas.addEventListener('click', abrirAlertas);
   // La campanita lleva a #colegas: si ya estamos en Mi cuenta, abrir la sección
-  window.addEventListener('hashchange', () => { if (location.hash === '#colegas' && esAgencia) abrirColegas(); });
+  window.addEventListener('hashchange', () => {
+    if (location.hash === '#colegas' && esAgencia) abrirColegas();
+    if (location.hash === '#alertas') abrirAlertas();
+  });
   btnPublicar.addEventListener('click', (e) => { if (!esAgencia && !esParticular) e.preventDefault(); });
   window.addEventListener('rda:cuenta', (e) => pintar(e.detail));
   pintar(cuentaGuardada());

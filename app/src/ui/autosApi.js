@@ -1,10 +1,11 @@
-// Llamadas a las edge functions de la cuenta (mkt-autos: autos de la agencia · mkt-perfil: perfil y logo · mkt-colegas: Red de colegas).
+// Llamadas a las edge functions de la cuenta (mkt-autos: autos de la agencia · mkt-perfil: perfil y logo · mkt-colegas: Red de colegas · mkt-alertas: alertas de compradores).
 import { SITE } from '../data/site.js';
 import { supa } from './auth.js';
 
 export const autosApi = (accion, extra = {}) => cuentaApi('mkt-autos', accion, extra);
 export const perfilApi = (accion, extra = {}) => cuentaApi('mkt-perfil', accion, extra);
 export const colegasApi = (accion, extra = {}) => cuentaApi('mkt-colegas', accion, extra);
+export const alertasApi = (accion, extra = {}) => cuentaApi('mkt-alertas', accion, extra);
 
 /** Llama a una edge function del marketplace con la sesión de la cuenta. */
 async function cuentaApi(fn, accion, extra) {

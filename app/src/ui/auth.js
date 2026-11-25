@@ -148,6 +148,9 @@ export function initAuth() {
     $$('[data-auth-open]').forEach((b) => b.setAttribute('aria-expanded', String(show)));
   };
 
+  // Otras pantallas pueden pedir que se abra el ingreso (ej.: crear una alerta sin estar logueado)
+  window.addEventListener('rda:abrir-ingreso', () => { if (!cuenta) open('login'); });
+
   $$('[data-auth-open]').forEach((b) => b.addEventListener('click', (e) => {
     e.preventDefault();
     if (cuenta && userMenu) {

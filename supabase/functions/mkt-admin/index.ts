@@ -311,5 +311,15 @@ async function autoEstado(b: A) {
   const { error } = await db.from("mkt_autos")
     .update({ estado, pausado_por_admin: estado === "pausado", updated_at: new Date().toISOString() }).eq("id", b.id);
   if (error) throw error;
+  // Al publicar (por ejemplo, aprobar el auto de un particular) se avisa a las alertas; las ya avisadas no se repiten
+  if (estado === "publicado") {
+    const p = fetch(`${env("SUPABASE_URL")}/functions/v1/mkt-alertas`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${env("SUPABASE_SERVICE_ROLE_KEY")}` },
+      body: JSON.stringify({ accion: "disparar", autos: [b.id] }),
+    }).catch((e) => console.error("alertas", e));
+    // deno-lint-ignore no-explicit-any
+    (globalThis as any).EdgeRuntime?.waitUntil?.(p);
+  }
   return { ok: true };
 }

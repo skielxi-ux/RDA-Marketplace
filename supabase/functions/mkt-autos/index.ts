@@ -1,7 +1,7 @@
 // RDA Marketplace · Edge Function: mkt-autos
 // Carga masiva de autos de agencias aprobadas (plantilla Excel + carpeta de fotos)
 // y carga de a uno para particulares (hasta 2 autos activos; cada carga o cambio queda "en revisión" hasta que la aprueba el admin).
-// Con sesión de agencia aprobada o particular activo: mios · urls_fotos · publicar · estado
+// Con sesión de agencia aprobada o particular activo: mios · urls_fotos · publicar · estado · borrar · estadisticas
 // Las fotos se suben directo a Storage (bucket mkt-fotos) con URLs firmadas que da esta función,
 // siempre dentro de la carpeta de la cuenta. Datos en public.mkt_autos (sin acceso público directo).
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -23,6 +23,18 @@ const cors = (origin: string | null) => ({
 });
 
 type A = Record<string, unknown>;
+
+/** Avisa a las alertas de compradores que entraron autos nuevos (no frena la respuesta si falla). */
+function avisarAlertas(ids: string[]) {
+  if (!ids.length) return;
+  const p = fetch(`${env("SUPABASE_URL")}/functions/v1/mkt-alertas`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Authorization: `Bearer ${env("SUPABASE_SERVICE_ROLE_KEY")}` },
+    body: JSON.stringify({ accion: "disparar", autos: ids }),
+  }).catch((e) => console.error("alertas", e));
+  // deno-lint-ignore no-explicit-any
+  (globalThis as any).EdgeRuntime?.waitUntil?.(p);
+}
 
 const texto = (v: unknown, max: number) => String(v ?? "").replace(/[\u0000-\u001f<>]/g, "").replace(/\s+/g, " ").trim().slice(0, max);
 const CODIGO = /^[A-Za-z0-9_-]{1,30}$/;
@@ -159,6 +171,7 @@ Deno.serve(async (req) => {
       }
 
       const viejas: string[] = [];
+      const idsNuevos: string[] = [];
       let nuevos = 0, actualizados = 0;
       for (const { auto, fotos } of limpios) {
         const p = prev.get(String(auto.codigo)) as A | undefined;
@@ -173,12 +186,14 @@ Deno.serve(async (req) => {
           if (error) throw error;
           actualizados++;
         } else {
-          const { error } = await db.from("mkt_autos").insert({ ...auto, fotos, cuenta_id: cuenta.id, ...(esParticular ? { estado: "revision", condicion: "usado" } : {}) });
+          const { data: ins, error } = await db.from("mkt_autos").insert({ ...auto, fotos, cuenta_id: cuenta.id, ...(esParticular ? { estado: "revision", condicion: "usado" } : {}) }).select("id").single();
           if (error) throw error;
+          if (!esParticular && ins?.id) idsNuevos.push(String(ins.id));
           nuevos++;
         }
       }
       if (viejas.length) await db.storage.from(BUCKET).remove(viejas);
+      avisarAlertas(idsNuevos); // los de particulares se avisan cuando el admin los aprueba
       return json({ ok: true, nuevos, actualizados, revision: esParticular });
     }
 
@@ -194,6 +209,16 @@ Deno.serve(async (req) => {
       const { error } = await db.from("mkt_autos").update({ estado, vendido_at: estado === "vendido" ? new Date().toISOString() : null, updated_at: new Date().toISOString() }).eq("id", a.id);
       if (error) throw error;
       return json({ ok: true });
+    }
+
+    // ---- Estadísticas: vistas de ficha y contactos por auto (últimos 30 días y total) + vistas por día ----
+    if (b.accion === "estadisticas") {
+      const [{ data: porAuto, error: e1 }, { data: dias, error: e2 }] = await Promise.all([
+        db.rpc("mkt_estadisticas_cuenta", { p_cuenta: cuenta.id }),
+        db.rpc("mkt_estadisticas_dias", { p_cuenta: cuenta.id }),
+      ]);
+      if (e1 || e2) throw e1 || e2;
+      return json({ autos: porAuto ?? [], dias: dias ?? [] });
     }
 
     // ---- Borrar un auto propio (con sus fotos) ----

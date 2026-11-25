@@ -55,6 +55,10 @@
             <span class="mc-action-icon"><i data-icon="handshake" class="h-6 w-6"></i></span>
             <span class="text-left"><span class="block text-[19px] font-bold">Red de colegas</span><span class="mt-1 block text-[14px] text-ink/70">Pedí a otras agencias el auto que busca tu cliente.</span></span>
           </button>
+          <button type="button" class="mc-action" aria-controls="alertas" aria-expanded="false" data-mc-alertas>
+            <span class="mc-action-icon"><i data-icon="bell" class="h-6 w-6"></i></span>
+            <span class="text-left"><span class="block text-[19px] font-bold">Mis alertas</span><span class="mt-1 block text-[14px] text-ink/70">Te avisamos cuando entra el auto que buscás.</span></span>
+          </button>
           <button type="button" class="mc-action is-soon" disabled aria-controls="mis-autos" aria-expanded="false" data-mc-misautos>
             <span class="mc-action-icon"><i data-icon="car" class="h-6 w-6"></i></span>
             <span class="text-left"><span class="block text-[19px] font-bold">Mis autos</span><span class="mt-1 block text-[14px] text-ink/70" data-mc-misautos-sub>Próximamente.</span></span>
@@ -77,6 +81,13 @@
           <div data-mis-autos aria-live="polite"></div>
         </section>
         <section id="buscados" class="mt-10 scroll-mt-28" aria-label="+Buscados" hidden></section>
+        <section id="alertas" class="mt-10 scroll-mt-28" aria-labelledby="alertas-title" hidden>
+          <div class="mb-6 flex flex-wrap items-end justify-between gap-4">
+            <h2 id="alertas-title" class="section-title">Mis alertas</h2>
+            <a href="./autos.html" class="btn-outline h-[46px]"><i data-icon="plus" class="h-4 w-4"></i> Crear una alerta</a>
+          </div>
+          <div data-alertas-box aria-live="polite"></div>
+        </section>
       </div>
     </div>
   </main>

@@ -243,7 +243,7 @@ function renderSellerCard(c) {
       <a href="${esc(whatsappUrl(c))}" target="_blank" rel="noopener noreferrer" class="btn-cta w-full justify-center !pl-2.5" data-whatsapp>
         <span class="btn-cta-icon">${icon('message-circle', 'h-4 w-4')}</span> Escribir por WhatsApp
       </a>
-      ${phone ? `<a href="tel:+${esc(phone)}" class="btn-outline h-[54px] w-full justify-center">${icon('phone', 'h-4 w-4')} Llamar</a>` : ''}
+      ${phone ? `<a href="tel:+${esc(phone)}" class="btn-outline h-[54px] w-full justify-center" data-llamar>${icon('phone', 'h-4 w-4')} Llamar</a>` : ''}
     </div>
     ${isPrivate ? '' : `<a href="${c.real ? `./agencia.html?id=${encodeURIComponent(s.id)}` : `./autos.html?agencia=${encodeURIComponent(c.seller)}`}" class="link-view mt-5 w-full justify-center">Ver todo su stock ${icon('arrow-up-right', 'h-4 w-4')}</a>`}
     <p class="mt-5 rounded-xl bg-soft px-4 py-3 text-[13px] leading-[1.6] text-ink/70">Nunca hagas pagos por adelantado sin ver el auto y la documentación.</p>

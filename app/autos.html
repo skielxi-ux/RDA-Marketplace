@@ -44,7 +44,10 @@
       <section id="resultados" aria-labelledby="results-count" class="min-w-0">
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
           <h2 id="results-count" class="text-[18px] font-bold" aria-live="polite"><span data-count><!--slot:count--></span> autos</h2>
-          <div class="flex items-center gap-3">
+          <div class="flex flex-wrap items-center gap-3">
+            <button type="button" class="btn-outline h-[46px]" data-alerta-crear title="Te avisamos con una notificación cuando entre un auto con estos filtros">
+              <i data-icon="bell" class="h-4 w-4"></i> <span data-alerta-label>Avisame cuando entre</span>
+            </button>
             <button type="button" id="filters-open" class="btn-outline h-[46px] lg:hidden" aria-controls="filters" aria-expanded="false">
               <i data-icon="sliders-horizontal" class="h-4 w-4"></i> Filtros <span id="filters-badge" class="hidden h-5 min-w-5 place-items-center rounded-full bg-brand px-1.5 text-[12px] text-white"></span>
             </button>
@@ -56,6 +59,7 @@
             </div>
           </div>
         </div>
+        <div class="mb-6 hidden items-start gap-3 rounded-2xl px-5 py-4 text-[15px]" role="status" data-alerta-msg></div>
 
         <div id="car-grid" class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3"><!--slot:grid--></div>
 
