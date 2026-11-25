@@ -25,7 +25,15 @@ export function initMiCuenta() {
   let rankingCargado = false;
   let esAgencia = false;
 
+  // Un solo botón activo a la vez: al abrir una sección se cierran las demás
   const activar = (btn, box) => {
+    $$('[data-mc-panel] .mc-action[aria-controls]').forEach((b) => {
+      if (b === btn) return;
+      b.classList.remove('is-active');
+      b.setAttribute('aria-expanded', 'false');
+      const otra = document.getElementById(b.getAttribute('aria-controls'));
+      if (otra) otra.hidden = true;
+    });
     box.hidden = false;
     btn.setAttribute('aria-expanded', 'true');
     btn.classList.add('is-active');
