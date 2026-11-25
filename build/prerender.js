@@ -18,7 +18,8 @@ const renderEquipo = () => EQUIPO.map((p) => `
               alt="${esc(p.nombre)}, ${esc(p.cargo)} de Red de Autos" class="aspect-[4/5] w-full object-cover transition-transform duration-500 hover:scale-[1.03]">
           </div>
           <p class="mt-5 text-[22px] font-medium">${esc(p.nombre)}</p>
-          <p class="mt-1 text-[15px] text-ink/70">${esc(p.cargo)}</p>
+          <p class="mt-1 text-[15px] font-medium text-brand">${esc(p.cargo)}</p>
+          <p class="mt-3 text-[15px] leading-[1.75] text-ink/75">${esc(p.bio)}</p>
         </li>`).join('');
 import { renderFilters, renderSortOptions } from '../app/src/render/listing.js';
 import { cars, featuredTabs } from '../app/src/data/catalog.js';

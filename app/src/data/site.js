@@ -30,7 +30,16 @@ export const SITE = {
 
 // Equipo (página Quiénes somos). Fotos en app/public/img/equipo/{foto}-400.webp y -700.webp
 export const EQUIPO = [
-  { nombre: 'Exequiel Fernandez Montini', cargo: 'Co Founder', foto: 'exequiel' },
-  { nombre: 'Nicolas Vera Robinson', cargo: 'Co Founder', foto: 'nicolas' },
-  { nombre: 'Hernán Lorusso', cargo: 'Co Founder', foto: 'hernan' },
+  {
+    nombre: 'Exequiel Fernandez Montini', cargo: 'Co Founder', foto: 'exequiel',
+    bio: 'Licenciado en Comunicación, con posgrados en Gestión de Recursos Humanos y Marketing 360°. El mundo de los autos lo conoce desde adentro: fue Jefe de Marketing de Lineup S.A., concesionario oficial Toyota en Tucumán. En Red de Autos se ocupa de que cada auto llegue a la persona indicada y de que la marca hable como hablamos nosotros: claro y sin vueltas.',
+  },
+  {
+    nombre: 'Nicolas Vera Robinson', cargo: 'Co Founder', foto: 'nicolas',
+    bio: 'Licenciado en Comercialización y, durante más de 7 años, Gerente de Ventas de Lineup. Conoce como pocos el día a día de un concesionario: la negociación, los tiempos y lo que necesita una agencia para cerrar una venta. Esa experiencia está detrás de cada herramienta que pensamos para las agencias.',
+  },
+  {
+    nombre: 'Hernán Lorusso', cargo: 'Co Founder', foto: 'hernan',
+    bio: 'Autodidacta de pura cepa, con una larga trayectoria comercial y en procesos. Fue Gerente de Posventa de Lineup durante más de 10 años y en 2017 ganó el Círculo Kaizen, el reconocimiento a la mejora continua. Su obsesión es que todo funcione simple y bien, y se nota en cómo trabajamos.',
+  },
 ];
