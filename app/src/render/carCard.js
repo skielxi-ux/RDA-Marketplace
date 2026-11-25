@@ -10,6 +10,7 @@ const BADGES = {
   'pocos-km': { text: 'Pocos km', icon: 'gauge', cls: 'text-brand' },
   'mejor-precio': { text: 'Mejor precio', icon: 'tag', cls: 'text-ok' },
   oferta: { text: 'Oferta', icon: 'tag', cls: 'text-[#E5484D]' },
+  usado: { text: 'Usado', icon: 'car', cls: 'text-ink/70' },
 };
 
 const initials = (name) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
@@ -57,6 +58,7 @@ export function renderCarCard(c, { lazy = true, slide = false } = {}) {
       </button>
       <div class="pointer-events-none absolute inset-x-4 bottom-4 text-white">
         <p class="flex items-center gap-2 text-[14px] font-medium"><span>${esc(c.year)}</span><span class="h-3.5 w-px bg-white/50" aria-hidden="true"></span><span>${esc(formatKm(c.km))}</span></p>
+        ${c.priceBefore ? `<p class="mt-1 text-[14px] text-white/75"><span class="sr-only">Antes: </span><s>${esc(formatPrice(c.priceBefore, c.currency))}</s></p>` : ''}
         <p class="mt-0.5 text-[24px] font-bold leading-tight">${esc(formatPrice(c.price, c.currency))}</p>
       </div>
       <div class="gallery-dots" aria-hidden="true">${shots.map((_, i) => `<span class="${i === 0 ? 'is-on' : ''}"></span>`).join('')}</div>

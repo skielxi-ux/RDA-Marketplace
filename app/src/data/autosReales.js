@@ -7,6 +7,7 @@ import { fotoUrl } from '../lib/fotos.js';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const esIdReal = (id) => UUID.test(String(id ?? ''));
 const TIPOS = new Set(['oficial', 'multimarca', 'particular']);
+const ETIQUETAS = new Set(['oferta', 'mejor-precio', 'pocos-km', 'nuevo', 'usado']);
 
 export function fromDb(r) {
   const titulo = `${r.marca} ${r.modelo} ${r.version}`;
@@ -28,7 +29,9 @@ export function fromDb(r) {
       phone: /^\d{10,15}$/.test(r.vendedor_tel ?? '') ? r.vendedor_tel : '',
       logo: fotoUrl(r.vendedor_logo ?? '') || null,
     },
-    badge: r.condicion === '0km' ? 'nuevo' : null,
+    // Etiqueta calculada en el servidor (oferta, mejor precio, pocos km, 0km o usado)
+    badge: ETIQUETAS.has(r.etiqueta) ? r.etiqueta : (r.condicion === '0km' ? 'nuevo' : 'usado'),
+    priceBefore: r.etiqueta === 'oferta' && Number(r.precio_antes) > Number(r.precio) ? Number(r.precio_antes) : null,
     published: new Date(r.publicado_at).getTime() || 0,
     features: null, dims: null, reviews: [],
     coords: coordsFor(r.ciudad, r.provincia),

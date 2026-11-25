@@ -308,6 +308,7 @@ export function renderFicha(c, pool = cars) {
           <button type="button" class="btn-outline h-[42px] !px-4" data-share>${icon('share-2', 'h-4 w-4')} Compartir</button>
           <button type="button" class="btn-outline fav-btn h-[42px] !px-4" data-car-fav="${esc(c.id)}" aria-pressed="false">${icon('heart', 'h-4 w-4')} <span data-fav-label>Guardar</span></button>
         </div>
+        ${c.priceBefore ? `<p class="flex items-center gap-2 text-[15px] text-ink/60"><span class="rounded-full bg-[#FDECEC] px-2.5 py-0.5 text-[13px] font-bold text-[#E5484D]">Bajó de precio</span><s>${esc(formatPrice(c.priceBefore, c.currency))}</s></p>` : ''}
         <p class="text-[32px] font-bold leading-none md:text-[38px]">${esc(formatPrice(c.price, c.currency))}</p>
         <p class="-mt-2 text-[14px] text-ink/60">Precio en ${c.currency === 'USD' ? 'dólares' : 'pesos'}, publicado por el vendedor</p>
       </div>
