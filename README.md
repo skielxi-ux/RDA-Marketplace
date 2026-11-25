@@ -54,3 +54,9 @@ El build escribe el sitio compilado en la raíz del repo (index.html + assets/),
 - Tabla `mkt_autos` (RLS sin políticas). Lectura pública: `mkt_autos_publicos()` (sin cuentas de prueba) y `mkt_auto(id)`.
 - Los autos reales se suman a los de ejemplo en el listado, los destacados de la home y "Autos similares". Su ficha es `auto.html?id=<uuid>` (se arma en el navegador).
 - Admin → pestaña **Autos**: buscar y pausar / volver a publicar (si lo pausa el admin, la agencia no puede reactivarlo).
+
+## Perfil de la agencia
+
+- Mi cuenta → **Perfil de la agencia** (cualquier agencia no suspendida): nombre, CUIT, tipo/marca, ciudad, provincia, dirección, horario, WhatsApp de ventas, email, descripción, sitio web, Instagram y logo (recorte cuadrado en el navegador, 400 px).
+- Edge function `mkt-perfil` (`ver`, `guardar`, `url_logo`, `guardar_logo`, `quitar_logo`). Nombre, CUIT y tipo quedan en `cambios_pendientes` y avisan al admin por Telegram; el admin los aprueba o rechaza en Concesionarios (`mkt-admin`: `aprobar_cambios` / `rechazar_cambios`).
+- Página pública `agencia.html?id=<uuid>` (funciones `mkt_agencia` y `mkt_autos_agencia`). El logo se ve en las tarjetas, en la ficha y en esa página; "Ver todo su stock" lleva ahí. Las consultas por WhatsApp van al número de ventas si lo cargó.
