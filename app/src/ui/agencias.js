@@ -60,6 +60,14 @@ export async function initAgencias() {
       : '<li class="col-span-full rounded-[20px] border border-dashed border-line p-10 text-center text-ink/70">No encontramos agencias con ese filtro.</li>';
   };
   form.addEventListener('input', pintar);
+  // Botón del banner: muestra solo las que aceptan vendedores independientes, sin recargar
+  $('[data-ag-independientes]')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    form.querySelector('[value="independientes"]').checked = true;
+    pintar();
+    history.replaceState(null, '', './agencias.html?filtro=independientes#listado');
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
   form.addEventListener('submit', (e) => e.preventDefault());
   pintar();
 }
