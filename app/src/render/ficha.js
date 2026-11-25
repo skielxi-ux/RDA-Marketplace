@@ -230,7 +230,9 @@ function renderSellerCard(c) {
   return `
   <aside class="seller-card" aria-label="Vendedor">
     <div class="flex items-center gap-4">
-      <span class="grid h-16 w-16 shrink-0 place-items-center ${isPrivate ? 'rounded-full bg-[#EEF1FB] text-brand' : 'rounded-2xl bg-ink text-white'} text-[20px] font-bold" aria-hidden="true">${esc(isPrivate ? initials(s.name).slice(0, 1) : initials(s.name))}</span>
+      ${s.logo
+        ? `<img src="${esc(s.logo)}" alt="Logo de ${esc(s.name)}" width="64" height="64" class="h-16 w-16 shrink-0 rounded-2xl border border-line bg-white object-contain p-1" />`
+        : `<span class="grid h-16 w-16 shrink-0 place-items-center ${isPrivate ? 'rounded-full bg-[#EEF1FB] text-brand' : 'rounded-2xl bg-ink text-white'} text-[20px] font-bold" aria-hidden="true">${esc(isPrivate ? initials(s.name).slice(0, 1) : initials(s.name))}</span>`}
       <div class="min-w-0">
         <p class="truncate text-[19px] font-bold">${esc(s.name)}</p>
         <p class="mt-1 inline-flex items-center gap-1.5 text-[14px] ${s.type === 'oficial' ? 'text-brand' : 'text-ink/70'}">${icon(s.type === 'oficial' ? 'badge-check' : isPrivate ? 'user' : 'store', 'h-4 w-4')} ${esc(SELLER_TYPES[s.type])}</p>
@@ -243,7 +245,7 @@ function renderSellerCard(c) {
       </a>
       ${phone ? `<a href="tel:+${esc(phone)}" class="btn-outline h-[54px] w-full justify-center">${icon('phone', 'h-4 w-4')} Llamar</a>` : ''}
     </div>
-    ${isPrivate ? '' : `<a href="./autos.html?agencia=${encodeURIComponent(c.real ? s.id : c.seller)}" class="link-view mt-5 w-full justify-center">Ver todo su stock ${icon('arrow-up-right', 'h-4 w-4')}</a>`}
+    ${isPrivate ? '' : `<a href="${c.real ? `./agencia.html?id=${encodeURIComponent(s.id)}` : `./autos.html?agencia=${encodeURIComponent(c.seller)}`}" class="link-view mt-5 w-full justify-center">Ver todo su stock ${icon('arrow-up-right', 'h-4 w-4')}</a>`}
     <p class="mt-5 rounded-xl bg-soft px-4 py-3 text-[13px] leading-[1.6] text-ink/70">Nunca hagas pagos por adelantado sin ver el auto y la documentación.</p>
   </aside>`;
 }

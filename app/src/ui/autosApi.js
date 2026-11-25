@@ -1,12 +1,16 @@
-// Llamadas a la edge function mkt-autos con la sesión de la cuenta (agencias aprobadas).
+// Llamadas a las edge functions de la cuenta (mkt-autos: autos de la agencia · mkt-perfil: perfil y logo).
 import { SITE } from '../data/site.js';
 import { supa } from './auth.js';
 
-export async function autosApi(accion, extra = {}) {
+export const autosApi = (accion, extra = {}) => cuentaApi('mkt-autos', accion, extra);
+export const perfilApi = (accion, extra = {}) => cuentaApi('mkt-perfil', accion, extra);
+
+/** Llama a una edge function del marketplace con la sesión de la cuenta. */
+async function cuentaApi(fn, accion, extra) {
   const sb = await supa();
   const token = (await sb.auth.getSession()).data.session?.access_token;
   if (!token) { const e = new Error('Tu sesión venció. Volvé a ingresar.'); e.status = 401; throw e; }
-  const res = await fetch(`${SITE.supabase.url}/functions/v1/mkt-autos`, {
+  const res = await fetch(`${SITE.supabase.url}/functions/v1/${fn}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', apikey: SITE.supabase.publishableKey, Authorization: `Bearer ${token}` },
     body: JSON.stringify({ accion, ...extra }),

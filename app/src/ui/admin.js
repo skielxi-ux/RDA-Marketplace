@@ -103,12 +103,17 @@ function cuentaCard(c) {
   acciones.push(btn('reset_pin', c.id, 'Nuevo PIN', 'rotate-ccw'));
   acciones.push(btn('prueba', c.id, c.es_prueba ? 'No es prueba' : 'Marcar prueba', 'tag'));
 
+  const ETQ = { nombre: 'Nombre', cuit: 'CUIT', agencia_tipo: 'Tipo', marca_oficial: 'Marca oficial' };
+  const val = (k, v) => (v == null || v === '' ? '—' : k === 'cuit' ? fmtCuit(String(v)) : k === 'agencia_tipo' ? (v === 'oficial' ? 'Concesionario oficial' : 'Agencia multimarca') : String(v));
+  const cambios = c.cambios_pendientes && typeof c.cambios_pendientes === 'object' ? Object.entries(c.cambios_pendientes).filter(([k]) => ETQ[k]) : [];
+  const logo = fotoUrl(c.logo ?? '');
+
   return `
   <article class="rounded-2xl border border-line bg-white p-5 sm:p-6" data-card="${esc(c.id)}">
     <div class="flex flex-wrap items-start justify-between gap-3">
       <div class="min-w-0">
         <p class="flex flex-wrap items-center gap-2 text-[18px] font-bold leading-tight">
-          ${icon(c.tipo === 'agencia' ? 'store' : 'user', 'h-5 w-5 text-brand')} <span class="break-words">${esc(c.nombre)}</span>
+          ${logo ? `<img src="${esc(logo)}" alt="" width="32" height="32" class="h-8 w-8 rounded-lg border border-line object-contain" />` : icon(c.tipo === 'agencia' ? 'store' : 'user', 'h-5 w-5 text-brand')} <span class="break-words">${esc(c.nombre)}</span>
         </p>
         <p class="mt-1 text-[14px] text-ink/70">${esc(tipo)}</p>
       </div>
@@ -121,6 +126,12 @@ function cuentaCard(c) {
       <div class="flex gap-2"><dt class="text-ink/60">Alta</dt><dd>${esc(fmtFecha(c.created_at))}</dd></div>
       ${c.revisado_at ? `<div class="flex gap-2"><dt class="text-ink/60">Revisada</dt><dd>${esc(fmtFecha(c.revisado_at))}</dd></div>` : ''}
     </dl>
+    ${cambios.length ? `
+    <div class="mt-4 rounded-xl bg-[#EEF1FB] p-4">
+      <p class="text-[14px] font-bold text-brand">Pidió cambiar${c.cambios_at ? ` · ${esc(fmtFecha(c.cambios_at))}` : ''}</p>
+      <ul class="mt-2 space-y-1 text-[14px]">${cambios.map(([k, v]) => `<li><span class="text-ink/60">${esc(ETQ[k])}:</span> ${esc(val(k, c[k]))} → <b>${esc(val(k, v))}</b></li>`).join('')}</ul>
+      <div class="mt-3 flex flex-wrap gap-2">${btn('aprobar_cambios', c.id, 'Aprobar cambios', 'circle-check', 'btn-primary')}${btn('rechazar_cambios', c.id, 'Rechazar', 'x')}</div>
+    </div>` : ''}
     <div class="mt-5 flex flex-wrap gap-2">${acciones.join('')}</div>
   </article>`;
 }
@@ -147,6 +158,7 @@ function renderResumen(r) {
         <p class="mt-1.5 text-[14px] text-ink/70">${esc(k)}</p>
       </div>`).join('')}
     </div>
+    ${r.cambios ? `<button type="button" class="mt-6 flex w-full items-center justify-between gap-4 rounded-2xl bg-[#EEF1FB] px-5 py-4 text-left text-brand transition-colors hover:bg-[#E2E7FA]" data-go="concesionarios"><span><b>${esc(r.cambios)}</b> ${r.cambios === 1 ? 'agencia pidió' : 'agencias pidieron'} cambiar datos de su perfil</span>${icon('arrow-right', 'h-5 w-5')}</button>` : ''}
     ${r.pendientes ? `<button type="button" class="mt-6 flex w-full items-center justify-between gap-4 rounded-2xl bg-[#FFF6E5] px-5 py-4 text-left text-[#8A5A00] transition-colors hover:bg-[#FFEFD1]" data-go="concesionarios"><span><b>${esc(r.pendientes)}</b> ${r.pendientes === 1 ? 'agencia espera' : 'agencias esperan'} revisión</span>${icon('arrow-right', 'h-5 w-5')}</button>` : ''}
     <section class="mt-8 rounded-2xl border border-line bg-white p-5 sm:p-6" aria-labelledby="reg-title">
       <div class="flex flex-wrap items-end justify-between gap-3">
@@ -230,9 +242,10 @@ async function loadList(tab) {
   const lista = $('[data-lista]', box);
   lista.innerHTML = vacio('Cargando…');
   const estado = f.elements.estado.value;
-  const [todas, pend] = await Promise.all([
+  const [todas, pend, camb] = await Promise.all([
     admin('cuentas', { tipo: cfg.tipo, q: f.elements.q.value, estado }),
     tab === 'concesionarios' ? admin('cuentas', { tipo: 'agencia', estado: 'pendiente' }) : null,
+    tab === 'concesionarios' ? admin('cuentas', { tipo: 'agencia', cambios: true }) : null,
   ]);
   let cuentas = todas.cuentas;
   if (pend) {
@@ -241,6 +254,12 @@ async function loadList(tab) {
         <h2 id="pend-title" class="mb-4 text-[20px] font-bold text-[#8A5A00]">Esperan revisión (${pend.cuentas.length})</h2>
         <div class="grid gap-4 xl:grid-cols-2">${pend.cuentas.map(cuentaCard).join('')}</div>
       </section>` : '';
+    const conCambios = camb.cuentas.filter((c) => c.estado !== 'pendiente');
+    if (conCambios.length) $('[data-pend]', box).insertAdjacentHTML('beforeend', `
+      <section class="mb-10 rounded-2xl bg-[#EEF1FB] p-4 sm:p-6" aria-labelledby="camb-title">
+        <h2 id="camb-title" class="mb-4 text-[20px] font-bold text-brand">Cambios de perfil para revisar (${conCambios.length})</h2>
+        <div class="grid gap-4 xl:grid-cols-2">${conCambios.map(cuentaCard).join('')}</div>
+      </section>`);
     if (!estado) cuentas = cuentas.filter((c) => c.estado !== 'pendiente'); // ya se muestran arriba
   }
   lista.innerHTML = cuentas.length
@@ -425,6 +444,8 @@ const OPS = {
   reactivar: { title: 'Reactivar cuenta', text: 'La cuenta vuelve a poder ingresar.', ok: 'Reactivar' },
   desbloquear: { title: 'Desbloquear', text: 'Se borran los intentos fallidos de PIN y puede volver a probar ya.', ok: 'Desbloquear' },
   reset_pin: { title: 'Crear un PIN nuevo', text: 'Se genera un PIN temporal de 6 números y el anterior deja de funcionar. Lo vas a ver una sola vez para mandárselo por WhatsApp.', ok: 'Crear PIN nuevo' },
+  aprobar_cambios: { title: 'Aprobar cambios de perfil', text: 'Los datos nuevos (nombre, CUIT o tipo) se publican enseguida.', ok: 'Aprobar cambios' },
+  rechazar_cambios: { title: 'Rechazar cambios de perfil', text: 'Se descartan los datos nuevos y quedan los de antes. Avisale a la agencia por WhatsApp.', ok: 'Rechazar cambios', danger: true },
   prueba: { title: 'Cuenta de prueba', text: 'Cambia si esta cuenta se marca como de prueba (no se cuenta en el resumen y se puede borrar desde "Pruebas").', ok: 'Cambiar' },
 };
 

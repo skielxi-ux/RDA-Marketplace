@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--slot:csp-->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <!-- Página de agencia: se arma en el navegador con los datos de Supabase -->
+  <meta name="robots" content="noindex, follow" />
+  <title>Agencia | Red de Autos</title>
+  <meta name="description" content="Agencia en Red de Autos: autos 0km y usados, datos de contacto y ubicación." />
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <link rel="manifest" href="./site.webmanifest" />
+  <script type="module" src="/src/agencia.js"></script>
+</head>
+<body>
+  <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
+  <!--slot:site-header-->
+  <main id="contenido" class="min-h-[60vh]" aria-busy="true">
+    <div class="container-x py-10" data-ag-cargando>
+      <div class="flex items-center gap-6"><div class="h-24 w-24 animate-pulse rounded-[20px] bg-soft"></div><div class="h-10 w-72 animate-pulse rounded-lg bg-soft"></div></div>
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3"><div class="aspect-[4/3] animate-pulse rounded-2xl bg-soft"></div><div class="aspect-[4/3] animate-pulse rounded-2xl bg-soft"></div><div class="hidden aspect-[4/3] animate-pulse rounded-2xl bg-soft xl:block"></div></div>
+    </div>
+    <div class="container-x py-16 text-center" data-ag-error hidden>
+      <span class="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-[#EEF1FB] text-brand"><i data-icon="store" class="h-6 w-6"></i></span>
+      <h1 class="mt-5 text-[26px] font-bold">No encontramos esta agencia</h1>
+      <p class="mt-2 text-[16px] text-ink/70">Puede que ya no esté publicada en Red de Autos.</p>
+      <a href="./autos.html" class="btn-primary mx-auto mt-6 h-[54px] w-fit !px-8">Ver autos en venta <i data-icon="arrow-right" class="h-4 w-4"></i></a>
+    </div>
+    <div data-ag-root></div>
+  </main>
+  <!--slot:footer-->
+  <!--slot:to-top-->
+</body>
+</html>

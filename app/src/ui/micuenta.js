@@ -6,6 +6,7 @@ import { supa, cuentaGuardada } from './auth.js';
 import { renderRanking } from './ranking.js';
 import { autosApi, fotoUrl } from './autosApi.js';
 import { carUrl } from '../data/catalog.js';
+import { initPerfil } from './perfil.js';
 
 export function initMiCuenta() {
   const guest = $('[data-mc-guest]');
@@ -16,6 +17,8 @@ export function initMiCuenta() {
   const btnMis = $('[data-mc-misautos]');
   const boxMis = $('#mis-autos');
   const listaMis = $('[data-mis-autos]');
+  const btnPerfil = $('[data-mc-perfil]');
+  const boxPerfil = $('#perfil');
   let rankingCargado = false;
   let esAgencia = false;
 
@@ -86,6 +89,11 @@ export function initMiCuenta() {
     }
   };
   const abrirMisAutos = () => { activar(btnMis, boxMis); cargarMisAutos(); };
+  let perfilCargado = false;
+  const abrirPerfil = () => {
+    activar(btnPerfil, boxPerfil);
+    if (!perfilCargado) { perfilCargado = true; initPerfil($('[data-perfil-box]')); }
+  };
 
   listaMis.addEventListener('click', async (e) => {
     const b = e.target.closest('[data-estado]');
@@ -116,6 +124,8 @@ export function initMiCuenta() {
       $('[data-mc-sub]').textContent = 'Tu espacio en Red de Autos.';
       boxBuscados.hidden = true; rankingCargado = false;
       boxMis.hidden = true;
+      boxPerfil.hidden = true;
+      perfilCargado = false;
       return;
     }
     const tipo = cuenta.tipo === 'agencia'
@@ -132,12 +142,18 @@ export function initMiCuenta() {
     habilitar(btnPublicar, esAgencia, esAgencia ? 'Cargá tu stock con la plantilla de Excel y tus fotos.' : pendiente ? 'Disponible cuando aprobemos tu agencia.' : 'Próximamente.');
     habilitar(btnMis, esAgencia, esAgencia ? 'Mirá, pausá o volvé a publicar tus autos.' : pendiente ? 'Disponible cuando aprobemos tu agencia.' : 'Próximamente.');
 
+    // Perfil: cualquier agencia (aprobada o en revisión)
+    btnPerfil.hidden = cuenta.tipo !== 'agencia';
+    if (cuenta.tipo !== 'agencia') boxPerfil.hidden = true;
+    if (cuenta.tipo === 'agencia' && location.hash === '#perfil') abrirPerfil();
+
     if (!pendiente && location.hash === '#buscados') abrirRanking();
     if (esAgencia && location.hash === '#mis-autos') abrirMisAutos();
   };
 
   btnBuscados.addEventListener('click', abrirRanking);
   btnMis.addEventListener('click', abrirMisAutos);
+  btnPerfil.addEventListener('click', abrirPerfil);
   btnPublicar.addEventListener('click', (e) => { if (!esAgencia) e.preventDefault(); });
   window.addEventListener('rda:cuenta', (e) => pintar(e.detail));
   pintar(cuentaGuardada());

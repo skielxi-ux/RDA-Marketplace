@@ -16,7 +16,9 @@ const initials = (name) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((w)
 
 function renderSeller(seller) {
   const isPrivate = seller.type === 'particular';
-  const avatar = isPrivate
+  const avatar = seller.logo
+    ? `<img src="${esc(seller.logo)}" alt="" width="36" height="36" loading="lazy" decoding="async" class="h-9 w-9 shrink-0 rounded-lg border border-line bg-white object-contain p-0.5" />`
+    : isPrivate
     ? `<span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#EEF1FB] text-[14px] font-bold text-brand" aria-hidden="true">${esc(initials(seller.name).slice(0, 1))}</span>`
     : `<span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-ink text-[12px] font-bold tracking-tight text-white" aria-hidden="true">${esc(initials(seller.name))}</span>`;
   const tag = {

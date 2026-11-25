@@ -26,6 +26,7 @@ export function fromDb(r) {
       name: r.vendedor_nombre,
       type: TIPOS.has(r.vendedor_tipo) ? r.vendedor_tipo : 'multimarca',
       phone: /^\d{10,15}$/.test(r.vendedor_tel ?? '') ? r.vendedor_tel : '',
+      logo: fotoUrl(r.vendedor_logo ?? '') || null,
     },
     badge: r.condicion === '0km' ? 'nuevo' : null,
     published: new Date(r.publicado_at).getTime() || 0,
@@ -60,4 +61,20 @@ export async function cargarAuto(id) {
   const rows = await rpc('mkt_auto', { p_id: id });
   const c = Array.isArray(rows) && rows[0] ? fromDb(rows[0]) : null;
   return c?.photoUrls.length ? c : null;
+}
+
+/** Perfil público de una agencia y sus autos publicados (null si no existe o no está aprobada). */
+export async function cargarAgencia(id) {
+  if (!esIdReal(id)) return null;
+  const [perfil, autos] = await Promise.all([rpc('mkt_agencia', { p_id: id }), rpc('mkt_autos_agencia', { p_id: id })]);
+  const a = Array.isArray(perfil) && perfil[0];
+  if (!a) return null;
+  return {
+    ...a,
+    whatsapp: /^\d{10,15}$/.test(a.whatsapp ?? '') ? a.whatsapp : '',
+    logoUrl: fotoUrl(a.logo ?? '') || null,
+    sitio_web: /^https:\/\//.test(a.sitio_web ?? '') ? a.sitio_web : null,
+    instagram: /^[A-Za-z0-9._]{1,30}$/.test(a.instagram ?? '') ? a.instagram : null,
+    autos: (Array.isArray(autos) ? autos : []).map(fromDb).filter((c) => c.photoUrls.length),
+  };
 }

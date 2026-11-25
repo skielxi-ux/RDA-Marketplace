@@ -1,6 +1,6 @@
 // RDA Marketplace · Edge Function: mkt-admin (panel del administrador del marketplace)
 // Sesión: la misma del admin de la web actual (login en la función "admin" con celular + contraseña).
-// Acciones: resumen, cuentas, cuenta (aprobar, rechazar, suspender, reactivar, reset_pin, prueba), borrar_pruebas,
+// Acciones: resumen, cuentas, cuenta (aprobar, rechazar, suspender, reactivar, reset_pin, prueba, aprobar_cambios, rechazar_cambios), borrar_pruebas,
 //           ferias, crear_feria, cancelar_feria, invitar_feria (WhatsApp a las agencias aprobadas),
 //           autos, auto_estado (pausar / volver a publicar autos cargados por las agencias).
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -45,7 +45,7 @@ async function wa(to: string, text: string) {
   return r.ok;
 }
 
-const CAMPOS = "id, tipo, telefono, nombre, ciudad, provincia, agencia_tipo, marca_oficial, cuit, estado, es_prueba, user_id, intentos, bloqueado_hasta, revisado_at, created_at";
+const CAMPOS = "id, tipo, telefono, nombre, ciudad, provincia, agencia_tipo, marca_oficial, cuit, estado, es_prueba, user_id, intentos, bloqueado_hasta, revisado_at, created_at, logo, cambios_pendientes, cambios_at";
 const pinDebil = (p: string) => /^(\d)\1{5}$/.test(p) || ["123456", "654321", "012345", "123123", "121212", "112233"].includes(p);
 function pinTemporal() {
   for (;;) {
@@ -94,7 +94,7 @@ Deno.serve(async (req) => {
 });
 
 async function resumen() {
-  const { data } = await db.from("mkt_cuentas").select("tipo, estado, es_prueba, created_at");
+  const { data } = await db.from("mkt_cuentas").select("tipo, estado, es_prueba, created_at, cambios_pendientes");
   const rows = data ?? [];
   const reales = rows.filter((r) => !r.es_prueba);
   const n = (f: (r: A) => boolean) => reales.filter(f).length;
@@ -119,6 +119,7 @@ async function resumen() {
     suspendidas: n((r) => r.estado === "suspendida"),
     rechazadas: n((r) => r.estado === "rechazada"),
     pruebas: rows.length - reales.length,
+    cambios: rows.filter((r) => r.cambios_pendientes && r.estado !== "pendiente").length,
     dias,
   };
 }
@@ -128,6 +129,7 @@ async function cuentas(b: A) {
   if (["particular", "agencia"].includes(b.tipo)) q = q.eq("tipo", b.tipo);
   if (["activa", "pendiente", "aprobada", "rechazada", "suspendida"].includes(b.estado)) q = q.eq("estado", b.estado);
   if (b.prueba === true) q = q.eq("es_prueba", true);
+  if (b.cambios === true) q = q.not("cambios_pendientes", "is", null);
   const texto = String(b.q ?? "").trim().slice(0, 60);
   if (texto) {
     const dig = texto.replace(/\D/g, "");
@@ -158,6 +160,19 @@ async function cuenta(b: A) {
     case "reactivar": upd = { estado: c.tipo === "agencia" ? "aprobada" : "activa", intentos: 0, bloqueado_hasta: null }; break;
     case "desbloquear": upd = { intentos: 0, bloqueado_hasta: null }; break;
     case "prueba": upd = { es_prueba: !c.es_prueba }; break;
+    case "aprobar_cambios": {
+      const p = (c.cambios_pendientes ?? {}) as A;
+      if (!Object.keys(p).length) throw new Error("No hay cambios para aprobar.");
+      for (const k of ["nombre", "cuit", "agencia_tipo", "marca_oficial"]) if (k in p) upd[k] = p[k];
+      if (upd.agencia_tipo === "multimarca") upd.marca_oficial = null;
+      if (upd.cuit) {
+        const { data: dup } = await db.from("mkt_cuentas").select("id").eq("cuit", upd.cuit).neq("id", c.id).maybeSingle();
+        if (dup) throw new Error("Otra agencia ya tiene ese CUIT.");
+      }
+      Object.assign(upd, { cambios_pendientes: null, cambios_at: null, revisado_at: ahora });
+      break;
+    }
+    case "rechazar_cambios": upd = { cambios_pendientes: null, cambios_at: null }; break;
     case "reset_pin": {
       pin = pinTemporal();
       const { error } = await db.rpc("mkt_set_pin", { p_tel: c.telefono, p_pin: pin });
