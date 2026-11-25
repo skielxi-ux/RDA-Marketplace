@@ -316,7 +316,7 @@ function feriaAutos(f) {
 function feriaCard(f, aprobadas) {
   const [txt, cls, viva] = feriaEstado(f);
   const inv = f.invitacion_enviada_at
-    ? `Invitación enviada el ${esc(fmtFeria(f.invitacion_enviada_at))} a ${esc(f.invitados)} ${f.invitados === 1 ? 'agencia' : 'agencias'} (${esc(f.invitados_ok)} entregadas)`
+    ? `Invitación enviada el ${esc(fmtFeria(f.invitacion_enviada_at))} a ${esc(f.invitados)} ${f.invitados === 1 ? 'agencia' : 'agencias'} (campanita a todas · ${esc(f.invitados_ok)} por Telegram)`
     : `Sin invitar · ${esc(aprobadas)} ${aprobadas === 1 ? 'agencia aprobada' : 'agencias aprobadas'} para invitar`;
   return `
   <article class="flex flex-col gap-4 rounded-2xl border border-line bg-white p-5 sm:p-6 md:flex-row md:items-start md:justify-between">
@@ -381,13 +381,13 @@ async function invitarFeria(id) {
   if (!n) return dialog({ title: 'No hay a quién invitar', text: 'Todavía no hay agencias aprobadas en el marketplace. Aprobá alguna en "Concesionarios" y volvé.', ok: '', cancel: 'Entendido' });
   const ok = await dialog({
     title: f?.invitacion_enviada_at ? 'Volver a invitar' : 'Invitar agencias',
-    text: `Se envía un WhatsApp a ${n} ${n === 1 ? 'agencia aprobada' : 'agencias aprobadas'} con el nombre y las fechas de "${f?.nombre ?? ''}".\n\nMientras uses el número de prueba de WhatsApp, solo les llega a los números habilitados.`,
+    text: `Les llega a ${n} ${n === 1 ? 'agencia aprobada' : 'agencias aprobadas'} un aviso en la campanita del sitio y, a las que conectaron Telegram, un mensaje del bot con el nombre y las fechas de "${f?.nombre ?? ''}".`,
     ok: 'Enviar invitaciones',
   });
   if (!ok) return;
   try {
     const r = await admin('invitar_feria', { id });
-    toast(`Invitación enviada a ${r.enviados} de ${r.total}`, r.enviados > 0);
+    toast(`Invitación enviada a ${r.total} ${r.total === 1 ? 'agencia' : 'agencias'} (${r.enviados} por Telegram)`);
     await loadFeria();
   } catch (e) { handleError(e); }
 }

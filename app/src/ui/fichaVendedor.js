@@ -1,5 +1,6 @@
 // Ficha de un auto real: seguimiento del link de vendedores independientes (?ref=CODIGO)
 // y, si el que mira es un vendedor aprobado, el recuadro "Compartir con mi link".
+import { urlCompartir } from '../lib/compartir.js';
 import { $ } from './dom.js';
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
@@ -51,7 +52,7 @@ export async function initFichaVendedor(c) {
   if (!comision) {
     caja.innerHTML = `<p class="flex items-center gap-2 text-[15px] text-ink/70">${icon('handshake', 'h-5 w-5 text-ink/40')} Esta agencia no trabaja con vendedores independientes.</p>`;
   } else {
-    const url = `${location.origin}${location.pathname}?id=${encodeURIComponent(c.id)}&ref=${r.ref}`;
+    const url = await urlCompartir(c.id, r.ref);
     const texto = `Mirá este auto: ${document.title.split(' | ')[0]} ${url}`;
     caja.innerHTML = `
       <p class="flex items-center gap-2 text-[16px] font-bold">${icon('handshake', 'h-5 w-5 text-brand')} Comisión para vos: ${esc(comision)} %</p>

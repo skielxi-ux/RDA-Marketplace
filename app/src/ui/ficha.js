@@ -1,4 +1,5 @@
 // Ficha del auto: visor de fotos, slider en celular, compartir, favoritos y autos similares.
+import { urlCompartir } from '../lib/compartir.js';
 import Swiper from 'swiper';
 import { Navigation, A11y } from 'swiper/modules';
 import { $, $$ } from './dom.js';
@@ -82,15 +83,20 @@ function toast(text) {
 }
 
 function initShare(title) {
+  // Autos reales: link con vista previa (foto y precio) si ya está generada
+  const id = new URLSearchParams(location.search).get('id');
+  const real = /auto\.html$/.test(location.pathname) && id;
+  let url = location.href;
+  if (real) urlCompartir(id).then((u) => { url = u; });
   $$('[data-share]').forEach((b) => b.addEventListener('click', async () => {
-    const data = { title, text: `${title} en Red de Autos`, url: location.href };
+    const data = { title, text: `${title} en Red de Autos`, url };
     try {
       if (navigator.share) { await navigator.share(data); return; }
     } catch (err) {
       if (err?.name === 'AbortError') return;
     }
     try {
-      await navigator.clipboard.writeText(location.href);
+      await navigator.clipboard.writeText(url);
       toast('Link copiado');
     } catch {
       toast('No se pudo copiar el link');

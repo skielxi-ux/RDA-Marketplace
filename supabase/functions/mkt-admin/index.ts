@@ -1,7 +1,7 @@
 // RDA Marketplace · Edge Function: mkt-admin (panel del administrador del marketplace)
 // Sesión: la misma del admin de la web actual (login en la función "admin" con celular + contraseña).
 // Acciones: resumen, cuentas, cuenta (aprobar, rechazar, suspender, reactivar, reset_pin, prueba, aprobar_cambios, rechazar_cambios), borrar_pruebas,
-//           ferias (con los autos que sumó cada agencia), crear_feria, cancelar_feria, quitar_auto_feria, invitar_feria (WhatsApp a las agencias aprobadas),
+//           ferias (con los autos que sumó cada agencia), crear_feria, cancelar_feria, quitar_auto_feria, invitar_feria (Telegram + campanita a las agencias aprobadas),
 //           (aprobar / rechazar también vale para vendedores independientes)
 //           autos, auto_estado (aprobar autos de particulares en revisión, pausar / volver a publicar).
 // Avisos por Telegram a las agencias: aprobación, cambios de perfil aprobados/rechazados y ferias nuevas.
@@ -26,27 +26,6 @@ async function adminEmail() {
 }
 
 const SITIO = "https://skielxi-ux.github.io/RDA-Marketplace/";
-
-/** WhatsApp Cloud API (mismo método que la web actual): texto si la ventana de 24 h está abierta, si no plantilla. */
-async function wa(to: string, text: string) {
-  const { data: abierta } = await db.rpc("ventana_abierta", { p_tel: to });
-  const payload = abierta
-    ? { type: "text", text: { body: text.slice(0, 4000), preview_url: true } }
-    : { type: "template", template: { name: "actualizacion_pedido", language: { code: env("WA_TEMPLATE_LANG", "es_AR") },
-        components: [{ type: "body", parameters: [{ type: "text", text: text.replace(/\*/g, "").replace(/[\n\t]+/g, " ").slice(0, 900) }] }] } };
-  const enviar = async (dest: string) => {
-    const r = await fetch(`https://graph.facebook.com/${env("WA_API_VERSION", "v23.0")}/${env("WA_PHONE_NUMBER_ID")}/messages`, {
-      method: "POST", headers: { Authorization: `Bearer ${env("WA_TOKEN")}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ messaging_product: "whatsapp", recipient_type: "individual", to: dest, ...payload }),
-    });
-    return { r, d: await r.json().catch(() => ({})) };
-  };
-  let { r, d } = await enviar(to);
-  if (!r.ok && to.startsWith("549") && [131030, 100].includes(d?.error?.code)) ({ r, d } = await enviar("54" + to.slice(3)));
-  await db.from("wa_mensajes").insert({ direccion: "saliente", telefono: to, tipo: abierta ? "text" : "template:actualizacion_pedido", contenido: payload,
-    wa_message_id: d?.messages?.[0]?.id ?? null, error: r.ok ? null : JSON.stringify(d?.error ?? d).slice(0, 500) });
-  return r.ok;
-}
 
 /** Aviso por Telegram a una cuenta del marketplace (si conectó su Telegram). Nunca corta la acción si falla. */
 async function avisarTg(telefono: string, texto: string) {
@@ -305,15 +284,17 @@ async function invitarFeria(b: A) {
   const { data: f } = await db.from("mkt_ferias").select("*").eq("id", String(b.id ?? "")).maybeSingle();
   if (!f) throw new Error("No encontré la feria.");
   if (f.estado !== "activa" || new Date(f.termina) <= new Date()) throw new Error("Esa feria ya no está activa.");
-  const { data: ags } = await db.from("mkt_cuentas").select("telefono, nombre").eq("tipo", "agencia").eq("estado", "aprobada").eq("es_prueba", false);
+  const { data: ags } = await db.from("mkt_cuentas").select("id, telefono, nombre").eq("tipo", "agencia").eq("estado", "aprobada").eq("es_prueba", false);
   const lista = ags ?? [];
   if (!lista.length) throw new Error("Todavía no hay agencias aprobadas para invitar.");
+  // Campanita del sitio (a todas) + Telegram (a las que lo conectaron)
+  await notificar(lista.map((a: A) => a.id), "feria_nueva", `Te invitamos a la ${f.nombre}, del ${fechaAr(f.empieza)} al ${fechaAr(f.termina)} h. Sumá tus autos con precio relámpago.`, "mi-cuenta.html#feria");
   let ok = 0;
   for (const a of lista) {
-    const texto = `🎉 Hola ${a.nombre}! Te invitamos a la *${f.nombre}* de Red de Autos, del ${fechaAr(f.empieza)} al ${fechaAr(f.termina)} h.` +
-      (f.descripcion ? `\n${f.descripcion}` : "") +
+    const texto = `🎉 <b>¡Hola ${h(a.nombre)}! Te invitamos a la ${h(f.nombre)}</b>\nDel ${fechaAr(f.empieza)} al ${fechaAr(f.termina)} h.` +
+      (f.descripcion ? `\n${h(f.descripcion)}` : "") +
       `\nElegí qué autos de tu stock entran y ponele a cada uno su precio relámpago y cuánto dura, desde Mi cuenta → Feria: ${SITIO}mi-cuenta.html#feria`;
-    if (await wa(a.telefono, texto).catch(() => false)) ok++;
+    if (await avisarTg(a.telefono, texto)) ok++;
   }
   const { data, error } = await db.from("mkt_ferias").update({ invitacion_enviada_at: new Date().toISOString(), invitados: lista.length, invitados_ok: ok })
     .eq("id", f.id).select("*").single();
