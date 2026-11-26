@@ -534,7 +534,7 @@ async function runOp(op, id, card) {
           <p class="mt-5 rounded-2xl bg-soft py-5 text-center text-[34px] font-bold tracking-[0.3em]">${esc(r.pin_temporal)}</p>
           <div class="mt-4 grid gap-3 sm:grid-cols-2">
             <button type="button" class="btn-outline h-[48px] justify-center" data-copy="${esc(r.pin_temporal)}">${icon('clipboard-check', 'h-4 w-4')} Copiar PIN</button>
-            <a href="https://wa.me/${esc(tel)}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener noreferrer" class="btn-primary btn-wa h-[48px]">${icon('message-circle', 'h-4 w-4')} Enviar por WhatsApp</a>
+            <a href="https://wa.me/${esc(tel)}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener noreferrer" class="btn-primary btn-wa h-[48px]">${icon('whatsapp', 'h-4 w-4')} Enviar por WhatsApp</a>
           </div>`,
         onOpen: (d) => {
           $('[data-copy]', d)?.addEventListener('click', async (e) => {
