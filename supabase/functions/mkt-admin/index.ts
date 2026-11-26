@@ -4,6 +4,7 @@
 //           ferias (con los autos que sumó cada agencia), crear_feria, cancelar_feria, quitar_auto_feria, invitar_feria (Telegram + campanita a las agencias aprobadas),
 //           (aprobar / rechazar también vale para vendedores independientes)
 //           autos, auto_estado (aprobar autos de particulares en revisión, pausar / volver a publicar).
+//           Cédula de particulares: link temporal para verla en la revisión y se borra al aprobar o rechazar.
 // Avisos por Telegram a las agencias: aprobación, cambios de perfil aprobados/rechazados y ferias nuevas.
 // Avisos en la campanita (mkt_notificaciones): cuenta aprobada/rechazada, cambios de perfil, feria nueva, auto publicado/pausado.
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -218,6 +219,8 @@ async function borrarPruebas(b: A) {
     // Fotos de sus autos (los autos se borran solos con la cuenta)
     const { data: fotos } = await db.storage.from("mkt-fotos").list(c.id, { limit: 1000 });
     if (fotos?.length) await db.storage.from("mkt-fotos").remove(fotos.map((f) => `${c.id}/${f.name}`));
+    const { data: docs } = await db.storage.from("mkt-docs").list(c.id, { limit: 100 });
+    if (docs?.length) await db.storage.from("mkt-docs").remove(docs.map((f) => `${c.id}/${f.name}`));
   }
   if (lista.length) {
     const { error } = await db.from("mkt_cuentas").delete().in("id", lista.map((c) => c.id)).eq("es_prueba", true);
@@ -306,22 +309,38 @@ async function invitarFeria(b: A) {
 async function autos(b: A) {
   const q = txt(b.q, 60).toLowerCase();
   const { data, error } = await db.from("mkt_autos")
-    .select("id, codigo, marca, modelo, version, anio, condicion, km, precio, moneda, combustible, transmision, ciudad, provincia, descripcion, fotos, estado, pausado_por_admin, created_at, updated_at, cuenta:mkt_cuentas(id, nombre, tipo, telefono, es_prueba)")
+    .select("id, codigo, marca, modelo, version, anio, condicion, km, precio, moneda, combustible, transmision, ciudad, provincia, descripcion, fotos, estado, pausado_por_admin, created_at, updated_at, dominio, cedula, cedula_verificada_at, cuenta:mkt_cuentas(id, nombre, tipo, telefono, es_prueba)")
     .order("created_at", { ascending: false }).limit(500);
   if (error) throw error;
   const lista = (data ?? []).filter((a: A) => !q || `${a.marca} ${a.modelo} ${a.version} ${a.codigo} ${(a.cuenta as A)?.nombre}`.toLowerCase().includes(q));
   // Los que esperan revisión (particulares), primero
   lista.sort((x: A, y: A) => Number(y.estado === "revision") - Number(x.estado === "revision"));
+  // Particulares en revisión: link temporal (10 min) a la cédula privada y aviso si la patente ya está en otro aviso
+  for (const a of lista.filter((x: A) => x.estado === "revision")) {
+    if (a.cedula) {
+      const { data: s } = await db.storage.from("mkt-docs").createSignedUrl(String(a.cedula), 600);
+      a.cedula_url = s?.signedUrl ?? null;
+    }
+    if (a.dominio) {
+      const { data: otros } = await db.from("mkt_autos").select("id, marca, modelo, estado, cuenta:mkt_cuentas(nombre)")
+        .eq("dominio", a.dominio).neq("id", a.id).neq("estado", "vendido").limit(3);
+      a.patente_repetida = (otros ?? []).map((o: A) => `${o.marca} ${o.modelo} · ${(o.cuenta as A)?.nombre ?? ""} (${o.estado})`);
+    }
+  }
+  for (const a of lista) delete a.cedula; // la ruta interna no sale del servidor
   return { autos: lista };
 }
 
 async function autoEstado(b: A) {
   const estado = b.estado === "pausado" ? "pausado" : b.estado === "publicado" ? "publicado" : "";
   if (!estado || typeof b.id !== "string") throw new Error("Datos inválidos");
-  const { data: prev } = await db.from("mkt_autos").select("estado, marca, modelo, anio, cuenta_id, cuenta:mkt_cuentas(tipo)").eq("id", b.id).maybeSingle();
+  const { data: prev } = await db.from("mkt_autos").select("estado, marca, modelo, anio, cuenta_id, cedula, cuenta:mkt_cuentas(tipo)").eq("id", b.id).maybeSingle();
+  // Al aprobar o rechazar la revisión, la cédula se borra; si se aprobó, queda la fecha de verificación
+  const doc: A = prev?.cedula ? { cedula: null, ...(estado === "publicado" ? { cedula_verificada_at: new Date().toISOString() } : {}) } : {};
   const { error } = await db.from("mkt_autos")
-    .update({ estado, pausado_por_admin: estado === "pausado", updated_at: new Date().toISOString() }).eq("id", b.id);
+    .update({ estado, pausado_por_admin: estado === "pausado", updated_at: new Date().toISOString(), ...doc }).eq("id", b.id);
   if (error) throw error;
+  if (prev?.cedula) await db.storage.from("mkt-docs").remove([String(prev.cedula)]);
   if (prev) {
     const auto = `${prev.marca} ${prev.modelo} ${prev.anio}`;
     const link = (prev.cuenta as A)?.tipo === "particular" ? "vender.html" : "mi-cuenta.html#mis-autos";

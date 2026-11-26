@@ -85,6 +85,23 @@
               </div>
               <label class="mt-4 block"><span class="vd-label">Descripción</span><textarea class="auth-input !h-auto min-h-[130px] py-3" name="descripcion" maxlength="1000" rows="5" placeholder="Estado, service al día, único dueño, detalles a tener en cuenta…"></textarea></label>
             </fieldset>
+
+            <fieldset class="mt-10 rounded-[20px] border border-line bg-soft p-5 sm:p-6">
+              <legend class="px-1 text-[19px] font-bold">Documentación <span class="text-brand">*</span></legend>
+              <p class="flex items-start gap-2 text-[14px] text-ink/70"><i data-icon="lock" class="mt-0.5 h-4 w-4 shrink-0 text-brand"></i> Para cuidar a los compradores, verificamos que el auto exista y sea el del aviso. <b>No se publica:</b> la cédula la ve solo Red de Autos y se borra apenas revisamos tu aviso.</p>
+              <div class="mt-4 grid gap-4 sm:grid-cols-[200px_1fr] sm:items-start">
+                <label class="block"><span class="vd-label">Patente <span class="text-brand">*</span></span><input class="auth-input uppercase tracking-[0.08em]" name="dominio" required maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="AB123CD" /></label>
+                <div>
+                  <span class="vd-label">Foto de la cédula (verde o azul) <span class="text-brand">*</span></span>
+                  <label class="pub-drop !min-h-[96px] !py-4" data-vd-ced-drop>
+                    <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" class="sr-only" data-vd-ced-input />
+                    <i data-icon="id-card" class="h-5 w-5 text-brand"></i>
+                    <span class="text-[14px] font-medium" data-vd-ced-label>Sacale una foto del lado donde figura la patente</span>
+                  </label>
+                  <img alt="Vista previa de la cédula" class="mt-3 max-h-[160px] rounded-lg border border-line" data-vd-ced-prev hidden />
+                </div>
+              </div>
+            </fieldset>
           </div>
 
           <div>

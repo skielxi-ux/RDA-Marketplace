@@ -4,6 +4,8 @@
 // Con sesión de agencia aprobada o particular activo: mios · urls_fotos · publicar · estado · borrar · estadisticas
 // Solo agencias: feria · feria_sumar · feria_quitar (autos del stock con precio relámpago en la feria vigente)
 //                relampago · relampago_quitar (precio relámpago por tiempo determinado, cuando la agencia quiera)
+// Particulares: además de las fotos, la patente y una foto de la cédula (url_cedula). La cédula va al bucket PRIVADO
+// mkt-docs, solo la ve el admin para verificar y se borra apenas aprueba o rechaza (queda cedula_verificada_at).
 // Las fotos se suben directo a Storage (bucket mkt-fotos) con URLs firmadas que da esta función,
 // siempre dentro de la carpeta de la cuenta. Datos en public.mkt_autos (sin acceso público directo).
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -15,6 +17,9 @@ const BUCKET = "mkt-fotos";
 const MAX_FOTOS = 7;
 const MAX_AUTOS = 200;
 const MAX_PARTICULAR = 2;
+const DOCS = "mkt-docs"; // bucket privado (cédulas)
+/** Patente argentina: ABC123 (vieja) o AB123CD (Mercosur). Devuelve "" si no es válida. */
+const normDominio = (v: unknown) => { const d = String(v ?? "").toUpperCase().replace(/[^A-Z0-9]/g, ""); return /^([A-Z]{3}\d{3}|[A-Z]{2}\d{3}[A-Z]{2})$/.test(d) ? d : ""; };
 
 const ORIGENES = new Set(["https://skielxi-ux.github.io", "http://localhost:5173", "http://localhost:4173"]);
 const cors = (origin: string | null) => ({
@@ -48,7 +53,7 @@ const PROVINCIAS = new Set([
   "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquén", "Río Negro", "Salta", "San Juan", "San Luis", "Santa Cruz",
   "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucumán",
 ]);
-const CAMPOS = "id, codigo, marca, modelo, version, anio, condicion, km, precio, moneda, combustible, transmision, carroceria, ciudad, provincia, motor, puertas, color, traccion, descripcion, fotos, estado, pausado_por_admin, created_at, updated_at, relampago_precio, relampago_empieza, relampago_termina";
+const CAMPOS = "id, codigo, marca, modelo, version, anio, condicion, km, precio, moneda, combustible, transmision, carroceria, ciudad, provincia, motor, puertas, color, traccion, descripcion, fotos, estado, pausado_por_admin, created_at, updated_at, relampago_precio, relampago_empieza, relampago_termina, dominio, cedula, cedula_verificada_at";
 
 /** Valida un auto que viene de la plantilla. Devuelve el auto limpio o el motivo del error. */
 function validarAuto(x: A, anioMax: number): { ok: A } | { error: string } {
@@ -131,6 +136,16 @@ Deno.serve(async (req) => {
       return json({ urls });
     }
 
+    // ---- URL firmada para subir la cédula (solo particulares, bucket privado) ----
+    if (b.accion === "url_cedula") {
+      if (!esParticular) return err("La cédula se pide solo a particulares.", 403);
+      const ext = b.formato === "jpg" ? "jpg" : "webp";
+      const path = `${cuenta.id}/${crypto.randomUUID()}.${ext}`;
+      const { data, error } = await db.storage.from(DOCS).createSignedUploadUrl(path);
+      if (error) throw error;
+      return json({ path, token: data.token });
+    }
+
     // ---- Publicar (crea o actualiza por código) ----
     if (b.accion === "publicar") {
       const lista = Array.isArray(b.autos) ? b.autos as A[] : [];
@@ -163,10 +178,27 @@ Deno.serve(async (req) => {
         if (falta) return err(`${falta.auto.codigo}: alguna foto no terminó de subir. Probá de nuevo.`);
       }
 
-      const { data: previos } = await db.from("mkt_autos").select("id, codigo, fotos").eq("cuenta_id", cuenta.id).in("codigo", [...new Set(limpios.map((l) => String(l.auto.codigo)))]);
+      const { data: previos } = await db.from("mkt_autos").select("id, codigo, fotos, dominio, cedula, cedula_verificada_at").eq("cuenta_id", cuenta.id).in("codigo", [...new Set(limpios.map((l) => String(l.auto.codigo)))]);
       const prev = new Map((previos ?? []).map((p: A) => [String(p.codigo), p]));
       const sinFotos = limpios.find((l) => !l.fotos.length && !prev.has(String(l.auto.codigo)));
       if (sinFotos) return err(esParticular ? "Subí al menos una foto." : `${sinFotos.auto.codigo}: un auto nuevo necesita al menos una foto.`);
+      // Particulares: patente obligatoria y cédula obligatoria si el auto todavía no fue verificado (o cambió la patente)
+      let doc: { dominio: string; cedula: string | null; reset: boolean; vieja: string | null } | null = null;
+      if (esParticular) {
+        const x = lista[0];
+        const dominio = normDominio(x.dominio);
+        if (!dominio) return err("Revisá la patente: tiene que ser como AB123CD o ABC123.");
+        const p = prev.get(String(limpios[0].auto.codigo)) as A | undefined;
+        const cedula = x.cedula ? String(x.cedula) : null;
+        const cambioPatente = !!p && p.dominio !== dominio;
+        const necesita = !p || cambioPatente || (!p.cedula_verificada_at && !p.cedula);
+        if (cedula) {
+          if (!new RegExp(`^${cuenta.id}/[0-9a-f-]{36}\\.(webp|jpg)$`).test(cedula)) return err("Cédula inválida.");
+          const { data: existe } = await db.rpc("mkt_doc_existe", { p_name: cedula });
+          if (!existe) return err("La foto de la cédula no terminó de subir. Probá de nuevo.");
+        } else if (necesita) return err(cambioPatente ? "Cambiaste la patente: subí la foto de la cédula de ese auto." : "Subí la foto de la cédula del auto (verde o azul).");
+        doc = { dominio, cedula, reset: cambioPatente, vieja: cedula && p?.cedula ? String(p.cedula) : null };
+      }
       if (esParticular && !prev.size) {
         const { count } = await db.from("mkt_autos").select("id", { count: "exact", head: true }).eq("cuenta_id", cuenta.id).neq("estado", "vendido");
         if ((count ?? 0) >= MAX_PARTICULAR) return err(`Podés tener hasta ${MAX_PARTICULAR} autos publicados. Marcá uno como vendido o borralo para cargar otro.`);
@@ -179,7 +211,12 @@ Deno.serve(async (req) => {
         const p = prev.get(String(auto.codigo)) as A | undefined;
         if (p) {
           const cambios: A = { ...auto, updated_at: new Date().toISOString() };
-          if (esParticular) cambios.estado = "revision"; // cada cambio de un particular se vuelve a revisar
+          if (esParticular) {
+            cambios.estado = "revision"; // cada cambio de un particular se vuelve a revisar
+            cambios.dominio = doc!.dominio;
+            if (doc!.cedula) cambios.cedula = doc!.cedula;
+            if (doc!.reset || doc!.cedula) cambios.cedula_verificada_at = null;
+          }
           if (fotos.length) {
             cambios.fotos = fotos;
             viejas.push(...((p.fotos as string[]) ?? []).filter((f) => !fotos.includes(f)));
@@ -188,13 +225,14 @@ Deno.serve(async (req) => {
           if (error) throw error;
           actualizados++;
         } else {
-          const { data: ins, error } = await db.from("mkt_autos").insert({ ...auto, fotos, cuenta_id: cuenta.id, ...(esParticular ? { estado: "revision", condicion: "usado" } : {}) }).select("id").single();
+          const { data: ins, error } = await db.from("mkt_autos").insert({ ...auto, fotos, cuenta_id: cuenta.id, ...(esParticular ? { estado: "revision", condicion: "usado", dominio: doc!.dominio, cedula: doc!.cedula } : {}) }).select("id").single();
           if (error) throw error;
           if (!esParticular && ins?.id) idsNuevos.push(String(ins.id));
           nuevos++;
         }
       }
       if (viejas.length) await db.storage.from(BUCKET).remove(viejas);
+      if (doc?.vieja) await db.storage.from(DOCS).remove([doc.vieja]);
       avisarAlertas(idsNuevos); // los de particulares se avisan cuando el admin los aprueba
       return json({ ok: true, nuevos, actualizados, revision: esParticular });
     }
@@ -203,13 +241,14 @@ Deno.serve(async (req) => {
     if (b.accion === "estado") {
       const estado = ["pausado", "publicado", "vendido"].includes(String(b.estado)) ? String(b.estado) : "";
       if (!estado || typeof b.id !== "string") return err("Datos inválidos");
-      const { data: a } = await db.from("mkt_autos").select("id, estado, pausado_por_admin").eq("id", b.id).eq("cuenta_id", cuenta.id).maybeSingle();
+      const { data: a } = await db.from("mkt_autos").select("id, estado, pausado_por_admin, cedula").eq("id", b.id).eq("cuenta_id", cuenta.id).maybeSingle();
       if (!a) return err("No encontramos ese auto.", 404);
       if (a.estado === "revision" && estado !== "vendido") return err("Lo estamos revisando. Te avisamos cuando esté publicado.", 403);
       if (a.estado === "vendido") return err("Ese auto ya está marcado como vendido.", 403);
       if (estado === "publicado" && a.pausado_por_admin) return err("Este auto lo pausó Red de Autos. Escribinos para revisarlo.", 403);
-      const { error } = await db.from("mkt_autos").update({ estado, vendido_at: estado === "vendido" ? new Date().toISOString() : null, updated_at: new Date().toISOString() }).eq("id", a.id);
+      const { error } = await db.from("mkt_autos").update({ estado, vendido_at: estado === "vendido" ? new Date().toISOString() : null, updated_at: new Date().toISOString(), ...(estado === "vendido" && a.cedula ? { cedula: null } : {}) }).eq("id", a.id);
       if (error) throw error;
+      if (estado === "vendido" && a.cedula) await db.storage.from(DOCS).remove([String(a.cedula)]);
       return json({ ok: true });
     }
 
@@ -226,11 +265,12 @@ Deno.serve(async (req) => {
     // ---- Borrar un auto propio (con sus fotos) ----
     if (b.accion === "borrar") {
       if (typeof b.id !== "string") return err("Datos inválidos");
-      const { data: a } = await db.from("mkt_autos").select("id, fotos").eq("id", b.id).eq("cuenta_id", cuenta.id).maybeSingle();
+      const { data: a } = await db.from("mkt_autos").select("id, fotos, cedula").eq("id", b.id).eq("cuenta_id", cuenta.id).maybeSingle();
       if (!a) return err("No encontramos ese auto.", 404);
       const { error } = await db.from("mkt_autos").delete().eq("id", a.id);
       if (error) throw error;
       if ((a.fotos as string[])?.length) await db.storage.from(BUCKET).remove(a.fotos as string[]);
+      if (a.cedula) await db.storage.from(DOCS).remove([String(a.cedula)]);
       return json({ ok: true });
     }
 

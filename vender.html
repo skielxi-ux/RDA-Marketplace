@@ -26,17 +26,17 @@
   <meta name="twitter:image" content="https://skielxi-ux.github.io/RDA-Marketplace/img/og.jpg" />
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
-  <script type="module" crossorigin src="./assets/vender-G1jq5OSH.js"></script>
-  <link rel="modulepreload" crossorigin href="./assets/dom-C8xd8TO7.js">
-  <link rel="modulepreload" crossorigin href="./assets/auth-DjO-SZcN.js">
-  <link rel="modulepreload" crossorigin href="./assets/icons-xIOwbhHI.js">
+  <script type="module" crossorigin src="./assets/vender-CDSPmnmA.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/dom-C1X2dB9K.js">
+  <link rel="modulepreload" crossorigin href="./assets/auth-Ct2Oz9NK.js">
+  <link rel="modulepreload" crossorigin href="./assets/icons-BCeff-oe.js">
   <link rel="modulepreload" crossorigin href="./assets/catalog-C6oEt7qm.js">
   <link rel="modulepreload" crossorigin href="./assets/modelos-BZRcky_i.js">
   <link rel="modulepreload" crossorigin href="./assets/carga-9OZX3V5K.js">
-  <link rel="modulepreload" crossorigin href="./assets/fotos-DA77roJl.js">
+  <link rel="modulepreload" crossorigin href="./assets/fotos-B_fbhPIY.js">
   <link rel="modulepreload" crossorigin href="./assets/rolldown-runtime-DK3Fl9T5.js">
-  <link rel="modulepreload" crossorigin href="./assets/autosApi-VTD4COsp.js">
-  <link rel="stylesheet" crossorigin href="./assets/dom-aP6CemRJ.css">
+  <link rel="modulepreload" crossorigin href="./assets/autosApi-C41y-rlb.js">
+  <link rel="stylesheet" crossorigin href="./assets/dom-DGRyjTGb.css">
 </head>
 <body>
   <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
@@ -172,6 +172,23 @@
                 <label class="block"><span class="vd-label">Provincia <span class="text-brand">*</span></span><select class="auth-input" name="provincia" required data-vd-provincias><option value="">Elegí</option></select></label>
               </div>
               <label class="mt-4 block"><span class="vd-label">Descripción</span><textarea class="auth-input !h-auto min-h-[130px] py-3" name="descripcion" maxlength="1000" rows="5" placeholder="Estado, service al día, único dueño, detalles a tener en cuenta…"></textarea></label>
+            </fieldset>
+
+            <fieldset class="mt-10 rounded-[20px] border border-line bg-soft p-5 sm:p-6">
+              <legend class="px-1 text-[19px] font-bold">Documentación <span class="text-brand">*</span></legend>
+              <p class="flex items-start gap-2 text-[14px] text-ink/70"><svg xmlns="http://www.w3.org/2000/svg" class="i-lock mt-0.5 h-4 w-4 shrink-0 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Para cuidar a los compradores, verificamos que el auto exista y sea el del aviso. <b>No se publica:</b> la cédula la ve solo Red de Autos y se borra apenas revisamos tu aviso.</p>
+              <div class="mt-4 grid gap-4 sm:grid-cols-[200px_1fr] sm:items-start">
+                <label class="block"><span class="vd-label">Patente <span class="text-brand">*</span></span><input class="auth-input uppercase tracking-[0.08em]" name="dominio" required maxlength="9" autocomplete="off" autocapitalize="characters" placeholder="AB123CD" /></label>
+                <div>
+                  <span class="vd-label">Foto de la cédula (verde o azul) <span class="text-brand">*</span></span>
+                  <label class="pub-drop !min-h-[96px] !py-4" data-vd-ced-drop>
+                    <input type="file" accept="image/jpeg,image/png,image/webp" capture="environment" class="sr-only" data-vd-ced-input />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="i-id-card h-5 w-5 text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 19a4 4 0 00-8 0"/><path d="M16 10h2"/><path d="M16 14h2"/><circle cx="9" cy="12" r="3"/><rect x="2" y="5" width="20" height="14" rx="2"/></svg>
+                    <span class="text-[14px] font-medium" data-vd-ced-label>Sacale una foto del lado donde figura la patente</span>
+                  </label>
+                  <img alt="Vista previa de la cédula" class="mt-3 max-h-[160px] rounded-lg border border-line" data-vd-ced-prev hidden />
+                </div>
+              </div>
             </fieldset>
           </div>
 

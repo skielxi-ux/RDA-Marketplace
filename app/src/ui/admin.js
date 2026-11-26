@@ -470,6 +470,19 @@ async function loadAutos() {
   }).join('')}</ul>`;
 }
 
+/** Patente + cédula (privada, link de 10 min) para comparar con el aviso. Se borra sola al aprobar o rechazar. */
+function cedulaRevision(a) {
+  const pat = a.dominio ? `<b class="rounded-md border border-ink/20 bg-white px-2 py-0.5 font-mono tracking-[0.1em]">${esc(a.dominio)}</b>` : '<span class="text-ink/60">sin patente</span>';
+  const rep = (a.patente_repetida ?? []).length
+    ? `<p class="mt-2 rounded-lg bg-[#FDECEC] px-3 py-2 text-[13px] text-[#B42318]">⚠ Esta patente también está en: ${a.patente_repetida.map(esc).join(' · ')}</p>` : '';
+  const ced = a.cedula_url
+    ? `<a href="${esc(a.cedula_url)}" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block"><img src="${esc(a.cedula_url)}" alt="Cédula del auto" class="max-h-[200px] rounded-lg border border-line" /></a>
+       <p class="text-[12px] text-ink/60">Compará marca, modelo, año y patente con el aviso. La cédula se borra sola al aprobar o rechazar.</p>`
+    : a.cedula_verificada_at ? `<p class="mt-1 text-[13px] text-ok">✓ Cédula verificada el ${esc(fmtFecha(a.cedula_verificada_at))} (cambio de datos, misma patente)</p>`
+    : '<p class="mt-1 text-[13px] text-[#B42318]">Sin cédula</p>';
+  return `<div class="mt-3 rounded-xl border border-line bg-white p-3"><p class="text-[14px]">Patente: ${pat}</p>${rep}${ced}</div>`;
+}
+
 /** Auto de un particular esperando revisión: se ve todo (fotos y datos) para aprobarlo o rechazarlo. */
 function autoRevision(a) {
   const fotos = (a.fotos ?? []).map((f) => fotoUrl(f)).filter(Boolean);
@@ -481,6 +494,7 @@ function autoRevision(a) {
       <p class="text-[14px] text-ink/75">${esc(formatPrice(Number(a.precio), a.moneda))} · ${esc(Number(a.km).toLocaleString('es-AR'))} km · ${esc(a.combustible)} · ${esc(a.transmision)} · ${esc(`${a.ciudad}, ${a.provincia}`)}</p>
       <p class="text-[14px] text-ink/75">${esc(a.cuenta?.nombre ?? '')}${tel ? ` · <a class="text-brand underline" href="https://wa.me/${esc(tel)}" target="_blank" rel="noopener noreferrer">WhatsApp ${esc(tel)}</a>` : ''}</p>
       ${a.descripcion ? `<p class="mt-2 whitespace-pre-line text-[14px]">${esc(a.descripcion)}</p>` : ''}
+      ${cedulaRevision(a)}
       ${fotos.length ? `<div class="mt-3 flex gap-2 overflow-x-auto pb-1">${fotos.map((u) => `<a href="${esc(u)}" target="_blank" rel="noopener noreferrer" class="shrink-0"><img src="${esc(u)}" alt="" width="160" height="120" loading="lazy" class="h-[90px] w-[120px] rounded-lg object-cover sm:h-[120px] sm:w-[160px]" /></a>`).join('')}</div>` : ''}
       <div class="mt-4 flex flex-wrap gap-2">
         <button type="button" class="btn-primary h-[44px] !px-5 text-[14px]" data-auto-estado="publicado" data-id="${esc(a.id)}">${icon('circle-check', 'h-4 w-4')} Aprobar y publicar</button>

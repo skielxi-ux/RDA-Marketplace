@@ -1,6 +1,6 @@
 // Textos legales: Términos y condiciones y Política de privacidad.
 // Cada sección: [título, [párrafos | { lista: [...] }]]. Se renderizan en build/prerender.js.
-export const VIGENCIA = '25 de noviembre de 2026';
+export const VIGENCIA = '26 de noviembre de 2026';
 
 export const TERMINOS = [
   ['1. Qué es Red de Autos', [
@@ -31,7 +31,7 @@ export const TERMINOS = [
     'Quien publica declara que tiene derecho a ofrecer el vehículo y que los datos, el precio y las fotos son reales y corresponden a ese vehículo.',
     { lista: [
       'Está prohibido publicar vehículos que no estén disponibles, con precios engañosos, fotos que no les correspondan, datos de contacto de terceros o contenido ofensivo, ilegal o que infrinja derechos de terceros.',
-      'Las publicaciones de particulares se revisan antes de mostrarse. Los particulares pueden tener hasta 2 vehículos publicados a la vez.',
+      'Las publicaciones de particulares se revisan antes de mostrarse. Para publicar, el particular debe informar la patente y subir una foto de la cédula del vehículo (verde o azul), que se usa solo para verificar que el vehículo exista y coincida con el aviso. Los particulares pueden tener hasta 2 vehículos publicados a la vez.',
       'Red de Autos puede pausar, editar en lo formal o eliminar publicaciones que considere inadecuadas, sin que eso genere derecho a reclamo.',
       'Las etiquetas automáticas (por ejemplo, "Mejor precio", "Pocos km" u "Oferta") se calculan con la información cargada por los vendedores y son solo orientativas.',
     ] },
@@ -83,6 +83,7 @@ export const PRIVACIDAD = [
       'Agencias: nombre comercial, CUIT, tipo de agencia, dirección, horario, WhatsApp de ventas, email, sitio web, Instagram, logo y la comisión para vendedores independientes, si la ofrecen.',
       'Vendedores independientes: nombre y apellido, DNI y, si lo das, email.',
       'Publicaciones: datos y fotos de los vehículos.',
+      'Particulares que publican: la patente y una foto de la cédula del vehículo. La cédula se guarda en un espacio privado, la ve solo Red de Autos para verificar la publicación, nunca se publica y se borra apenas se aprueba o rechaza el aviso (o si lo borrás antes). La patente tampoco se muestra en el aviso.',
       'Alertas: los criterios de búsqueda y los datos técnicos de suscripción a notificaciones de tu navegador.',
       'Uso del sitio: páginas vistas, de dónde llegó la visita (por ejemplo, Google o WhatsApp), si es desde celular o compu, búsquedas, visitas a fichas y clics de contacto, de forma anónima (guardamos un código irreversible que cambia todos los días, no tu dirección IP ni tu identidad). No usamos cookies de seguimiento ni servicios de analítica de terceros.',
       'En tu propio navegador guardamos tus favoritos y tu sesión. Esos datos no viajan a nuestros servidores.',

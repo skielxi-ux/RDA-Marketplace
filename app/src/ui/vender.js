@@ -30,6 +30,7 @@ export function initVender() {
   let mios = [];
   let editando = null;     // auto que se está editando
   let fotos = [];          // [{ file, url }] fotos nuevas elegidas
+  let cedula = null;       // { file, url } foto de la cédula (privada: va al bucket mkt-docs)
   let ocupado = false;
 
   $('[data-vd-provincias]').insertAdjacentHTML('beforeend', PROVINCIAS.map((p) => `<option>${esc(p)}</option>`).join(''));
@@ -162,6 +163,33 @@ export function initVender() {
     pintarFotos();
   });
 
+  // ---------- Cédula (obligatoria para particulares; solo la ve el admin) ----------
+  const patenteDe = (v) => String(v ?? '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const PATENTE = /^([A-Z]{3}\d{3}|[A-Z]{2}\d{3}[A-Z]{2})$/;
+  /** ¿Hace falta subir la cédula? Auto nuevo, cambio de patente, o todavía sin cédula verificada ni pendiente. */
+  const pideCedula = () => !editando || patenteDe(form.elements.dominio.value) !== (editando.dominio ?? '') || (!editando.cedula_verificada_at && !editando.cedula);
+  function pintarCedula() {
+    const prev = $('[data-vd-ced-prev]');
+    prev.hidden = !cedula;
+    if (cedula) prev.src = cedula.url; else prev.removeAttribute('src');
+    $('[data-vd-ced-drop]').classList.toggle('is-done', !!cedula);
+    $('[data-vd-ced-label]').textContent = cedula ? 'Cédula lista · tocá para cambiarla'
+      : !pideCedula() ? (editando.cedula_verificada_at ? '✓ Ya verificamos la cédula de este auto' : 'Ya recibimos la cédula · podés cambiarla')
+      : 'Sacale una foto del lado donde figura la patente';
+  }
+  function soltarCedula() { if (cedula) URL.revokeObjectURL(cedula.url); cedula = null; }
+  $('[data-vd-ced-input]').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!/^image\/(jpeg|png|webp)$/.test(file.type)) return error('La cédula tiene que ser una foto JPG, PNG o WebP.');
+    if (file.size > MAX_MB * 1024 * 1024) return error(`La foto de la cédula pesa más de ${MAX_MB} MB.`);
+    error(''); soltarCedula();
+    cedula = { file, url: URL.createObjectURL(file) };
+    pintarCedula();
+  });
+  form.elements.dominio.addEventListener('input', pintarCedula);
+
   // ---------- Editar ----------
   function empezarEdicion(a) {
     if (!a) return;
@@ -171,11 +199,13 @@ export function initVender() {
     f.km.value = Number(a.km).toLocaleString('es-AR');
     f.precio.value = Number(a.precio).toLocaleString('es-AR');
     f.puertas.value = a.puertas ?? '';
+    f.dominio.value = a.dominio ?? '';
+    soltarCedula();
     fotos.forEach((x) => URL.revokeObjectURL(x.url)); fotos = [];
     $('[data-vd-form-title]').textContent = 'Editar publicación';
     $('[data-vd-submit-label]').textContent = 'Guardar y enviar a revisión';
     $('[data-vd-cancelar]').hidden = false;
-    pintarMios(); pintarFotos(); error('');
+    pintarMios(); pintarFotos(); pintarCedula(); error('');
     form.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   function limpiarForm() {
@@ -185,6 +215,7 @@ export function initVender() {
     if (c?.provincia && PROVINCIAS.includes(c.provincia)) form.elements.provincia.value = c.provincia;
     editando = null;
     fotos.forEach((x) => URL.revokeObjectURL(x.url)); fotos = [];
+    soltarCedula(); pintarCedula();
     $('[data-vd-form-title]').textContent = 'Publicá tu auto';
     $('[data-vd-submit-label]').textContent = 'Enviar a revisión';
     $('[data-vd-cancelar]').hidden = true;
@@ -214,6 +245,9 @@ export function initVender() {
     if (!Number.isInteger(a.km) || a.km < 0 || a.km > 2000000) return { error: 'Revisá los kilómetros (solo números, ej.: 85000).' };
     if (!Number.isFinite(a.precio) || a.precio <= 0 || a.precio >= 1e11) return { error: 'Revisá el precio (solo números, ej.: 14500000).' };
     if (!editando && !fotos.length) return { error: 'Subí al menos una foto.' };
+    a.dominio = patenteDe(v('dominio'));
+    if (!PATENTE.test(a.dominio)) return { error: 'Revisá la patente: tiene que ser como AB123CD o ABC123.' };
+    if (!cedula && pideCedula()) return { error: 'Subí la foto de la cédula del auto (verde o azul). Solo la vemos nosotros para verificar.' };
     return { auto: a };
   }
 
@@ -241,8 +275,20 @@ export function initVender() {
           rutas.push(urls[i].path);
         }
       }
+      // Cédula: al bucket privado, recién al enviar (así no quedan cédulas sueltas)
+      let rutaCedula = null;
+      if (cedula) {
+        label.textContent = 'Subiendo cédula…';
+        const sb = await supa();
+        const formato = await formatoFotos();
+        const blob = await comprimir(cedula.file, formato);
+        const { path, token } = await autosApi('url_cedula', { formato });
+        const { error: up } = await sb.storage.from('mkt-docs').uploadToSignedUrl(path, token, blob, { contentType: formato === 'jpg' ? 'image/jpeg' : 'image/webp' });
+        if (up) throw new Error('Se cortó la subida de la cédula. Revisá tu conexión y probá de nuevo.');
+        rutaCedula = path;
+      }
       label.textContent = 'Enviando…';
-      await autosApi('publicar', { autos: [{ ...r.auto, fotos: rutas }] });
+      await autosApi('publicar', { autos: [{ ...r.auto, fotos: rutas, ...(rutaCedula ? { cedula: rutaCedula } : {}) }] });
       limpiarForm();
       await cargarMios();
       $('[data-vd-mios-box]').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -257,4 +303,5 @@ export function initVender() {
   window.addEventListener('rda:cuenta', (e) => pintarAcceso(e.detail));
   pintarAcceso(cuentaGuardada());
   pintarFotos();
+  pintarCedula();
 }
