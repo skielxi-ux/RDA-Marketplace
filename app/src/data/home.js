@@ -28,6 +28,16 @@ export const sellPrivate = {
   ],
 };
 
+// Servicio pago de fotos con fondo de estudio (home, antes del contacto, y versión chica en Mi cuenta)
+export const fotoEstudio = {
+  eyebrow: 'Servicio de fotos',
+  title: '¿Tenés fotos de tus autos pero querés que se vean más profesionales?',
+  text: 'Nos encargamos de que tus autos luzcan con fondo de estudio, para que tus publicaciones tengan más impacto y se destaquen en el listado. Escribinos y te lo resolvemos.',
+  puntos: ['Fondo de estudio limpio y uniforme', 'Usamos las fotos que ya tenés', 'Listas para publicar en Red de Autos y en tus redes'],
+  costo: 'Es un servicio con costo. Escribinos por WhatsApp y te pasamos el precio según la cantidad de autos.',
+  mensaje: '¡Hola! Quiero consultar por el servicio de fotos con fondo de estudio para mis autos.',
+};
+
 // Bloque "Para vendedores independientes" (debajo del de particulares). foto: null hasta tener la foto definitiva.
 export const forIndependents = {
   eyebrow: 'Para vendedores independientes',

@@ -2,7 +2,7 @@
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
 import { SITE } from '../data/site.js';
-import { forDealers, forIndependents, sellPrivate, stats, testimonials, brands, footer } from '../data/home.js';
+import { forDealers, forIndependents, fotoEstudio, sellPrivate, stats, testimonials, brands, footer } from '../data/home.js';
 import { logoSvg } from './logo.js';
 import { brandLogoSvg } from './brandLogos.js';
 
@@ -109,6 +109,52 @@ export const renderForIndependents = () => {
     </div>
   </section>`;
 };
+
+/** Link de WhatsApp de Red de Autos con un mensaje ya escrito. */
+export const waRda = (mensaje) => `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(mensaje)}`;
+
+export const renderFotoEstudio = () => {
+  const d = fotoEstudio;
+  return `
+  <section id="fotos-estudio" aria-labelledby="estudio-title" class="pt-20 md:pt-[110px]">
+    <div class="container-x">
+      <div class="reveal grid items-center gap-8 overflow-hidden rounded-[28px] bg-ink p-7 text-white sm:p-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-12 lg:p-14">
+        <div>
+          <p class="flex items-center gap-2.5 text-[13px] font-bold uppercase tracking-[0.12em] text-[#9DB0FF]">${icon('camera', 'h-4 w-4')} ${esc(d.eyebrow)}</p>
+          <h2 id="estudio-title" class="mt-5 text-[28px] font-bold leading-[1.12] tracking-tight text-balance sm:text-[38px] xl:text-[44px]">${esc(d.title)}</h2>
+          <p class="mt-5 max-w-[620px] text-[16px] leading-[1.7] text-white/80 sm:text-[18px]">${esc(d.text)}</p>
+          <ul class="mt-6 grid gap-2.5">
+            ${d.puntos.map((p) => `<li class="flex items-start gap-2.5 text-[15px] text-white/85">${icon('circle-check', 'mt-0.5 h-5 w-5 shrink-0 text-[#4ADE80]')} ${esc(p)}</li>`).join('')}
+          </ul>
+          <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+            <a href="${esc(waRda(d.mensaje))}" target="_blank" rel="noopener noreferrer" class="btn-cta btn-wa !pl-2.5">
+              <span class="btn-cta-icon">${icon('whatsapp', 'h-[18px] w-[18px]')}</span> Consultar por WhatsApp
+            </a>
+          </div>
+          <p class="mt-5 flex items-start gap-2 text-[14px] text-white/65">${icon('tag', 'mt-0.5 h-4 w-4 shrink-0')} ${esc(d.costo)}</p>
+        </div>
+        <div class="relative mx-auto grid aspect-[4/3] w-full max-w-[460px] place-items-center rounded-[24px] bg-[radial-gradient(ellipse_at_center,#FFFFFF_0%,#E7EAF3_55%,#C9CFDE_100%)]" aria-hidden="true">
+          <span class="absolute inset-x-[12%] bottom-[16%] h-[10%] rounded-[50%] bg-ink/20 blur-md"></span>
+          <span class="relative text-ink/80">${icon('car', 'h-28 w-28 sm:h-36 sm:w-36')}</span>
+          <span class="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[13px] font-bold text-ink shadow">${icon('sparkle', 'h-4 w-4 text-brand')} Fondo de estudio</span>
+        </div>
+      </div>
+    </div>
+  </section>`;
+};
+
+/** Versión chica para Mi cuenta (agencias y particulares). */
+export const renderFotoEstudioMini = () => `
+  <aside class="mt-10 flex flex-col gap-5 rounded-[24px] bg-ink p-6 text-white sm:flex-row sm:items-center sm:justify-between sm:p-8" aria-labelledby="estudio-mini">
+    <div class="flex items-start gap-4">
+      <span class="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/10 text-[#9DB0FF]">${icon('camera', 'h-6 w-6')}</span>
+      <div>
+        <p id="estudio-mini" class="text-[18px] font-bold">Fotos con fondo de estudio para tus autos</p>
+        <p class="mt-1 text-[14px] text-white/70">Mandanos las fotos que tenés y te las devolvemos con fondo profesional. Servicio con costo.</p>
+      </div>
+    </div>
+    <a href="${esc(waRda(fotoEstudio.mensaje))}" target="_blank" rel="noopener noreferrer" class="btn-primary btn-wa h-[48px] shrink-0 justify-center !px-5">${icon('whatsapp', 'h-4 w-4')} Consultar</a>
+  </aside>`;
 
 export const renderStats = () => `
   <section aria-label="La red en números" class="pt-16 md:pt-[90px]">

@@ -5,7 +5,7 @@ import { esc } from '../app/src/lib/html.js';
 import { renderHeroSlides, renderMakeOptions, renderBodyTypes, renderReasons } from '../app/src/render/sections.js';
 import { renderCarSlides, renderCarGrid } from '../app/src/render/carCard.js';
 import { renderHeadTags, renderJsonLd } from '../app/src/render/seo.js';
-import { renderForDealers, renderForIndependents, renderSellPrivate, renderStats, renderTestimonials, renderBrands, renderFooter } from '../app/src/render/home2.js';
+import { renderForDealers, renderForIndependents, renderFotoEstudio, renderSellPrivate, renderStats, renderTestimonials, renderBrands, renderFooter } from '../app/src/render/home2.js';
 import { renderSiteHeader, renderToTop } from '../app/src/render/layout.js';
 import { logoSvg } from '../app/src/render/logo.js';
 import { EQUIPO, SITE as SITE_DATA } from '../app/src/data/site.js';
@@ -157,6 +157,7 @@ const PAGES = {
     dealers: renderForDealers(),
     sell: renderSellPrivate(),
     independientes: renderForIndependents(),
+    fotoEstudio: renderFotoEstudio(),
     stats: '', // oculto hasta tener cifras reales (renderStats)
     testimonials: renderTestimonials(),
     brands: renderBrands(),

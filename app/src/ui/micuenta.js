@@ -12,6 +12,7 @@ import { editarAuto } from './editarAuto.js';
 import { initMisAlertas } from './misAlertas.js';
 import { initVendedorPanel } from './vendedorPanel.js';
 import { initMiFeria } from './miFeria.js';
+import { renderFotoEstudioMini } from '../render/home2.js';
 import { textoOferta, relojGlobal } from '../lib/oferta.js';
 
 export function initMiCuenta() {
@@ -291,6 +292,8 @@ export function initMiCuenta() {
 
     btnColegas.hidden = !esAgencia;
     btnFeria.hidden = !esAgencia;
+    // Servicio de fotos con fondo de estudio: para quienes publican autos (agencias y particulares)
+    $('[data-estudio]').innerHTML = cuenta.tipo === 'vendedor' ? '' : renderFotoEstudioMini();
     if (!esAgencia) boxFeria.hidden = true;
     if (esAgencia && location.hash === '#feria') abrirFeria();
     pintarTelegram();

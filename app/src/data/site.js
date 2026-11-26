@@ -6,6 +6,7 @@ export const SITE = {
     'Autos 0km y usados de agencias y concesionarios de Tucumán. Compará precios, mirá las fotos y hablá directo con el vendedor por WhatsApp. Publicá gratis.',
   locale: 'es_AR',
   phone: { display: '381 633-5234', tel: '+543816335234' },
+  whatsapp: '5493816335234', // WhatsApp de Red de Autos (servicios, consultas)
   email: 'reddeautostuc@gmail.com',
   // Partner de seguros (página Seguros y recuadro en la ficha de cada auto). Sin número, no se muestra el botón.
   seguros: { nombre: 'GAMAN BROKERS', whatsapp: '5493815744335', logo: './img/partners/gaman.webp' },
