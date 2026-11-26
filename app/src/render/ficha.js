@@ -187,7 +187,9 @@ const renderDims = (c) => !c.dims ? '' : `
 function renderMap(c) {
   if (!c.coords) return '';
   const [lat, lng, zona = 1] = c.coords; // zona > 1: no conocemos la ciudad, se muestra la provincia
-  const bbox = [lng - 0.06 * zona, lat - 0.035 * zona, lng + 0.06 * zona, lat + 0.035 * zona].map((n) => n.toFixed(4)).join(',');
+  // Local exacto de la agencia: mapa cerca (unas cuadras); si no, la zona de la ciudad
+  const d = c.exacta ? 0.12 : 1;
+  const bbox = [lng - 0.06 * zona * d, lat - 0.035 * zona * d, lng + 0.06 * zona * d, lat + 0.035 * zona * d].map((n) => n.toFixed(4)).join(',');
   const src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik${zona > 1 ? '' : `&marker=${lat},${lng}`}`;
   const dir = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
   return `
@@ -195,7 +197,7 @@ function renderMap(c) {
     <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
       <div>
         <h2 id="map-title" class="ficha-h2 !mb-1">Ubicación</h2>
-        <p class="text-[15px] text-ink/70">${esc(c.city)}, ${esc(c.province)} · zona aproximada</p>
+        <p class="text-[15px] text-ink/70">${c.exacta ? `${c.address ? `${esc(c.address)}, ` : ''}${esc(c.city)}, ${esc(c.province)}` : `${esc(c.city)}, ${esc(c.province)} · zona aproximada`}</p>
       </div>
       <a href="${esc(dir)}" target="_blank" rel="noopener noreferrer" class="btn-outline h-[44px]">${icon('map-pin', 'h-4 w-4')} Cómo llegar</a>
     </div>

@@ -2,7 +2,7 @@
 import { $, $$ } from './dom.js';
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
-import { renderPerfilForm, renderPendientes, renderLogo } from '../render/perfil.js';
+import { renderPerfilForm, renderPendientes, renderLogo, estadoMapa } from '../render/perfil.js';
 import { formatoFotos } from '../lib/fotos.js';
 import { perfilApi } from './autosApi.js';
 import { supa } from './auth.js';
@@ -58,6 +58,7 @@ export async function initPerfil(box) {
       const r = await perfilApi('guardar', datos);
       perfil = r.perfil;
       $('[data-perfil-pendientes]', box).innerHTML = renderPendientes(perfil);
+      $('[data-perfil-mapa]', box).innerHTML = estadoMapa(perfil);
       ok.textContent = r.pendiente ? 'Guardado. El nombre, CUIT o tipo quedan en revisión.' : 'Listo, tus datos están actualizados.';
       if (perfil.instagram) $('#pf-ig', box).value = `@${perfil.instagram}`;
       if (perfil.sitio_web) $('#pf-web', box).value = perfil.sitio_web;

@@ -63,8 +63,15 @@ export async function cargarAutosReales() {
 /** Un auto por id (null si no existe o no está publicado). */
 export async function cargarAuto(id) {
   if (!esIdReal(id)) return null;
-  const rows = await rpc('mkt_auto', { p_id: id });
+  // La ubicación exacta del local solo existe para agencias aprobadas que cargaron su dirección
+  const [rows, ubic] = await Promise.all([rpc('mkt_auto', { p_id: id }), rpc('mkt_auto_ubicacion', { p_id: id }).catch(() => [])]);
   const c = Array.isArray(rows) && rows[0] ? fromDb(rows[0]) : null;
+  const u = Array.isArray(ubic) ? ubic[0] : null;
+  if (c && u && Number.isFinite(u.lat) && Number.isFinite(u.lng)) {
+    c.coords = [u.lat, u.lng, 1];
+    c.exacta = true;
+    c.address = u.direccion || '';
+  }
   return c?.photoUrls.length ? c : null;
 }
 

@@ -45,6 +45,13 @@ export const renderLogo = (p) => {
     : `<span class="grid h-full w-full place-items-center text-ink/35">${icon('store', 'h-10 w-10')}</span>`;
 };
 
+/** Aviso debajo de la dirección: si el local quedó ubicado en el mapa de las fichas de los autos. */
+export function estadoMapa(p) {
+  if (!p.direccion) return '<span class="text-ink/60">Cargá calle y número para que tus autos muestren el local exacto en el mapa.</span>';
+  if (p.lat != null) return `<a href="https://www.openstreetmap.org/?mlat=${Number(p.lat)}&mlon=${Number(p.lng)}#map=18/${Number(p.lat)}/${Number(p.lng)}" target="_blank" rel="noopener noreferrer" class="font-medium text-ok hover:underline">✓ Tu local está ubicado en el mapa · ver dónde quedó</a>`;
+  return '<span class="font-medium text-[#8A5A00]">No encontramos esa dirección en el mapa. Revisala (calle y número, ej. Av. Mitre 181) y guardá de nuevo. Mientras tanto se muestra la zona de tu ciudad.</span>';
+}
+
 export function renderPerfilForm(p) {
   // Lo que pidió cambiar y espera revisión se muestra en el formulario (así no lo vuelve a escribir)
   const pend = p.cambios_pendientes ?? {};
@@ -95,6 +102,7 @@ export function renderPerfilForm(p) {
           ${field('pf-ciudad', 'Ciudad', input('pf-ciudad', 'ciudad', p.ciudad, 'maxlength="60" required autocomplete="address-level2"'))}
           ${field('pf-provincia', 'Provincia', select('pf-provincia', 'provincia', opciones(PROVINCIAS, p.provincia, 'Elegí la provincia')))}
           ${field('pf-direccion', 'Dirección del local', input('pf-direccion', 'direccion', p.direccion, 'maxlength="120" placeholder="Av. Mate de Luna 1234" autocomplete="street-address"'))}
+          <p class="text-[13px] sm:col-span-2" data-perfil-mapa>${estadoMapa(p)}</p>
           ${field('pf-horario', 'Horario de atención', input('pf-horario', 'horario', p.horario, 'maxlength="120" placeholder="Lun a vie 9 a 19 h · Sáb 9 a 13 h"'))}
         </div>
       </fieldset>

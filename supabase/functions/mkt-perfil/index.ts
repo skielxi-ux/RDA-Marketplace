@@ -2,6 +2,7 @@
 // Perfil de la agencia (con su sesión): ver · guardar · url_logo · guardar_logo · quitar_logo
 // Incluye si acepta vendedores independientes y la comisión (1 a 4 %).
 // Nombre, CUIT y tipo (multimarca / oficial y marca) quedan como "cambios pendientes" hasta que el admin los apruebe.
+// La dirección se ubica en el mapa con OpenStreetMap (Nominatim) al guardar: lat/lng para el mapa de la ficha del auto.
 // El resto se guarda al instante. El logo se sube a Storage (mkt-fotos) con URL firmada, dentro de la carpeta de la cuenta.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -63,7 +64,32 @@ async function avisarAdminTelegram(msg: string) {
   } catch (e) { console.error("aviso telegram", e); }
 }
 
-const CAMPOS = "id, tipo, estado, nombre, cuit, agencia_tipo, marca_oficial, ciudad, provincia, direccion, horario, telefono, whatsapp_ventas, email, descripcion, sitio_web, instagram, logo, cambios_pendientes, cambios_at, acepta_independientes, comision_independientes";
+/** Busca la dirección del local en OpenStreetMap. Devuelve [lat, lng] o null si no la encuentra con número de calle. */
+async function ubicar(direccion: string, ciudad: string, provincia: string): Promise<[number, number] | null> {
+  if (!/\d/.test(direccion)) return null; // sin número de calle no hay punto exacto
+  const prov = provincia === "CABA" ? "Ciudad Autónoma de Buenos Aires" : provincia;
+  const intentos = [
+    new URLSearchParams({ street: direccion, city: ciudad, state: prov }),
+    new URLSearchParams({ q: `${direccion}, ${ciudad}, ${prov}` }),
+  ];
+  for (const p of intentos) {
+    try {
+      p.set("format", "jsonv2"); p.set("limit", "1"); p.set("countrycodes", "ar");
+      const r = await fetch(`https://nominatim.openstreetmap.org/search?${p}`, {
+        headers: { "User-Agent": "RedDeAutos-Marketplace/1.0 (https://skielxi-ux.github.io/RDA-Marketplace/)", "Accept-Language": "es" },
+        signal: AbortSignal.timeout(6000),
+      });
+      if (!r.ok) continue;
+      const [x] = await r.json();
+      const lat = Number(x?.lat), lng = Number(x?.lon);
+      // Solo resultados con precisión de calle o casa, dentro de Argentina
+      if (x && Number(x.place_rank) >= 26 && lat > -56 && lat < -21 && lng > -74 && lng < -53) return [lat, lng];
+    } catch (e) { console.error("ubicar", e); }
+  }
+  return null;
+}
+
+const CAMPOS = "id, tipo, estado, nombre, cuit, agencia_tipo, marca_oficial, ciudad, provincia, direccion, horario, telefono, whatsapp_ventas, email, descripcion, sitio_web, instagram, logo, cambios_pendientes, cambios_at, acepta_independientes, comision_independientes, lat, lng";
 const publico = (c: A) => ({ ...c, telefono: undefined, tipo: undefined });
 
 Deno.serve(async (req) => {
@@ -141,6 +167,15 @@ Deno.serve(async (req) => {
       const hayCambios = Object.keys(cambios).length > 0;
       const yaPendiente = JSON.stringify(c.cambios_pendientes ?? null) === JSON.stringify(hayCambios ? cambios : null);
       const upd: A = { ...directos };
+      // Ubicación en el mapa: se busca de nuevo si cambió la dirección (o si todavía no estaba ubicada)
+      let ubicacion: "exacta" | "no_encontrada" | null = null;
+      const cambioLugar = directos.direccion !== c.direccion || ciudad !== c.ciudad || provincia !== c.provincia;
+      if (!directos.direccion) { upd.lat = null; upd.lng = null; }
+      else if (cambioLugar || c.lat == null) {
+        const punto = await ubicar(String(directos.direccion), ciudad, provincia);
+        upd.lat = punto?.[0] ?? null; upd.lng = punto?.[1] ?? null;
+        ubicacion = punto ? "exacta" : "no_encontrada";
+      } else ubicacion = "exacta";
       if (!yaPendiente) {
         upd.cambios_pendientes = hayCambios ? cambios : null;
         upd.cambios_at = hayCambios ? new Date().toISOString() : null;
@@ -156,7 +191,7 @@ Deno.serve(async (req) => {
         ].join("\n"));
       }
       const { data: nuevo } = await db.from("mkt_cuentas").select(CAMPOS).eq("id", c.id).single();
-      return json({ ok: true, perfil: publico(nuevo), pendiente: hayCambios });
+      return json({ ok: true, perfil: publico(nuevo), pendiente: hayCambios, ubicacion });
     }
 
     if (b.accion === "url_logo") {
