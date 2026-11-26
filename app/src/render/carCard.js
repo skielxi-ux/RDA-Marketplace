@@ -31,7 +31,7 @@ function renderSeller(seller) {
     multimarca: `<span class="text-ink/50" title="Agencia multimarca">${icon('store', 'h-[18px] w-[18px]')}</span>`,
   }[seller.type];
   return `
-      <div class="mt-auto flex items-center gap-3 border-t border-line pt-4">
+      <div class="flex items-center gap-3 border-t border-line pt-4">
         ${avatar}
         <span class="min-w-0 flex-1 truncate text-[15px] font-medium">${esc(seller.name)}<span class="sr-only"> · ${esc(SELLER_TYPES[seller.type])}</span></span>
         ${tag}
@@ -47,6 +47,8 @@ export function renderCarCard(c, { lazy = true, slide = false } = {}) {
   const url = carUrl(c);
   const reloj = c.feria || c.relampago;
 
+  // Alineación: título y descripción ocupan siempre 2 renglones y la ubicación 1; además el botón "Ver más"
+  // lleva mt-auto, así queda siempre al pie de la tarjeta (todas las de una fila miden lo mismo).
   const card = `
   <article class="car-card group" data-car-id="${esc(c.id)}">
     <div class="car-media" data-gallery="${esc(JSON.stringify(shots))}">
@@ -69,14 +71,15 @@ export function renderCarCard(c, { lazy = true, slide = false } = {}) {
       <div class="gallery-dots" aria-hidden="true">${shots.map((_, i) => `<span class="${i === 0 ? 'is-on' : ''}"></span>`).join('')}</div>
     </div>
     <div class="flex flex-1 flex-col p-5">
-      <h3 class="car-title text-[19px] font-medium leading-snug"><a href="${esc(url)}" class="car-link">${esc(title)}</a></h3>
-      <p class="mt-2 line-clamp-2 text-[15px] leading-[1.55] text-ink/70">${esc(c.desc)}</p>
+      <h3 class="car-title line-clamp-2 min-h-[53px] text-[19px] font-medium leading-snug" title="${esc(title)}"><a href="${esc(url)}" class="car-link">${esc(title)}</a></h3>
+      <p class="mt-2 line-clamp-2 min-h-[47px] text-[15px] leading-[1.55] text-ink/70">${esc(c.desc)}</p>
       <p class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[14px] text-ink/80">
         <span class="inline-flex items-center gap-1.5">${icon('fuel', 'h-4 w-4')}<span class="sr-only">Combustible: </span>${esc(c.fuel)}</span>
         <span class="inline-flex items-center gap-1.5">${icon('cog', 'h-4 w-4')}<span class="sr-only">Caja: </span>${esc(c.gear)}</span>
       </p>
-      <p class="mt-2 flex items-center gap-1.5 text-[15px]">${icon('map-pin', 'h-4 w-4 shrink-0 text-ink/70')} ${esc(c.city)}, ${esc(c.province)}</p>
-      <a href="${esc(url)}" class="btn-outline relative z-[2] mb-5 mt-4 h-[46px] justify-center" aria-label="Ver más sobre ${esc(title)}">Ver más ${icon('arrow-right', 'h-4 w-4')}</a>
+      <p class="mt-2 flex min-w-0 items-center gap-1.5 text-[15px]">${icon('map-pin', 'h-4 w-4 shrink-0 text-ink/70')} <span class="truncate">${esc(c.city)}, ${esc(c.province)}</span></p>
+      <span class="block h-4 shrink-0" aria-hidden="true"></span>
+      <a href="${esc(url)}" class="btn-outline relative z-[2] mb-5 mt-auto h-[46px] shrink-0 justify-center" aria-label="Ver más sobre ${esc(title)}">Ver más ${icon('arrow-right', 'h-4 w-4')}</a>
       ${renderSeller(seller)}
     </div>
   </article>`;
