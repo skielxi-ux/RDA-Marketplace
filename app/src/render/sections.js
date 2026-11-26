@@ -38,7 +38,7 @@ export const renderBodyTypes = () =>
           width="600" height="700" alt="${esc(t.alt ?? '')}" loading="lazy" decoding="async" />
         <div class="absolute inset-0 bg-gradient-to-b from-ink/75 via-ink/10 to-transparent"></div>
         <div class="relative p-[30px] text-white">
-          <p class="text-[15px]">${esc(t.count)} ${t.count === 1 ? 'auto' : 'autos'}</p>
+          <p class="text-[15px]" data-conteo-tipo="${esc(t.slug)}">Ver autos</p>
           <h3 class="mt-1 text-[18px] font-medium">${esc(t.name)}</h3>
         </div>
       </a>

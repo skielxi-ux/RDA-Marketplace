@@ -1,1 +1,0 @@
-import"./a11y-3Npf8TRU.js";import"./dom-BlTyJZs9.js";import{c as e,n as t,s as n}from"./auth-BJy7-iIn.js";import{t as r}from"./ficha-B_aU83AQ.js";document.documentElement.classList.add(`js`),e(),n(),r(),t();

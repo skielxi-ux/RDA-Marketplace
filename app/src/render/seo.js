@@ -40,7 +40,8 @@ export function renderJsonLd(list = cars, listName = 'Autos destacados') {
         sameAs: Object.values(SITE.social).filter(Boolean),
       },
       { '@type': 'WebSite', '@id': `${SITE.url}#web`, name: SITE.name, url: SITE.url, inLanguage: 'es-AR', publisher: { '@id': `${SITE.url}#org` } },
-      {
+      // La lista de autos solo va si hay autos en el HTML (los reales se cargan en el navegador)
+      ...(!list.length ? [] : [{
         '@type': 'ItemList',
         name: listName,
         itemListElement: list.map((c, i) => ({
@@ -61,7 +62,7 @@ export function renderJsonLd(list = cars, listName = 'Autos destacados') {
             bodyType: c.body,
           },
         })),
-      },
+      }]),
     ],
   };
   return `<script type="application/ld+json">${jsonForScript(data)}</script>`;

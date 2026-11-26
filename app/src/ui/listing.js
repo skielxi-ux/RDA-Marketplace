@@ -8,6 +8,7 @@ import { registrarBusqueda } from '../lib/busquedas.js';
 import { renderCarGrid } from '../render/carCard.js';
 import { renderModelOptions } from '../render/sections.js';
 import { SORT_OPTIONS } from '../render/listing.js';
+import { icon } from '../lib/icons.js';
 
 const CONDITIONS = { todos: null, '0km': 'new', usados: 'used' };
 const TITLES = { todos: 'Autos en venta', '0km': 'Autos 0km', usados: 'Autos usados' };
@@ -194,14 +195,14 @@ export function initListing() {
   window.matchMedia('(min-width: 1024px)').addEventListener('change', (m) => m.matches && setOpen(false));
 
   paintForm();
-  render();
+  // Mientras llegan los autos, un aviso de carga (no el "no encontramos autos")
+  grid.innerHTML = `<p class="col-span-full flex items-center justify-center gap-2 py-16 text-ink/60">${icon('loader-circle', 'h-5 w-5 animate-spin')} Cargando autos…</p>`;
   // Llegó con una marca en la URL (clic en una marca, o el buscador de la home: el servidor no la cuenta dos veces)
   if (state.marca) { contado = ''; contar(llegoPorMarca ? 'marca' : 'filtro'); }
 
   // Sumar los autos de las agencias y actualizar los contadores de los filtros
-  cargarAutosReales().then((reales) => {
-    if (!reales.length) return;
-    pool = [...reales, ...cars];
+  cargarAutosReales().catch(() => []).then((reales) => {
+    pool = reales;
     $$('[data-filter-count]').forEach((el) => {
       const [name, value] = el.dataset.filterCount.split(':');
       el.textContent = String(pool.filter((c) => (name === 'carroceria' ? c.body : sellerOf(c).type) === value).length);

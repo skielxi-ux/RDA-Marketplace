@@ -14,6 +14,19 @@ export function initBodyTypes() {
   });
 }
 
+/** Cantidad real de autos por carrocería y por marca en la home ("3 autos" / "Ver autos"). */
+function pintarConteos(reales) {
+  const texto = (n) => (n ? `${n} ${n === 1 ? 'auto' : 'autos'}` : 'Ver autos');
+  $$('[data-conteo-tipo]').forEach((el) => {
+    const t = el.dataset.conteoTipo;
+    el.textContent = texto(reales.filter((c) => (t === 'electrico' ? c.fuel === 'Eléctrico' : c.body === t)).length);
+  });
+  $$('[data-conteo-marca]').forEach((el) => {
+    const m = el.dataset.conteoMarca.toLowerCase();
+    el.textContent = texto(reales.filter((c) => c.brand.toLowerCase() === m).length);
+  });
+}
+
 export function initFeatured() {
   const el = $('#featured');
   const wrapper = $('.swiper-wrapper', el);
@@ -25,9 +38,9 @@ export function initFeatured() {
   });
   initCards(el);
 
-  // Destacados: primero los autos reales de las agencias (los más nuevos), después los de ejemplo
+  // Destacados: los autos reales más nuevos. Las pestañas sin autos se ocultan; sin autos, se oculta la sección.
   let tabs = featuredTabs;
-  let activa = $('#featured-tabs [aria-selected="true"]')?.dataset.tab ?? featuredTabs[0].key;
+  let activa = featuredTabs[0].key;
   const pintar = (key) => {
     const data = tabs.find((t) => t.key === key);
     if (!data) return;
@@ -36,11 +49,24 @@ export function initFeatured() {
     swiper.slideTo(0, 0);
     initCards(el);
   };
-  cargarAutosReales().then((reales) => {
-    if (!reales.length) return;
-    const de = (fn) => reales.filter(fn);
-    const extra = { nuevos: de((c) => c.condition === 'new'), usados: de((c) => c.condition === 'used'), particulares: de((c) => c.sellerInfo.type === 'particular') };
-    tabs = featuredTabs.map((t) => ({ ...t, cars: [...(extra[t.key] ?? []), ...t.cars].slice(0, 8) }));
+  cargarAutosReales().catch(() => []).then((reales) => {
+    pintarConteos(reales);
+    const de = (fn) => reales.filter(fn).slice(0, 8);
+    const autos = { nuevos: de((c) => c.condition === 'new'), usados: de((c) => c.condition === 'used'), particulares: de((c) => c.sellerInfo.type === 'particular') };
+    tabs = featuredTabs.map((t) => ({ ...t, cars: autos[t.key] ?? [] }));
+    const conAutos = tabs.filter((t) => t.cars.length);
+    if (!conAutos.length) { el.closest('section').hidden = true; return; }
+    $$('#featured-tabs [data-tab]').forEach((b) => {
+      const vacia = !conAutos.some((t) => t.key === b.dataset.tab);
+      b.hidden = vacia;
+      b.setAttribute('aria-selected', String(b.dataset.tab === conAutos[0].key));
+      b.classList.toggle('is-active', b.dataset.tab === conAutos[0].key);
+      b.tabIndex = b.dataset.tab === conAutos[0].key ? 0 : -1;
+    });
+    // Con una sola pestaña, la barra de pestañas no hace falta
+    $('#featured-tabs').hidden = conAutos.length < 2;
+    activa = conAutos[0].key;
+    el.setAttribute('aria-labelledby', `tab-${activa}`);
     pintar(activa);
   });
 
