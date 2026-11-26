@@ -1,4 +1,4 @@
-import{n as e,t}from"./dom-X2tapx7s.js";import{a as n,c as r,i,n as a,s as o,t as s}from"./auth-Cw7ZMunr.js";import{i as c,n as l,t as u}from"./icons-YsKP1_xN.js";import{t as d}from"./ranking-19GaM3mP.js";import{i as f,n as p,o as m,s as h,t as g}from"./autosApi-C2nZlgTP.js";import{o as _}from"./catalog-C6oEt7qm.js";import{i as v,t as y}from"./modelos-BZRcky_i.js";import{t as b}from"./carga-9OZX3V5K.js";import{n as x,r as S,t as C}from"./fotos-BojmJC_u.js";import{n as w,r as ee,t as T}from"./oferta-o_gfkh8Z.js";import{a as E,i as D,r as O,t as te}from"./alertaListado-BvzUDuno.js";var k=e=>/^\d{11}$/.test(e??``)?`${e.slice(0,2)}-${e.slice(2,10)}-${e.slice(10)}`:e??``,ne=e=>String(e??``).replace(/^549(\d+)$/,`$1`),A=(e,t,n,r=``)=>`
+import{n as e,t}from"./dom-7APuqk7w.js";import{a as n,c as r,i,n as a,s as o,t as s}from"./auth-a4695JTW.js";import{i as c,n as l,t as u}from"./icons-BDwMUW1t.js";import{t as d}from"./ranking-aKg9DPLr.js";import{i as f,n as p,o as m,s as h,t as g}from"./autosApi-wRis0Fh9.js";import{o as _}from"./catalog-C6oEt7qm.js";import{i as v,t as y}from"./modelos-BZRcky_i.js";import{t as b}from"./carga-9OZX3V5K.js";import{n as x,r as S,t as C}from"./fotos-BrPLvvdK.js";import{n as w,r as ee,t as T}from"./oferta-o_gfkh8Z.js";import{a as E,i as D,r as O,t as te}from"./alertaListado-IR0nVLer.js";var k=e=>/^\d{11}$/.test(e??``)?`${e.slice(0,2)}-${e.slice(2,10)}-${e.slice(10)}`:e??``,ne=e=>String(e??``).replace(/^549(\d+)$/,`$1`),A=(e,t,n,r=``)=>`
   <div>
     <label for="${e}" class="auth-label">${l(t)}</label>
     ${n}
@@ -200,7 +200,7 @@ import{n as e,t}from"./dom-X2tapx7s.js";import{a as n,c as r,i,n as a,s as o,t a
   </div>`}function K(e){return e?.vinculado?`<p class="flex items-center gap-2 rounded-2xl bg-[#E8F5E9] px-5 py-3 text-[14px] text-ok">${u(`circle-check`,`h-4 w-4`)} Los pedidos te llegan también por Telegram${e.como?` (${l(e.como)})`:``}.</p>`:`
     <div class="flex flex-col gap-4 rounded-2xl bg-[#EEF1FB] p-5 sm:flex-row sm:items-center sm:justify-between">
       <p class="text-[15px]"><b>Recibí los pedidos en Telegram.</b> <span class="text-ink/70">Conectá tu cuenta una sola vez con el bot de Red de Autos.</span></p>
-      <button type="button" class="btn-primary h-[46px] shrink-0 justify-center" data-tg-conectar>${u(`message-circle`,`h-4 w-4`)} Conectar Telegram</button>
+      <button type="button" class="btn-primary h-[46px] shrink-0 justify-center" data-tg-conectar>${u(`telegram`,`h-4 w-4`)} Conectar Telegram</button>
     </div>`}var q=e=>{let t=Math.max(0,Math.round((Date.now()-new Date(e).getTime())/6e4));if(t<1)return`recién`;if(t<60)return`hace ${t} min`;let n=Math.round(t/60);if(n<24)return`hace ${n} h`;let r=Math.round(n/24);return r===1?`ayer`:`hace ${r} días`};function J(e){let t=e.anio_desde&&e.anio_hasta?e.anio_desde===e.anio_hasta?`${e.anio_desde}`:`${e.anio_desde} a ${e.anio_hasta}`:e.anio_desde?`Desde ${e.anio_desde}`:e.anio_hasta?`Hasta ${e.anio_hasta}`:``,n=[t&&[u(`calendar`,`h-3.5 w-3.5`),t],e.km_max!=null&&[u(`gauge`,`h-3.5 w-3.5`),`Hasta ${H(e.km_max)} km`],e.transmision&&[u(`cog`,`h-3.5 w-3.5`),e.transmision],e.combustible&&[u(`fuel`,`h-3.5 w-3.5`),e.combustible],e.color&&[u(`palette`,`h-3.5 w-3.5`),e.color]].filter(Boolean),r=e.agencia,i=S(r.logo??``),a=/^\d{10,15}$/.test(r.whatsapp??``)?r.whatsapp:``,o=[e.marca,e.modelo,e.version].filter(Boolean).join(` `),s=`Hola ${r.nombre}, vi en la Red de colegas de Red de Autos que buscás ${o}${t?` (${t})`:``}. Tengo uno que te puede servir.`,c=e.estado===`cerrado`;return`
   <li class="colega-card ${c?`opacity-60`:``}" data-pedido="${l(e.id)}">
     <div class="flex items-start justify-between gap-3">
@@ -450,14 +450,14 @@ import{n as e,t}from"./dom-X2tapx7s.js";import{a as n,c as r,i,n as a,s as o,t a
         <div class="mb-8 overflow-hidden rounded-[24px] bg-ink text-white">
           <div class="grid gap-6 p-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:p-8">
             <div>
-              <p class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[13px] font-medium">${u(`message-circle`,`h-4 w-4`)} Bot de Red de Autos en Telegram</p>
+              <p class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[13px] font-medium">${u(`telegram`,`h-4 w-4`)} Bot de Red de Autos en Telegram</p>
               <p class="mt-3 text-[22px] font-bold leading-tight sm:text-[26px]">Conectá Telegram y manejá tu stock desde el celular</p>
               <ul class="mt-4 grid gap-2 text-[15px] text-white/85 sm:grid-cols-2">
                 ${[[`bell`,`Avisos al instante de pedidos de colegas`],[`tag`,`Cambiar el precio de un auto`],[`circle-check`,`Marcar un auto como vendido`],[`lock`,`Pausar y volver a publicar`],[`handshake`,`Pedir autos a colegas y responder "Lo tengo"`],[`badge-check`,`Avisos de tu cuenta y de ferias nuevas`]].map(([e,t])=>`<li class="flex items-start gap-2">${u(e,`mt-0.5 h-4 w-4 shrink-0 text-[#9DB0FF]`)}<span>${t}</span></li>`).join(``)}
               </ul>
             </div>
             <div class="flex flex-col gap-2 md:items-end">
-              <button type="button" class="btn-primary h-[54px] justify-center !px-8" data-tg-conectar>${u(`message-circle`,`h-4 w-4`)} Conectar Telegram</button>
+              <button type="button" class="btn-primary h-[54px] justify-center !px-8" data-tg-conectar>${u(`telegram`,`h-4 w-4`)} Conectar Telegram</button>
               <p class="text-[13px] text-white/60 md:text-right">Se abre Telegram: tocá <b>Iniciar</b> y listo.<br>Si no lo tenés, bajalo gratis de tu tienda de apps.</p>
             </div>
           </div>

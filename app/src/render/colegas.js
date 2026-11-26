@@ -103,7 +103,7 @@ export function renderTelegram(estado) {
   return `
     <div class="flex flex-col gap-4 rounded-2xl bg-[#EEF1FB] p-5 sm:flex-row sm:items-center sm:justify-between">
       <p class="text-[15px]"><b>Recibí los pedidos en Telegram.</b> <span class="text-ink/70">Conectá tu cuenta una sola vez con el bot de Red de Autos.</span></p>
-      <button type="button" class="btn-primary h-[46px] shrink-0 justify-center" data-tg-conectar>${icon('message-circle', 'h-4 w-4')} Conectar Telegram</button>
+      <button type="button" class="btn-primary h-[46px] shrink-0 justify-center" data-tg-conectar>${icon('telegram', 'h-4 w-4')} Conectar Telegram</button>
     </div>`;
 }
 

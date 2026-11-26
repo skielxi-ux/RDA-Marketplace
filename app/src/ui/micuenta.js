@@ -163,7 +163,7 @@ export function initMiCuenta() {
         <div class="mb-8 overflow-hidden rounded-[24px] bg-ink text-white">
           <div class="grid gap-6 p-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:p-8">
             <div>
-              <p class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[13px] font-medium">${icon('message-circle', 'h-4 w-4')} Bot de Red de Autos en Telegram</p>
+              <p class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[13px] font-medium">${icon('telegram', 'h-4 w-4')} Bot de Red de Autos en Telegram</p>
               <p class="mt-3 text-[22px] font-bold leading-tight sm:text-[26px]">Conectá Telegram y manejá tu stock desde el celular</p>
               <ul class="mt-4 grid gap-2 text-[15px] text-white/85 sm:grid-cols-2">
                 ${[['bell', 'Avisos al instante de pedidos de colegas'], ['tag', 'Cambiar el precio de un auto'], ['circle-check', 'Marcar un auto como vendido'], ['lock', 'Pausar y volver a publicar'], ['handshake', 'Pedir autos a colegas y responder "Lo tengo"'], ['badge-check', 'Avisos de tu cuenta y de ferias nuevas']]
@@ -171,7 +171,7 @@ export function initMiCuenta() {
               </ul>
             </div>
             <div class="flex flex-col gap-2 md:items-end">
-              <button type="button" class="btn-primary h-[54px] justify-center !px-8" data-tg-conectar>${icon('message-circle', 'h-4 w-4')} Conectar Telegram</button>
+              <button type="button" class="btn-primary h-[54px] justify-center !px-8" data-tg-conectar>${icon('telegram', 'h-4 w-4')} Conectar Telegram</button>
               <p class="text-[13px] text-white/60 md:text-right">Se abre Telegram: tocá <b>Iniciar</b> y listo.<br>Si no lo tenés, bajalo gratis de tu tienda de apps.</p>
             </div>
           </div>
