@@ -1,6 +1,7 @@
 // Editar un auto a mano (Mi cuenta → Mis autos de las agencias): ventana con el formulario completo.
 // Guarda con la misma acción que la carga masiva (mkt-autos "publicar", mismo código → actualiza, no duplica).
-// Si se eligen fotos nuevas, reemplazan a las actuales; si no, quedan las que estaban.
+// Fotos: se pueden agregar (hasta 7 en total), reemplazar todas, quitar de a una o elegir la portada.
+// Si no se tocan, quedan las que estaban.
 import { $ } from './dom.js';
 import { esc } from '../lib/html.js';
 import { icon } from '../lib/icons.js';
@@ -62,8 +63,11 @@ export function editarAuto(a, onGuardado) {
         <div class="mt-6">
           <p class="vd-label">Fotos</p>
           <ul class="grid grid-cols-4 gap-2 sm:grid-cols-7" data-ea-fotos></ul>
-          <label class="btn-outline mt-3 h-[44px] w-fit cursor-pointer !px-4 text-[14px]"><input type="file" accept="image/jpeg,image/png,image/webp" multiple class="sr-only" data-ea-input /> ${icon('images', 'h-4 w-4')} Reemplazar fotos</label>
-          <p class="mt-2 text-[13px] text-ink/60" data-ea-fotos-nota>Si elegís fotos nuevas (hasta ${MAX_FOTOS}), reemplazan a las actuales. La primera es la portada.</p>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <label class="btn-primary h-[44px] w-fit cursor-pointer !px-4 text-[14px]" data-ea-agregar-label><input type="file" accept="image/jpeg,image/png,image/webp" multiple class="sr-only" data-ea-agregar /> ${icon('plus', 'h-4 w-4')} Agregar fotos</label>
+            <label class="btn-outline h-[44px] w-fit cursor-pointer !px-4 text-[14px]"><input type="file" accept="image/jpeg,image/png,image/webp" multiple class="sr-only" data-ea-input /> ${icon('images', 'h-4 w-4')} Reemplazar todas</label>
+          </div>
+          <p class="mt-2 text-[13px] text-ink/60" data-ea-fotos-nota></p>
         </div>
         ${(() => {
           const vigente = a.relampago_precio && new Date(a.relampago_termina).getTime() > Date.now();
@@ -94,16 +98,41 @@ export function editarAuto(a, onGuardado) {
   const form = $('[data-ea-form]', dlg);
   const ul = $('[data-ea-fotos]', dlg);
   const err = $('[data-ea-error]', dlg);
-  let nuevas = [];
+  // Lista de fotos en orden: las que ya estaban ({ path }) y las nuevas ({ file, url }). La primera es la portada.
+  const originales = (a.fotos ?? []).filter((p) => fotoUrl(p));
+  let fotos = originales.map((path) => ({ path, url: fotoUrl(path) }));
+  const nuevas = () => fotos.filter((f) => f.file);
+  const tocadas = () => fotos.length !== originales.length || fotos.some((f, i) => f.path !== originales[i]);
   let ocupado = false;
 
   const pintarFotos = () => {
-    const items = nuevas.length ? nuevas.map((f) => f.url) : (a.fotos ?? []).map(fotoUrl).filter(Boolean);
-    ul.innerHTML = items.map((u, i) => `<li class="relative aspect-[4/3] overflow-hidden rounded-lg bg-soft"><img src="${esc(u)}" alt="Foto ${i + 1}" class="h-full w-full object-cover" />${i === 0 ? '<span class="absolute left-1 top-1 rounded bg-ink/80 px-1.5 py-0.5 text-[11px] font-bold text-white">Portada</span>' : ''}</li>`).join('');
+    ul.innerHTML = fotos.map((f, i) => `
+      <li class="group relative aspect-[4/3] overflow-hidden rounded-lg bg-soft">
+        <img src="${esc(f.url)}" alt="Foto ${i + 1}" class="h-full w-full object-cover" />
+        ${i === 0
+          ? '<span class="absolute left-1 top-1 rounded bg-ink/80 px-1.5 py-0.5 text-[11px] font-bold text-white">Portada</span>'
+          : `<button type="button" class="absolute bottom-1 left-1 rounded bg-white/90 px-1.5 py-0.5 text-[11px] font-bold text-ink shadow transition-colors hover:bg-brand hover:text-white" data-ea-portada="${i}">Portada</button>`}
+        ${fotos.length > 1 ? `<button type="button" class="absolute right-1 top-1 grid h-7 w-7 place-items-center rounded-full bg-white/90 text-ink shadow transition-colors hover:bg-[#D92D20] hover:text-white" aria-label="Quitar foto ${i + 1}" data-ea-quitar="${i}">${icon('x', 'h-3.5 w-3.5')}</button>` : ''}
+      </li>`).join('');
+    const lleno = fotos.length >= MAX_FOTOS;
+    const lab = $('[data-ea-agregar-label]', dlg);
+    lab.classList.toggle('pointer-events-none', lleno);
+    lab.classList.toggle('opacity-50', lleno);
+    $('[data-ea-agregar]', dlg).disabled = lleno;
+    $('[data-ea-fotos-nota]', dlg).textContent = lleno
+      ? `Ya tenés ${MAX_FOTOS} fotos, el máximo. Para sumar otra, quitá alguna con la ✕.`
+      : `${fotos.length} de ${MAX_FOTOS} fotos. Podés agregar ${MAX_FOTOS - fotos.length} más. La primera es la portada.`;
   };
+  /** Valida los archivos elegidos (tipo y tamaño). */
+  const validos = (lista) => {
+    const ok = [...lista].filter((f) => /^image\/(jpeg|png|webp)$/.test(f.type) && f.size <= 25 * 1024 * 1024);
+    if (ok.length < lista.length) error('Algunos archivos no son fotos JPG, PNG o WebP de hasta 25 MB y no se sumaron.');
+    return ok;
+  };
+  const liberar = (lista) => lista.forEach((f) => f.file && URL.revokeObjectURL(f.url));
   const error = (m) => { err.textContent = m || ''; err.classList.toggle('hidden', !m); if (m) err.scrollIntoView({ block: 'nearest' }); };
   let reloj = 0;
-  const cerrar = () => { if (ocupado) return; clearInterval(reloj); nuevas.forEach((f) => URL.revokeObjectURL(f.url)); dlg.close(); dlg.remove(); };
+  const cerrar = () => { if (ocupado) return; clearInterval(reloj); liberar(fotos); dlg.close(); dlg.remove(); };
 
   // ---- Precio relámpago: resumen en vivo, y solo se guarda si se tocó ----
   const relBox = $('[data-ea-relampago]', dlg);
@@ -131,15 +160,34 @@ export function editarAuto(a, onGuardado) {
   relResumen();
   reloj = relojesOferta(dlg);
 
+  // Reemplazar todas
   $('[data-ea-input]', dlg).addEventListener('change', (e) => {
     error('');
-    const files = [...e.target.files].filter((f) => /^image\/(jpeg|png|webp)$/.test(f.type) && f.size <= 25 * 1024 * 1024);
-    if (files.length < e.target.files.length) error('Algunos archivos no son fotos JPG, PNG o WebP de hasta 25 MB y no se sumaron.');
+    const files = validos(e.target.files);
     if (files.length > MAX_FOTOS) error(`Podés subir hasta ${MAX_FOTOS} fotos. Tomamos las primeras ${MAX_FOTOS}.`);
-    nuevas.forEach((f) => URL.revokeObjectURL(f.url));
-    nuevas = files.slice(0, MAX_FOTOS).map((file) => ({ file, url: URL.createObjectURL(file) }));
+    if (files.length) {
+      liberar(fotos);
+      fotos = files.slice(0, MAX_FOTOS).map((file) => ({ file, url: URL.createObjectURL(file) }));
+      pintarFotos();
+    }
+    e.target.value = '';
+  });
+  // Agregar a las que ya están
+  $('[data-ea-agregar]', dlg).addEventListener('change', (e) => {
+    error('');
+    const files = validos(e.target.files);
+    const lugar = MAX_FOTOS - fotos.length;
+    if (files.length > lugar) error(`Entran ${lugar} ${lugar === 1 ? 'foto más' : 'fotos más'} (máximo ${MAX_FOTOS}). Sumamos las primeras ${lugar}.`);
+    fotos.push(...files.slice(0, lugar).map((file) => ({ file, url: URL.createObjectURL(file) })));
     pintarFotos();
     e.target.value = '';
+  });
+  // Quitar una foto o elegir la portada
+  ul.addEventListener('click', (e) => {
+    const q = e.target.closest('[data-ea-quitar]');
+    const p = e.target.closest('[data-ea-portada]');
+    if (q && fotos.length > 1) { liberar(fotos.splice(Number(q.dataset.eaQuitar), 1)); pintarFotos(); }
+    if (p) { fotos.unshift(...fotos.splice(Number(p.dataset.eaPortada), 1)); pintarFotos(); }
   });
   dlg.addEventListener('click', (e) => { if (e.target.closest('[data-ea-cerrar]') || e.target === dlg) { e.preventDefault(); cerrar(); } });
   dlg.addEventListener('cancel', (e) => { e.preventDefault(); cerrar(); });
@@ -171,23 +219,28 @@ export function editarAuto(a, onGuardado) {
     const btn = $('[data-ea-guardar]', dlg), label = $('[data-ea-label]', dlg);
     btn.disabled = true;
     try {
-      let fotos = [];
-      if (nuevas.length) {
-        const sb = await supa();
-        const formato = await formatoFotos();
-        label.textContent = 'Preparando fotos…';
-        const blobs = [];
-        for (const n of nuevas) blobs.push(await comprimir(n.file, formato));
-        const { urls } = await autosApi('urls_fotos', { cantidad: blobs.length, formato });
-        for (const [i, blob] of blobs.entries()) {
-          label.textContent = `Subiendo fotos ${i + 1} de ${blobs.length}…`;
-          const { error: up } = await sb.storage.from('mkt-fotos').uploadToSignedUrl(urls[i].path, urls[i].token, blob, { contentType: formato === 'jpg' ? 'image/jpeg' : 'image/webp' });
-          if (up) throw new Error('Se cortó la subida de una foto. Revisá tu conexión y probá de nuevo.');
-          fotos.push(urls[i].path);
+      // Fotos: si no se tocaron, se manda la lista vacía (quedan las que estaban)
+      let listaFinal = [];
+      if (tocadas()) {
+        const subir = nuevas();
+        if (subir.length) {
+          const sb = await supa();
+          const formato = await formatoFotos();
+          label.textContent = 'Preparando fotos…';
+          const blobs = [];
+          for (const n of subir) blobs.push(await comprimir(n.file, formato));
+          const { urls } = await autosApi('urls_fotos', { cantidad: blobs.length, formato });
+          for (const [i, blob] of blobs.entries()) {
+            label.textContent = `Subiendo fotos ${i + 1} de ${blobs.length}…`;
+            const { error: up } = await sb.storage.from('mkt-fotos').uploadToSignedUrl(urls[i].path, urls[i].token, blob, { contentType: formato === 'jpg' ? 'image/jpeg' : 'image/webp' });
+            if (up) throw new Error('Se cortó la subida de una foto. Revisá tu conexión y probá de nuevo.');
+            subir[i].subida = urls[i].path;
+          }
         }
+        listaFinal = fotos.map((f) => f.path ?? f.subida);
       }
       label.textContent = 'Guardando…';
-      await autosApi('publicar', { autos: [{ ...auto, fotos }] });
+      await autosApi('publicar', { autos: [{ ...auto, fotos: listaFinal }] });
       if (relTocado || (relPrecio && Number(a.relampago_precio) !== relPrecio)) {
         if (relPrecio) await autosApi('relampago', { id: a.id, precio: relPrecio, empieza: relEmpieza.toISOString(), horas: Number(v('rel_horas')) });
         else if (a.relampago_precio) await autosApi('relampago_quitar', { id: a.id });
