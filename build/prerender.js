@@ -56,6 +56,8 @@ const renderFeaturedTabs = () =>
 // Partes comunes a todas las páginas
 const common = (isBuild) => ({
   csp: isBuild ? `<meta http-equiv="Content-Security-Policy" content="${CSP}" />` : '',
+  // Fichas de autos reales y páginas de agencias (se arman en el navegador): indexables solo con el interruptor prendido
+  'robots-dinamico': `<meta name="robots" content="${SITE_DATA.indexable ? 'index, follow' : 'noindex, follow'}" />`,
   'site-header': renderSiteHeader(),
   footer: renderFooter(),
   'to-top': renderToTop(),
@@ -87,6 +89,7 @@ const PAGES = {
     indice: renderFaqIndice(),
     faq: renderFaq(),
   }),
+  '404.html': () => ({}),
   'terminos.html': () => ({
     head: renderHeadTags({ title: 'Términos y condiciones | Red de Autos', description: 'Términos y condiciones de uso de Red de Autos: publicaciones, cuentas, agencias, vendedores independientes y responsabilidades.', path: 'terminos.html' }),
     vigencia: `Vigentes desde el ${VIGENCIA}.`,

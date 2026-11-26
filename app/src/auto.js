@@ -11,6 +11,7 @@ import { $ } from './ui/dom.js';
 import { cars, carTitle } from './data/catalog.js';
 import { cargarAuto, cargarAutosReales, cargarOfertaFeria } from './data/autosReales.js';
 import { relojesOferta } from './lib/oferta.js';
+import { sinIndexar, canonica } from './lib/seoDinamico.js';
 import { renderFicha, renderFichaJsonLd } from './render/ficha.js';
 import { formatPrice, formatKm } from './lib/html.js';
 
@@ -33,6 +34,7 @@ initAuth();
   if (!c) {
     $('[data-ficha-error]').hidden = false;
     document.title = 'Auto no disponible | Red de Autos';
+    sinIndexar();
     return;
   }
   $('[data-ficha-error]').remove();
@@ -40,6 +42,7 @@ initAuth();
   $('[data-ficha-root]').innerHTML = renderFicha(c, [...reales, ...cars]);
   const titulo = `${carTitle(c)} ${c.year}`;
   document.title = `${titulo} · ${formatPrice(c.price, c.currency)} | Red de Autos`;
+  canonica(new URL(`auto.html?id=${encodeURIComponent(id)}`, location.href).href);
   $('meta[name="description"]').setAttribute('content', `${titulo}, ${formatKm(c.km)}, ${c.fuel.toLowerCase()}, caja ${c.gear.toLowerCase()}. ${c.city}, ${c.province}.`);
   // Datos estructurados para buscadores (JSON-LD, no ejecutable)
   const ld = document.createElement('template');

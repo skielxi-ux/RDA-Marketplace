@@ -1,4 +1,4 @@
 # Mientras el catálogo sea de ejemplo no queremos que Google lo indexe.
-# Al salir con dominio propio: cambiar a "Allow: /" y apuntar el Sitemap al dominio.
+# Para abrirlo: SITE.indexable = true en app/src/data/site.js (y la url del dominio propio).
 User-agent: *
 Disallow: /

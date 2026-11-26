@@ -1,17 +1,16 @@
 export const SITE = {
   name: 'Red de Autos',
   url: 'https://skielxi-ux.github.io/RDA-Marketplace/',
-  title: 'Autos 0km y usados de agencias y concesionarios oficiales | Red de Autos',
+  title: 'Autos 0km y usados en Tucumán | Red de Autos',
   description:
-    'Encontrá autos 0km y usados de agencias multimarca y concesionarios oficiales de todo el país. Compará precios, financiación y entrega inmediata.',
+    'Autos 0km y usados de agencias y concesionarios de Tucumán. Compará precios, mirá las fotos y hablá directo con el vendedor por WhatsApp. Publicá gratis.',
   locale: 'es_AR',
   phone: { display: '381 633-5234', tel: '+543816335234' },
   email: 'reddeautostuc@gmail.com',
   // Partner de seguros (página Seguros y recuadro en la ficha de cada auto). Sin número, no se muestra el botón.
   seguros: { nombre: 'GAMAN BROKERS', whatsapp: '5493815744335', logo: './img/partners/gaman.webp' },
   address: ['San Miguel de Tucumán', 'Tucumán, Argentina'],
-  ogImage:
-    'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1200&h=630&fit=crop&auto=format&q=75',
+  ogImage: 'https://skielxi-ux.github.io/RDA-Marketplace/img/og.jpg', // imagen al compartir las páginas generales
   // Supabase (proyecto RED DE AUTOS IA). La clave "publishable" es pública por diseño:
   // los datos están protegidos por RLS y por la función del servidor.
   supabase: {
@@ -19,6 +18,8 @@ export const SITE = {
     publishableKey: 'sb_publishable_hhgYneVg1XyLJL64fv1nXQ_io3nnHfO',
   },
   // Mientras el catálogo sea de ejemplo, el sitio no se indexa en Google.
+  // Interruptor de Google: en false, robots.txt bloquea todo y las páginas llevan noindex (catálogo de ejemplo).
+  // Al lanzar (sin autos de ejemplo y con dominio propio): cambiar `url` y poner true. Robots y sitemaps se adaptan solos.
   indexable: false,
   // Redes (en este orden en el header y el menú). Pegá la URL completa de cada perfil (https://...).
   // Mientras esté vacía, el ícono se ve pero no es un link.

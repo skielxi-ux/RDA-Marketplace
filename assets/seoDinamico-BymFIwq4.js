@@ -1,0 +1,1 @@
+function e(){let e=document.querySelector(`meta[name="robots"]`);e||(e=document.createElement(`meta`),e.name=`robots`,document.head.append(e)),e.content=`noindex, follow`}function t(e){let t=document.querySelector(`link[rel="canonical"]`);t||(t=document.createElement(`link`),t.rel=`canonical`,document.head.append(t)),t.href=e}export{e as n,t};

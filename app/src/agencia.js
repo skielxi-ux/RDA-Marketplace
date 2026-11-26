@@ -8,6 +8,7 @@ import { initCards } from './ui/cards.js';
 import { $ } from './ui/dom.js';
 import { cargarAgencia } from './data/autosReales.js';
 import { renderAgencia } from './render/agencia.js';
+import { sinIndexar, canonica } from './lib/seoDinamico.js';
 
 document.documentElement.classList.add('js');
 
@@ -24,11 +25,13 @@ initAuth();
   if (!a) {
     $('[data-ag-error]').hidden = false;
     document.title = 'Agencia no disponible | Red de Autos';
+    sinIndexar();
     return;
   }
   $('[data-ag-error]').remove();
   $('[data-ag-root]').innerHTML = renderAgencia(a);
   document.title = `${a.nombre} · ${a.ciudad} | Red de Autos`;
+  canonica(new URL(`agencia.html?id=${encodeURIComponent(a.id)}`, location.href).href);
   $('meta[name="description"]').setAttribute('content', `${a.nombre}: ${a.autos.length} autos en venta en ${a.ciudad}, ${a.provincia}. Contacto, horarios y ubicación.`);
   const grid = $('[data-agencia-grid]');
   if (grid) initCards(grid);

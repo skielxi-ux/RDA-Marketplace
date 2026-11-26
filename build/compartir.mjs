@@ -81,4 +81,20 @@ for (const f of readdirSync(DIR)) {
 }
 for (const f of readdirSync(IMG)) if (!nuevo[f.replace(/\.jpg$/, '')]) rmSync(`${IMG}/${f}`);
 writeFileSync(INDICE, `${JSON.stringify(nuevo, null, 1)}\n`);
+
+// Mapa del sitio de autos y agencias reales (lo lee Google cuando SITE.indexable está prendido)
+const ra = await fetch(`${SITE.supabase.url}/rest/v1/rpc/mkt_agencias_publicas`, {
+  method: 'POST', headers: { apikey: SITE.supabase.publishableKey, 'Content-Type': 'application/json' }, body: '{}',
+});
+const agencias = ra.ok ? (await ra.json()).filter((a) => ID.test(a.id) && a.autos > 0) : [];
+const dia = (d) => String(d ?? '').slice(0, 10);
+const urls = [
+  ...autos.filter((a) => nuevo[a.id]).map((a) => `  <url><loc>${esc(`${SITE.url}auto.html?id=${a.id}`)}</loc><lastmod>${dia(a.publicado_at)}</lastmod></url>`),
+  ...agencias.map((a) => `  <url><loc>${esc(`${SITE.url}agencia.html?id=${a.id}`)}</loc></url>`),
+];
+writeFileSync('sitemap-autos.xml', `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.join('\n')}
+</urlset>
+`);
 console.log(`Páginas para compartir: ${Object.keys(nuevo).length}`);

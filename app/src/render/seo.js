@@ -32,7 +32,13 @@ export function renderJsonLd(list = cars, listName = 'Autos destacados') {
   const data = {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'Organization', '@id': `${SITE.url}#org`, name: SITE.name, url: SITE.url, logo: `${SITE.url}favicon.svg` },
+      {
+        '@type': 'Organization', '@id': `${SITE.url}#org`, name: SITE.name, url: SITE.url, logo: `${SITE.url}favicon.svg`,
+        email: SITE.email, telephone: SITE.phone.tel,
+        address: { '@type': 'PostalAddress', addressLocality: 'San Miguel de Tucumán', addressRegion: 'Tucumán', addressCountry: 'AR' },
+        contactPoint: [{ '@type': 'ContactPoint', telephone: SITE.phone.tel, email: SITE.email, contactType: 'customer service', areaServed: 'AR', availableLanguage: 'es' }],
+        sameAs: Object.values(SITE.social).filter(Boolean),
+      },
       { '@type': 'WebSite', '@id': `${SITE.url}#web`, name: SITE.name, url: SITE.url, inLanguage: 'es-AR', publisher: { '@id': `${SITE.url}#org` } },
       {
         '@type': 'ItemList',

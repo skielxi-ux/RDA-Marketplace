@@ -21,4 +21,24 @@ ${urls.map((u) => `  <url><loc>${SITE.url}${u}</loc></url>`).join('\n')}
 </urlset>
 `;
 fs.writeFileSync(path.join(root, 'public/sitemap.xml'), sitemap);
+
+// robots.txt según el interruptor SITE.indexable (sitemap-autos.xml lo genera el proceso de compartir cada 15 min)
+const robots = SITE.indexable
+  ? `User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /mi-cuenta.html
+Disallow: /publicar.html
+Disallow: /favoritos.html
+Disallow: /c/
+
+Sitemap: ${SITE.url}sitemap.xml
+Sitemap: ${SITE.url}sitemap-autos.xml
+`
+  : `# Mientras el catálogo sea de ejemplo no queremos que Google lo indexe.
+# Para abrirlo: SITE.indexable = true en app/src/data/site.js (y la url del dominio propio).
+User-agent: *
+Disallow: /
+`;
+fs.writeFileSync(path.join(root, 'public/robots.txt'), robots);
 console.log(`Fichas generadas: ${cars.length}`);

@@ -1,0 +1,1 @@
+import{i as e,n as t}from"./dom-X2tapx7s.js";function n(){let n=t(`.reveal`);if(e()||!(`IntersectionObserver`in window)){n.forEach(e=>e.classList.add(`is-in`));return}let r=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(e.target.classList.add(`is-in`),r.unobserve(e.target))})},{threshold:.12});n.forEach(e=>r.observe(e))}export{n as t};
