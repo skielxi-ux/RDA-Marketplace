@@ -8,6 +8,7 @@ import { SITE } from '../data/site.js';
 import { renderRanking } from './ranking.js';
 import { renderEstadisticas } from './adminEstadisticas.js';
 import { renderPartners } from './adminPartners.js';
+import { renderPlanes } from './adminPlanes.js';
 import { fotoUrl } from '../lib/fotos.js';
 
 const sb = createClient(SITE.supabase.url, SITE.supabase.publishableKey, {
@@ -512,6 +513,7 @@ const LOADERS = {
   autos: () => loadAutos(),
   buscados: () => renderRanking($('#v-buscados'), sb),
   estadisticas: () => renderEstadisticas($('#v-estadisticas'), sb),
+  planes: () => renderPlanes($('#v-planes'), (accion, extra = {}) => call('mkt-planes', { accion, ...extra }), { toast, handleError, dialog, sb }),
   partners: () => renderPartners($('#v-partners'), (accion, extra = {}) => call('mkt-partners', { accion, ...extra }), { toast, handleError, dialog, sb }),
   pruebas: loadPruebas,
 };

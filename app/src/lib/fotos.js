@@ -6,6 +6,8 @@ const SEGURA = /^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(webp|jpg)$/;
 /** URL pública de una foto. Solo acepta rutas con el formato que genera el servidor. */
 const BASE = SITE.fotosCdn ? SITE.fotosCdn.replace(/\/$/, '') : `${SITE.supabase.url}/storage/v1/object/public/mkt-fotos`;
 export const fotoUrl = (path) => (SEGURA.test(String(path)) ? `${BASE}/${path}` : '');
+/** Logo o foto de Planes de ahorro (carpeta planes/ del mismo bucket). */
+export const planImgUrl = (path) => (/^planes\/[0-9a-f-]{36}\.(webp|jpg)$/.test(String(path)) ? `${BASE}/${path}` : '');
 /** Logo de un partner (carpeta partners/ del mismo bucket). */
 export const logoPartnerUrl = (path) => (/^partners\/[0-9a-f-]{36}\.(webp|jpg)$/.test(String(path)) ? `${BASE}/${path}` : '');
 

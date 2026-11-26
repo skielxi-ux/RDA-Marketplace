@@ -120,6 +120,13 @@ const PAGES = {
     }),
     marcas: renderMarcas(),
   }),
+  'planes-de-ahorro.html': () => ({
+    head: renderHeadTags({
+      title: 'Planes de ahorro en Tucumán: vendedores de concesionarios | Red de Autos',
+      description: 'Encontrá a los vendedores de planes de ahorro de los concesionarios de Tucumán. Elegí el concesionario y hablá directo por WhatsApp o teléfono con el vendedor que prefieras.',
+      path: 'planes-de-ahorro.html',
+    }),
+  }),
   'partners.html': () => ({
     head: renderHeadTags({
       title: 'Partners: talleres, detailing, polarizados y más | Red de Autos',
