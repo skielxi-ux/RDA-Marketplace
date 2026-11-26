@@ -28,7 +28,7 @@ function normalizarWa(v: unknown) {
   if (d.startsWith("549")) d = d.slice(3);
   else if (d.startsWith("54")) d = d.slice(2);
   if (d.startsWith("0")) d = d.slice(1);
-  d = d.replace(/^(\d{2,4})15(\d{6,8})$/, "$1$2"); // saca el 15 del celular
+  if (d.length === 12) d = d.replace(/^(\d{2,4})15(\d{6,8})$/, "$1$2"); // saca el 15 del celular (solo si sobra)
   return d.length === 10 ? `549${d}` : "";
 }
 

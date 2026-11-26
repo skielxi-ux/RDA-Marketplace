@@ -5,7 +5,7 @@ import { icon } from '../lib/icons.js';
 import { comprimir, formatoFotos, logoPartnerUrl } from '../lib/fotos.js';
 import { RUBROS } from '../data/partners.js';
 
-const fmtWa = (t) => String(t || '').replace(/^549(\d{3})(\d{3})(\d{4})$/, '381 $2-$3').replace(/^381 (\d{3}-\d{4})$/, '381 $1');
+const fmtWa = (t) => String(t || '').replace(/^549(\d{3})(\d{3})(\d{4})$/, '$1 $2-$3');
 const campo = (label, html, extra = '') => `<label class="block ${extra}"><span class="auth-label">${label}</span>${html}</label>`;
 
 /**
