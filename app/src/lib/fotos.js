@@ -1,9 +1,11 @@
 // Fotos de autos cargados por las agencias (Supabase Storage, bucket público mkt-fotos).
+// Si SITE.fotosCdn está cargado, se piden a Cloudflare, que las guarda en caché y casi no gasta transferencia de Supabase.
 import { SITE } from '../data/site.js';
 
 const SEGURA = /^[0-9a-f-]{36}\/[0-9a-f-]{36}\.(webp|jpg)$/;
 /** URL pública de una foto. Solo acepta rutas con el formato que genera el servidor. */
-export const fotoUrl = (path) => (SEGURA.test(String(path)) ? `${SITE.supabase.url}/storage/v1/object/public/mkt-fotos/${path}` : '');
+const BASE = SITE.fotosCdn ? SITE.fotosCdn.replace(/\/$/, '') : `${SITE.supabase.url}/storage/v1/object/public/mkt-fotos`;
+export const fotoUrl = (path) => (SEGURA.test(String(path)) ? `${BASE}/${path}` : '');
 
 /** Achica la foto en el navegador (lado mayor 1600 px) y la pasa a WebP (o JPEG si el navegador no sabe WebP). */
 export async function comprimir(file, formato) {

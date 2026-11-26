@@ -18,6 +18,9 @@ export const SITE = {
     publishableKey: 'sb_publishable_hhgYneVg1XyLJL64fv1nXQ_io3nnHfO',
   },
   // Mientras el catálogo sea de ejemplo, el sitio no se indexa en Google.
+  // Fotos por Cloudflare: dirección del Worker que las sirve con caché (ej. 'https://fotos.reddeautos.com.ar').
+  // Vacío = las fotos salen directo de Supabase. Ver cloudflare/README.md.
+  fotosCdn: '',
   // Interruptor de Google: en false, robots.txt bloquea todo y las páginas llevan noindex (catálogo de ejemplo).
   // Al lanzar (sin autos de ejemplo y con dominio propio): cambiar `url` y poner true. Robots y sitemaps se adaptan solos.
   indexable: false,

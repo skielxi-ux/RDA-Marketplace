@@ -38,7 +38,7 @@ const CSP = [
   "default-src 'self'",
   "script-src 'self'",
   "style-src 'self'",
-  "img-src 'self' data: blob: https://ytuecptdgtmrbiddyzht.supabase.co",
+  `img-src 'self' data: blob: https://ytuecptdgtmrbiddyzht.supabase.co${SITE_DATA.fotosCdn ? ` ${new URL(SITE_DATA.fotosCdn).origin}` : ''}`,
   "font-src 'self' data:",
   "connect-src 'self' https://ytuecptdgtmrbiddyzht.supabase.co wss://ytuecptdgtmrbiddyzht.supabase.co",
   'frame-src https://www.openstreetmap.org',
