@@ -120,6 +120,13 @@ const PAGES = {
     }),
     marcas: renderMarcas(),
   }),
+  'partners.html': () => ({
+    head: renderHeadTags({
+      title: 'Partners: talleres, detailing, polarizados y más | Red de Autos',
+      description: 'Empresas del mundo automotor que forman parte de Red de Autos: car detailing, polarizados, talleres mecánicos, gestoría, merchandising y más. Contacto directo por WhatsApp.',
+      path: 'partners.html',
+    }),
+  }),
   'seguros.html': () => ({
     head: renderHeadTags({
       title: 'Seguros para tu auto | Red de Autos',

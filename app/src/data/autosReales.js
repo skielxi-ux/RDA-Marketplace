@@ -40,7 +40,7 @@ export function fromDb(r) {
   };
 }
 
-async function rpc(nombre, body = {}) {
+export async function rpc(nombre, body = {}) {
   const res = await fetch(`${SITE.supabase.url}/rest/v1/rpc/${nombre}`, {
     method: 'POST',
     headers: { apikey: SITE.supabase.publishableKey, 'Content-Type': 'application/json' },

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--slot:csp-->
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <!--slot:head-->
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <script type="module" src="/src/partners.js"></script>
+</head>
+<body>
+  <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Saltar al contenido</a>
+  <!--slot:site-header-->
+  <main id="contenido">
+    <section class="border-b border-line bg-soft">
+      <div class="container-x py-8 md:py-12">
+        <nav aria-label="Migas de pan" class="text-[14px] text-ink/60">
+          <ol class="flex items-center gap-2"><li><a href="./" class="transition-colors hover:text-brand">Inicio</a></li><li aria-hidden="true">/</li><li aria-current="page" class="text-ink">Partners</li></ol>
+        </nav>
+        <h1 class="mt-3 text-[30px] font-bold leading-[1.1] sm:text-[38px] md:text-[44px]">Partners</h1>
+        <p class="mt-2 max-w-[680px] text-[16px] text-ink/70">Empresas del mundo automotor que forman parte de Red de Autos: detailing, polarizados, talleres, gestoría y más. Tocá el logo y escribiles directo por WhatsApp.</p>
+      </div>
+    </section>
+    <div class="container-x py-10 md:py-14">
+      <form class="mb-8 flex flex-col gap-4" role="search" data-pa-filtros hidden>
+        <label class="relative block w-full md:max-w-[420px]">
+          <span class="sr-only">Buscar partner o rubro</span>
+          <i data-icon="search" class="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink/50"></i>
+          <input type="search" class="filter-input !pl-11" placeholder="Buscar por nombre, rubro o ciudad" maxlength="60" data-pa-q />
+        </label>
+        <div class="flex flex-wrap gap-2" role="group" aria-label="Rubro" data-pa-rubros></div>
+      </form>
+      <p class="mb-5 text-[15px] text-ink/70" aria-live="polite" data-pa-cuenta></p>
+      <ul class="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 lg:gap-x-5" data-pa-lista>
+        <li class="col-span-full flex items-center gap-2 text-ink/60"><i data-icon="loader-circle" class="h-4 w-4 animate-spin"></i> Cargando partners…</li>
+      </ul>
+      <aside class="mt-14 flex flex-col gap-5 rounded-[24px] bg-soft p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8" aria-labelledby="pa-sumate">
+        <div>
+          <p id="pa-sumate" class="text-[20px] font-bold">¿Tenés una empresa del rubro automotor?</p>
+          <p class="mt-1 text-[15px] text-ink/70">Sumate a la red y llegá a quienes compran y venden autos en Red de Autos.</p>
+        </div>
+        <a href="#" target="_blank" rel="noopener noreferrer" class="btn-primary btn-wa h-[50px] shrink-0 justify-center !px-6" data-pa-sumate><i data-icon="whatsapp" class="h-4 w-4"></i> Quiero ser partner</a>
+      </aside>
+    </div>
+  </main>
+  <!--slot:footer-->
+  <!--slot:to-top-->
+</body>
+</html>

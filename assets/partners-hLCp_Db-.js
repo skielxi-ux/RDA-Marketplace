@@ -1,0 +1,1 @@
+var e=[`Car detailing y lavaderos`,`Polarizados y láminas`,`Talleres mecánicos`,`Chapa y pintura`,`Gomerías y alineación`,`Audio, alarmas y GPS`,`Gestoría y transferencias`,`Verificación policial y VTV`,`Financieras y créditos`,`Grúas y auxilio`,`Repuestos y accesorios`,`Merchandising`],t=e=>`¡Hola ${e}! Te contacto desde Red de Autos.`;export{e as n,t};
