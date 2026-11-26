@@ -133,10 +133,11 @@ export const renderFotoEstudio = () => {
           </div>
           <p class="mt-5 flex items-start gap-2 text-[14px] text-white/65">${icon('tag', 'mt-0.5 h-4 w-4 shrink-0')} ${esc(d.costo)}</p>
         </div>
-        <div class="relative mx-auto grid aspect-[4/3] w-full max-w-[460px] place-items-center rounded-[24px] bg-[radial-gradient(ellipse_at_center,#FFFFFF_0%,#E7EAF3_55%,#C9CFDE_100%)]" aria-hidden="true">
-          <span class="absolute inset-x-[12%] bottom-[16%] h-[10%] rounded-[50%] bg-ink/20 blur-md"></span>
-          <span class="relative text-ink/80">${icon('car', 'h-28 w-28 sm:h-36 sm:w-36')}</span>
-          <span class="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[13px] font-bold text-ink shadow">${icon('sparkle', 'h-4 w-4 text-brand')} Fondo de estudio</span>
+        <div class="relative mx-auto aspect-[4/5] w-full max-w-[440px] overflow-hidden rounded-[24px] lg:max-w-none">
+          <img src="./img/home/fotos-estudio-900.webp" srcset="./img/home/fotos-estudio-480.webp 480w, ./img/home/fotos-estudio-900.webp 900w"
+               sizes="(min-width:1024px) 34vw, 90vw" alt="Frente de un auto negro fotografiado con luces de estudio" width="900" height="1350"
+               loading="lazy" decoding="async" class="absolute inset-0 h-full w-full object-cover object-[center_60%]" />
+          <span class="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[13px] font-bold text-ink shadow">${icon('sparkle', 'h-4 w-4 text-brand')} Fotos que destacan</span>
         </div>
       </div>
     </div>
