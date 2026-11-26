@@ -14,6 +14,13 @@ const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "o
 const fecha = (d: string) => { const [, m, dd] = d.split("-").map(Number); return `${dd} de ${MESES[m - 1]}`; };
 const plural = (x: number, uno: string, varios: string) => `${n(x)} ${x === 1 ? uno : varios}`;
 
+/** Demanda sin stock del marketplace (la misma para todas las agencias), se carga una vez por envío. */
+let faltan: A[] = [];
+async function cargarFaltantes() {
+  const { data } = await db.rpc("mkt_faltantes_semana");
+  faltan = (data ?? []).slice(0, 3);
+}
+
 /** Texto del resumen (HTML de Telegram) y versión corta para la campanita. */
 function armar(r: A) {
   const contactos = r.whatsapp + r.llamadas;
@@ -31,6 +38,7 @@ function armar(r: A) {
     if (r.compartidos) l.push(`🔗 Tus autos se compartieron ${plural(r.compartidos, "vez", "veces")}`);
     if (r.top_titulo && r.top_vistas) l.push(`🏆 El más mirado: <b>${h(r.top_titulo)}</b> (${plural(r.top_vistas, "vista", "vistas")})`);
     if (!r.vistas) l.push("", "Esta semana tus autos no tuvieron visitas. Probá sumar más fotos o revisar los precios.");
+    if (faltan.length) l.push("", `🔎 <b>Lo que buscan y no hay:</b> ${faltan.map((f: A) => `${h(f.marca)} ${h(f.modelo)} (${plural(f.busquedas + f.alertas, "interesado", "interesados")})`).join(", ")}. Si tenés alguno, publicalo.`);
     if (r.sin_actualizar) l.push("", `🔄 ${r.sin_actualizar === 1 ? "Tenés 1 auto que no actualizás" : `Tenés ${n(r.sin_actualizar)} autos que no actualizás`} hace más de 30 días. ¿Sigue${r.sin_actualizar === 1 ? "" : "n"} disponible${r.sin_actualizar === 1 ? "" : "s"}? ¿Mismo precio? Podés cambiarlo acá mismo, por ejemplo: <i>"bajá el Cronos a 20.500.000"</i> o <i>"marcá vendido el Cronos"</i>.`);
     l.push("", "Tip: con un 🔥 <b>precio relámpago</b> (Mi cuenta → Mis autos → Editar) tus autos se destacan con contador.");
   }
@@ -71,6 +79,7 @@ Deno.serve(async (req) => {
   try { b = await req.json(); } catch { /* vacío */ }
 
   try {
+    await cargarFaltantes();
     if (b.accion === "prueba") {
       const { data, error } = await db.rpc("mkt_resumen_semanal", { p_cuenta: String(b.cuenta ?? "") });
       if (error) throw error;

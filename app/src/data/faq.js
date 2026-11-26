@@ -55,7 +55,7 @@ export const FAQ = [
       ['¿Qué es el precio relámpago?', 'Es una baja de precio por tiempo determinado que podés activar cuando quieras, sin esperar una feria. En Mi cuenta → Mis autos tocá "Editar", completá el precio relámpago, cuándo empieza y cuánto dura (de 2 horas a 30 días). El auto se muestra con la etiqueta 🔥 Relámpago, el precio normal tachado y un contador. Al terminar, vuelve solo a su precio.'],
       ['¿Cómo sumo mis autos a la feria?', 'Cuando hay una feria programada, entrá a Mi cuenta → Feria, tocá "Sumar a la feria" en cada auto que quieras ofrecer, poné el precio relámpago (tiene que ser más bajo que el actual), cuándo empieza y cuánto dura. Podés editarlo o sacarlo cuando quieras; al terminar, vuelve solo a su precio normal.'],
       ['¿Me avisan cómo les va a mis autos?', 'Sí. Todos los lunes a la mañana te mandamos por Telegram (y te queda en la campanita del sitio) el resumen de la semana: cuántas vistas y contactos tuvieron tus autos, cuál fue el más mirado y si tenés autos sin actualizar hace más de 30 días.'],
-      ['¿Qué es +Buscados?', 'Un ranking con los 10 autos más buscados del mes y del año en Red de Autos, para que sepas qué stock conviene tener.'],
+      ['¿Qué es +Buscados?', 'Un ranking con los 10 autos más buscados del mes y del año en todo Red de Autos (no solo en tu stock), para que sepas qué conviene tener. Debajo está "Lo que buscan y no hay": los autos que la gente buscó y no encontró publicados, más los compradores que dejaron una alerta esperándolos. Lo ves en Mi cuenta.'],
       ['¿Puedo tener una página de mi agencia?', 'Sí. Al completar tu perfil y subir tu logo, tu agencia tiene su propia página con todo tu stock publicado, para compartir donde quieras.'],
     ],
   },
