@@ -32,7 +32,7 @@ function tarjeta(a) {
     <div class="mt-auto pt-5">
       <a href="./agencia.html?id=${encodeURIComponent(a.id)}" class="link-view mb-4 text-[15px]">Ver ${esc(a.autos)} ${a.autos === 1 ? 'auto publicado' : 'autos publicados'} ${icon('arrow-up-right', 'h-4 w-4')}</a>
       ${a.tel ? `<div class="grid grid-cols-2 gap-2">
-        <a href="${esc(wa)}" target="_blank" rel="noopener noreferrer" class="btn-primary h-[46px] justify-center !px-3 text-[14px]">${icon('message-circle', 'h-4 w-4')} WhatsApp</a>
+        <a href="${esc(wa)}" target="_blank" rel="noopener noreferrer" class="btn-primary btn-wa h-[46px] justify-center !px-3 text-[14px]">${icon('message-circle', 'h-4 w-4')} WhatsApp</a>
         <a href="tel:+${esc(a.tel)}" class="btn-outline h-[46px] justify-center !px-3 text-[14px]" aria-label="Llamar a ${esc(a.nombre)} al ${esc(fmtTel(a.tel))}">${icon('phone', 'h-4 w-4')} Llamar</a>
       </div>` : ''}
     </div>

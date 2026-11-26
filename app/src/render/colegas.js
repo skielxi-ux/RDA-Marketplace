@@ -153,7 +153,7 @@ export function renderPedido(p) {
         ? (cerrado ? `<p class="text-[13px] text-ink/60">Avisado a ${esc(p.avisadas)} ${p.avisadas === 1 ? 'agencia' : 'agencias'}</p>`
           : `<div class="flex shrink-0 items-center gap-3"><span class="whitespace-nowrap text-[13px] text-ink/60">Avisado a ${esc(p.avisadas)}</span><button type="button" class="btn-outline h-[42px] whitespace-nowrap !px-4 text-[14px]" data-cg-cerrar="${esc(p.id)}">${icon('check', 'h-4 w-4')} Ya lo conseguí</button></div>`)
         : tel && !cerrado ? `<div class="flex shrink-0 gap-2">
-            <a href="https://wa.me/${esc(tel)}?text=${esc(encodeURIComponent(msg))}" target="_blank" rel="noopener noreferrer" class="btn-primary h-[44px] whitespace-nowrap !px-4 text-[14px]" data-cg-lotengo="${esc(p.id)}">${icon('message-circle', 'h-4 w-4')} ${p.respondi ? 'Escribile' : 'Lo tengo'}</a>
+            <a href="https://wa.me/${esc(tel)}?text=${esc(encodeURIComponent(msg))}" target="_blank" rel="noopener noreferrer" class="btn-primary btn-wa h-[44px] whitespace-nowrap !px-4 text-[14px]" data-cg-lotengo="${esc(p.id)}">${icon('message-circle', 'h-4 w-4')} ${p.respondi ? 'Escribile' : 'Lo tengo'}</a>
             <a href="tel:+${esc(tel)}" class="btn-outline h-[44px] !px-3.5" aria-label="Llamar a ${esc(a.nombre)}">${icon('phone', 'h-4 w-4')}</a>
           </div>` : ''}
     </div>

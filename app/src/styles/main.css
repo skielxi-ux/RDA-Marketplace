@@ -50,6 +50,12 @@
     @apply grid h-[40px] w-[40px] place-items-center rounded-full bg-white/15 transition-colors duration-300;
   }
   .btn-cta:hover .btn-cta-icon { @apply bg-white/25; }
+  /* Botones de WhatsApp: verde WhatsApp (un tono más oscuro que el del logo, para que el texto blanco se lea bien).
+     Se suma a .btn-primary, .btn-outline o .btn-cta: misma forma y misma animación, solo cambia el color. */
+  .btn-wa {
+    @apply !border-transparent !bg-[#1DA851] !text-white !shadow-[0_8px_24px_-10px_rgba(29,168,81,0.6)]
+           hover:!bg-[#178F45] hover:!shadow-[0_14px_30px_-8px_rgba(29,168,81,0.75)];
+  }
   .btn-arrow {
     @apply inline-flex items-center gap-1.5 text-[16px] font-bold text-ink underline-offset-[6px] transition-colors duration-300 hover:text-brand hover:underline;
   }

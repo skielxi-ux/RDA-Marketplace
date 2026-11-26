@@ -58,7 +58,7 @@ export async function initFichaVendedor(c) {
       <p class="flex items-center gap-2 text-[16px] font-bold">${icon('handshake', 'h-5 w-5 text-brand')} Comisión para vos: ${esc(comision)} %</p>
       <p class="mt-1 text-[14px] leading-[1.6] text-ink/70">Sobre el precio final de venta. Compartí el auto con tu link: las visitas y los contactos de tu cliente quedan registrados en Mis clientes.</p>
       <div class="mt-4 grid grid-cols-2 gap-2">
-        <a href="https://wa.me/?text=${encodeURIComponent(texto)}" target="_blank" rel="noopener noreferrer" class="btn-primary h-[46px] justify-center !px-3 text-[14px]">${icon('message-circle', 'h-4 w-4')} Compartir</a>
+        <a href="https://wa.me/?text=${encodeURIComponent(texto)}" target="_blank" rel="noopener noreferrer" class="btn-primary btn-wa h-[46px] justify-center !px-3 text-[14px]">${icon('message-circle', 'h-4 w-4')} Compartir</a>
         <button type="button" class="btn-outline h-[46px] justify-center !px-3 text-[14px]" data-copiar-ref>${icon('share-2', 'h-4 w-4')} Copiar link</button>
       </div>`;
     caja.querySelector('[data-copiar-ref]').addEventListener('click', async (e) => {

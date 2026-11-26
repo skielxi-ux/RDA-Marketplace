@@ -35,7 +35,7 @@ export function renderAgencia(a) {
           <h1 class="text-[30px] font-bold leading-[1.1] sm:text-[38px] md:text-[44px]">${esc(a.nombre)}</h1>
           <p class="mt-2 inline-flex items-center gap-1.5 text-[15px] ${a.tipo === 'oficial' ? 'text-brand' : 'text-ink/70'}">${icon(a.tipo === 'oficial' ? 'badge-check' : 'store', 'h-4 w-4')} ${esc(tipo)}</p>
         </div>
-        ${wa ? `<a href="${esc(wa)}" target="_blank" rel="noopener noreferrer" class="btn-cta shrink-0 justify-center !pl-2.5"><span class="btn-cta-icon">${icon('message-circle', 'h-4 w-4')}</span> Escribir por WhatsApp</a>` : ''}
+        ${wa ? `<a href="${esc(wa)}" target="_blank" rel="noopener noreferrer" class="btn-cta btn-wa shrink-0 justify-center !pl-2.5"><span class="btn-cta-icon">${icon('message-circle', 'h-4 w-4')}</span> Escribir por WhatsApp</a>` : ''}
       </div>
     </div>
   </section>

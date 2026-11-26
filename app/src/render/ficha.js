@@ -241,7 +241,7 @@ function renderSellerCard(c) {
     </div>
     <p class="mt-5 flex items-center gap-2 text-[15px] text-ink/80">${icon('map-pin', 'h-4 w-4 shrink-0')} ${esc(c.city)}, ${esc(c.province)}</p>
     <div class="mt-6 space-y-3">
-      <a href="${esc(whatsappUrl(c))}" target="_blank" rel="noopener noreferrer" class="btn-cta w-full justify-center !pl-2.5" data-whatsapp>
+      <a href="${esc(whatsappUrl(c))}" target="_blank" rel="noopener noreferrer" class="btn-cta btn-wa w-full justify-center !pl-2.5" data-whatsapp>
         <span class="btn-cta-icon">${icon('message-circle', 'h-4 w-4')}</span> Escribir por WhatsApp
       </a>
       ${phone ? `<a href="tel:+${esc(phone)}" class="btn-outline h-[54px] w-full justify-center" data-llamar>${icon('phone', 'h-4 w-4')} Llamar</a>` : ''}
@@ -273,7 +273,7 @@ function renderSeguroCard(c) {
       <p class="text-[16px] font-bold leading-tight">¿Lo comprás? Cotizá el seguro</p>
     </div>
     <p class="mt-2 text-[14px] leading-[1.6] text-ink/70">Con ${esc(nombre)}, nuestro partner en seguros. Te asesoran por WhatsApp.</p>
-    <a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="btn-outline mt-4 h-[48px] w-full justify-center" data-seguro>${icon('message-circle', 'h-4 w-4')} Cotizar por WhatsApp</a>
+    <a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="btn-outline btn-wa mt-4 h-[48px] w-full justify-center" data-seguro>${icon('message-circle', 'h-4 w-4')} Cotizar por WhatsApp</a>
   </aside>`;
 }
 
@@ -352,7 +352,7 @@ export function renderFicha(c, pool = cars) {
       <p class="truncate text-[13px] text-ink/70">${esc(title)}</p>
       <p class="text-[18px] font-bold leading-tight">${esc(formatPrice(c.price, c.currency))}</p>
     </div>
-    <a href="${esc(whatsappUrl(c))}" target="_blank" rel="noopener noreferrer" class="btn-primary h-[48px] shrink-0 px-5">${icon('message-circle', 'h-4 w-4')} WhatsApp</a>
+    <a href="${esc(whatsappUrl(c))}" target="_blank" rel="noopener noreferrer" class="btn-primary btn-wa h-[48px] shrink-0 px-5">${icon('message-circle', 'h-4 w-4')} WhatsApp</a>
   </div>
 
   <!-- Visor de fotos -->

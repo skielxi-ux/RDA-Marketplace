@@ -20,7 +20,7 @@ export function renderSeguros() {
         <p class="flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.12em] text-white/70">${icon('shield-check', 'h-4 w-4')} Partner en seguros</p>
         <h2 id="seg-titulo" class="mt-4 text-[28px] font-bold leading-[1.2] sm:text-[36px] md:text-[42px]">¿Necesitás asegurar tu vehículo?</h2>
         <p class="mt-4 max-w-[560px] text-[17px] leading-[1.7] text-white/80">Ahora podés hacerlo con uno de nuestros partners líderes en seguros: <b class="text-white">${esc(nombre)}</b>. Escribiles por WhatsApp y te asesoran para elegir la cobertura ideal.</p>
-        ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="btn-cta mt-8 !pl-2.5"><span class="btn-cta-icon">${icon('message-circle', 'h-4 w-4')}</span> Cotizar por WhatsApp</a>` : ''}
+        ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="btn-cta btn-wa mt-8 !pl-2.5"><span class="btn-cta-icon">${icon('message-circle', 'h-4 w-4')}</span> Cotizar por WhatsApp</a>` : ''}
       </div>
       <div class="grid place-items-center rounded-[22px] bg-white p-8 md:p-10">
         ${logo ? `<img src="${esc(logo)}" alt="${esc(nombre)}" width="320" height="165" class="h-auto max-h-[165px] w-full max-w-[320px] object-contain" />` : `<p class="text-center text-[30px] font-bold tracking-tight text-ink">${esc(nombre)}</p>`}
